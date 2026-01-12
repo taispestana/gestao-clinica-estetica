@@ -35,6 +35,14 @@ composer run dev
 OBS: é necessário ter uma base de dados SQL para rodar o Projeto
 
 mais informações do laravel na documentação oficial do [LARAVEL](https://laravel.com/docs/11.x/installation)
+## Atualizando as branches
+Sempre rodar esses comandos separadamente nas suas proprias branches para atualizar a mesma após alguem ter feito um pull request para a main
+```
+git fetch origin
+```
+```
+git merge origin/main
+```
 
 ## Erros Conhecidos
 
