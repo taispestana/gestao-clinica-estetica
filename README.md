@@ -41,7 +41,7 @@ Sempre rodar esses comandos separadamente nas suas proprias branches para atuali
 git fetch origin
 ```
 ```
-git merge origin/main
+git merge origin/dev
 ```
 
 ## Erros Conhecidos
