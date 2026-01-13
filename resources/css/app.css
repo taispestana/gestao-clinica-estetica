@@ -1,3 +1,169 @@
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
-@tailwind utilities;
+@tailwind utilities; */
+
+/* Importação do Bootstrap instalado via NPM */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+:root {
+  --light-gray: #F7F7F7;
+  --white: #FAFAFA;
+  --main-text: #171717;
+  --placeholder: #A3A3A3;
+
+  /* botões e elementos principais */
+  --primary-button: #C5A157;
+  --primary-button-hover: #CEB47E;
+  --main-green: #223C2F;
+  --dark-green: #1A2B22;
+  /* status agendamento */
+  --status-green: #16A31D;
+  --status-red: #DC2626;
+  --status-yellow: #E8DC57;    
+
+}
+
+body {
+  background-color: var(--light-gray) !important;
+  color: var(--main-text);
+  font-family: 'Inter', sans-serif;
+
+}
+
+/* Login Card */
+.login-card {
+  background-color: var(--white);
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.1);
+  padding: 3rem;
+  max-width: 450px;
+  width: 100%;
+
+}
+
+/* Inputs */
+
+.input-group-custom {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--placeholder);
+  z-index: 10;
+}
+
+.label-input {
+  font-size: 0.825rem;       
+  font-weight: 500;          
+  margin-bottom: 0.5rem;    
+  display: block;           
+}
+
+/* .form-control-custom {
+  background-color: #3D3D3D !important;
+  border: none !important;
+  color: white !important;
+  padding: 0.75rem 1rem 0.75rem 2.8rem !important; 
+  border-radius: 8px;
+} */
+
+.form-control {
+  background-color: var(--white);
+  border: 1px solid #D1D5DB;
+  padding: 0.75rem 1rem 0.75rem 2.8rem !important; 
+  font-size: 0.85rem;
+  font-size: 0.85rem;
+  
+}
+
+.form-control::placeholder {
+  color: var(--placeholder);
+}
+
+.form-control:focus {
+  border-color: var(--primary-button);
+  box-shadow: 0 0 0 0.25;
+  text-shadow: var(--primary-button-hover);
+}
+
+/* Ajuste global para mensagens de erro */
+.invalid-feedback, 
+.text-danger, 
+.input-error-msg { 
+    color: #b35d5d !important;
+    font-size: 0.775rem !important; 
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+/* Custom Button */
+.btn-gold {
+  background-color: var(--primary-button) !important;
+  border: none !important;
+  border-radius: 8px;
+  color: var(--white) !important;
+  font-weight: 500;
+  padding: 0.8rem;
+  transition: 0.3s;
+
+}
+
+.btn-gold:hover {
+  background-color: var(--primary-button-hover) !important;
+
+}
+
+.gold-link {
+  color: var(--primary-button);
+  text-decoration: none;
+  font-weight: 400;
+
+}
+
+.gold-link:hover {
+  color: var(--primary-button-hover);
+  text-decoration: underline;
+
+}
+
+/* Header.css */
+.header {
+    height: 60px;
+    background-color: var(--main-green);
+    color: var(--white);
+}
+
+.header-logo-container {
+    width: 40px;
+    height: 40px;
+}
+
+.header-brand-title {
+    line-height: 1;
+}
+
+.header-location {
+    font-size: 0.7rem;
+    letter-spacing: 0.1rem;
+}
+
+.btn-logout {
+    background-color: var(--primary-button) !important;
+    padding: 8px 16px !important;
+    font-size: 14px !important;
+    transition: background-color 0.3s ease;
+}
+
+.btn-logout:hover {
+    background-color: var(--primary-button-hover) !important;
+    color: var(--white) !important;
+}
+
+.icon-logout {
+    width: 16px;
+    height: 16px;
+}
