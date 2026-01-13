@@ -1,3 +1,4 @@
+import ApplicationLogo from '@/Components/ApplicationLogo';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
@@ -6,7 +7,7 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Register() {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset} = useForm({
         name: '',
         email: '',
         password: '',
@@ -25,25 +26,60 @@ export default function Register() {
         <GuestLayout>
             <Head title="Register" />
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="name" value="Name" />
-
-                    <TextInput
-                        id="name"
-                        name="name"
-                        value={data.name}
-                        className="mt-1 block w-full"
-                        autoComplete="name"
-                        isFocused={true}
-                        onChange={(e) => setData('name', e.target.value)}
-                        required
-                    />
-
-                    <InputError message={errors.name} className="mt-2" />
+            <div className="login-card shadow-sm text-center p-5 text-center">
+                <div className="mb-4">
+                    <ApplicationLogo />
+                    <p className="text-muted small mt-0 mb-4">A gestão da sua Clínica de forma eficiente</p>
+                <h2 className="mb-5 fw-normal">Criar Conta</h2>
                 </div>
 
-                <div className="mt-4">
+            <form onSubmit={submit} className="text-start">
+                <div className="mb-4">
+                    <InputLabel htmlFor="name" value="Nome" className="label-input"/>
+                    <div className="input-group-custom">
+                        <span className="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/> <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </span>
+
+                        <TextInput
+                            id="name"
+                            name="name"
+                            value={data.name}
+                            className="form-control w-100"
+                            placeholder="Seu nome completo"
+                            autoComplete="name"
+                            isFocused={true}
+                            onChange={(e) => setData('name', e.target.value)}
+                            required
+                        />
+                    </div>
+                    <InputError message={errors.name} className="input-error-msg" />
+                </div>
+
+                <div className="mb-2">
+                    <InputLabel htmlFor="email" value="Endereço de e-mail" className="label-input" />
+                    <div className="input-group-custom">
+                        <span className="input-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                    </span>
+
+                        <TextInput
+                            id="email"
+                            type="email"
+                            name="email"
+                            value={data.email}
+                            className="form-control w-100" 
+                            placeholder="usuario@exemplo.com" 
+                            autoComplete="username"
+                            isFocused={true}
+                            onChange={(e) => setData('email', e.target.value)}
+                        />
+                </div>
+                    <InputError message={errors.email} className="mt-1" />
+                </div>        
+
+                {/* <div className="mt-2">
                     <InputLabel htmlFor="email" value="Email" />
 
                     <TextInput
@@ -58,51 +94,79 @@ export default function Register() {
                     />
 
                     <InputError message={errors.email} className="mt-2" />
-                </div>
+                </div> */}
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                <div className="mt-2">
+                    <InputLabel htmlFor="password" value="Senha" className="mb-2 small" />
+                    <div className="input-group-custom">   
+                            <span className="input-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            </span> 
 
                     <TextInput
                         id="password"
                         type="password"
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full"
+                        className="form-control w-100" 
+                        placeholder="********"
                         autoComplete="new-password"
                         onChange={(e) => setData('password', e.target.value)}
                         required
                     />
-
-                    <InputError message={errors.password} className="mt-2" />
                 </div>
 
-                <div className="mt-4">
+                    <InputError message={errors.password} className="mt-1" />
+                
+                </div>
+
+                <div className="mt-2">
                     <InputLabel
                         htmlFor="password_confirmation"
-                        value="Confirm Password"
+                        value="Confirmar Senha"
+                        className="mb-2 small"
                     />
+                    <div className="input-group-custom">   
+                        <span className="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        </span> 
 
-                    <TextInput
-                        id="password_confirmation"
-                        type="password"
-                        name="password_confirmation"
-                        value={data.password_confirmation}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) =>
-                            setData('password_confirmation', e.target.value)
-                        }
-                        required
-                    />
+                        <TextInput
+                            id="password_confirmation"
+                            type="password"
+                            name="password_confirmation"
+                            value={data.password_confirmation}
+                            className="form-control w-100"
+                            placeholder="********"
+                            autoComplete="new-password"
+                            onChange={(e) =>
+                                setData('password_confirmation', e.target.value)
+                            }
+                            required
+                        />
 
-                    <InputError
-                        message={errors.password_confirmation}
-                        className="mt-2"
-                    />
+                        <InputError
+                            message={errors.password_confirmation} className="input-error-msg"/>
+                    </div>
                 </div>
 
-                <div className="mt-4 flex items-center justify-end">
+                <div className="d-grid mt-4">
+                    <PrimaryButton className="btn-gold" disabled={processing}>
+                        Registar
+                    </PrimaryButton>
+                </div>
+
+                <div className="text-center mt-4">
+                    <span className="text-muted small">Já tem uma conta? </span>
+                    <Link href={route('login')} className="gold-link small">
+                        Entrar
+                    </Link>
+                </div>
+               
+
+
+
+                {/* <div className="mt-4 flex items-center justify-end">
                     <Link
                         href={route('login')}
                         className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -113,8 +177,9 @@ export default function Register() {
                     <PrimaryButton className="ms-4" disabled={processing}>
                         Register
                     </PrimaryButton>
-                </div>
+                </div> */}
             </form>
+         </div>
         </GuestLayout>
     );
 }

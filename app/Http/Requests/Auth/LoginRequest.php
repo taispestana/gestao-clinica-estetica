@@ -82,4 +82,16 @@ class LoginRequest extends FormRequest
     {
         return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
     }
+
+
+//      /**
+//      * Mudar mensagens de erro login para português .
+//      */
+//     public function messages(): array
+// {
+//     return [
+//         'email.required' => 'Por favor, insira o seu e-mail da clínica.',
+//         'password.required' => 'A senha é obrigatória para aceder ao sistema.',
+//     ];
+// }
 }
