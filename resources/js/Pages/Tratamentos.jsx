@@ -1,129 +1,134 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-
+ 
 export default function Tratamentos() {
     const stats = [
-        { title: 'Total de Tratamentos', value: '0', icon: 'users', color: 'bg-teal-50 text-teal-700' },
-        { title: 'Tratamentos Semanal', value: '0', icon: 'calendar', color: 'bg-emerald-50 text-emerald-700' },
-        { title: 'Tratamentos Mensal', value: '0', icon: 'calendar-days', color: 'bg-emerald-50 text-emerald-700' },
+        { title: 'Total de Tratamentos', value: '0', icon: 'flower1' },
+        { title: 'Tratamentos Semanais', value: '0', icon: 'flower2' },
+        { title: 'Tratamentos Mensais', value: '0', icon: 'flower3' },
     ];
-
+ 
     const appointments = [
-        { name: 'Nome do Tratamento', duration: '0min', value: '0' },
-        { name: 'Nome do Tratamento', duration: '0min', value: '0' },
-        { name: 'Nome do Tratamento', duration: '0min', value: '0' },
+        { name: 'Limpeza de Pele Deep', duration: '60min', value: '150,00' },
+        { name: 'Massagem Relaxante', duration: '45min', value: '120,00' },
+        { name: 'Drenagem Linfática', duration: '90min', value: '200,00' },
     ];
-
+ 
     const treatments = [
-        { name: 'Nome do Tratamento', percentage: 0 },
-        { name: 'Nome do Tratamento', percentage: 0 },
-        { name: 'Nome do Tratamento', percentage: 0 },
+        { name: 'Limpeza de Pele', percentage: 45 },
+        { name: 'Massagem', percentage: 30 },
+        { name: 'Drenagem', percentage: 25 },
     ];
-
+ 
     return (
         <AuthenticatedLayout>
             <Head title="Tratamentos" />
-
+ 
             {/* Cabeçalho da Página */}
             <div className="mb-4">
-                <h2 className="display-6 mb-2" style={{ color: '#000000ff', fontFamily: 'serif' }}>Tratamentos</h2>
-                <p className="text-secondary">Gerencie todos os tratamentos</p>
+                <h2 className="display-6 mb-2">Tratamentos</h2>
+                <p className="text-secondary">Gerencie todos os tratamentos disponíveis</p>
             </div>
-
+ 
             {/* Cards de Estatísticas */}
             <div className="row g-4 mb-4">
                 {stats.map((stat, index) => (
                     <div key={index} className="col-md-4">
-                        <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: '#F0FDF4' }}>
+                        <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
                             <div className="card-body">
                                 <div className="d-flex align-items-start justify-content-between mb-3">
-                                    <div className="p-3 rounded" style={{ backgroundColor: '#D1E7DD', color: '#1F3A2F' }}>
-                                        {stat.icon === 'users' && (
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style={{ width: '24px', height: '24px' }}>
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-                                            </svg>
-                                        )}
-                                        {stat.icon === 'calendar' && (
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style={{ width: '24px', height: '24px' }}>
-                                                <path fillRule="evenodd" d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0117.25 3v1.5h1.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-13.5A1.125 1.125 0 014.5 15.375V5.625c0-.621.504-1.125 1.125-1.125h1.375V3a.75.75 0 01.75-.75zM4.5 12a.75.75 0 01.75-.75h13.5a.75.75 0 010 1.5H5.25A.75.75 0 014.5 12zM5.25 16.5a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H6a.75.75 0 01-.75-.75z" clipRule="evenodd" />
-                                            </svg>
-                                        )}
-                                        {stat.icon === 'calendar-days' && (
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style={{ width: '24px', height: '24px' }}>
-                                                <path fillRule="evenodd" d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0117.25 3v1.5h1.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-13.5A1.125 1.125 0 014.5 15.375V5.625c0-.621.504-1.125 1.125-1.125h1.375V3a.75.75 0 01.75-.75zM4.5 12a.75.75 0 01.75-.75h13.5a.75.75 0 010 1.5H5.25A.75.75 0 014.5 12z" clipRule="evenodd" />
-                                            </svg>
-                                        )}
+                                    <div className="p-3 rounded" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
+                                        <svg width="25" height="20" viewBox="0 0 25 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M7.82288 8.80173C9.2627 9.69792 10.5103 10.8842 11.4886 12.2869C11.7877 12.7155 12.0612 13.1658 12.3047 13.629C12.5482 13.1615 12.8217 12.7155 13.1207 12.2869C14.0991 10.8842 15.3467 9.69792 16.7865 8.80173C18.6963 7.61113 20.9393 6.92708 23.3276 6.92708H23.7506C24.2249 6.92708 24.6094 7.31673 24.6094 7.7973C24.6094 14.2049 19.4867 19.3958 13.1635 19.3958H12.3047H11.4459C5.12268 19.3958 0 14.2049 0 7.7973C0 7.31673 0.384521 6.92708 0.858765 6.92708H1.28174C3.67004 6.92708 5.91309 7.61113 7.82288 8.80173ZM12.8815 0.242448C13.5522 0.974121 15.4919 3.35098 16.4874 7.36869C14.8639 8.30384 13.4369 9.56803 12.3047 11.0747C11.1725 9.56803 9.74548 8.30817 8.12195 7.36869C9.11316 3.35098 11.0529 0.974121 11.7279 0.242448C11.8774 0.0822591 12.0868 0 12.3047 0C12.5226 0 12.7319 0.0822591 12.8815 0.242448Z" fill="#1A2B22"/>
+                                        </svg>
                                     </div>
                                 </div>
-                                <div className="h3 font-weight-bold mb-1" style={{ color: '#1F3A2F' }}>{stat.value}</div>
+                                <div className="h3 font-weight-bold mb-1" style={{ color: 'var(--main-text)' }}>{stat.value}</div>
                                 <div className="text-muted small fw-medium">{stat.title}</div>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
-            <div className="d-flex align-items-center gap-5 mb-4">
-                <button className="btn text-white" style={{ backgroundColor: '#C5A365' }}>+ Novo Tratamento</button>
+ 
+            <div className="mb-4">
+                <button className="btn text-white px-4 shadow-sm" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>
+                    + Novo Tratamento
+                </button>
             </div>
-            <div className="row g-4">
-                {/* Lista de Agendamentos */}
+ 
+            <div className="row g-4 mb-5">
+                {/* Lista de Agendamentos (Tratamentos) */}
                 <div className="col-lg-8">
-                    <div className="card border-0 shadow-sm p-4">
-                        <div className="d-flex align-items-center justify-content-between mb-4">
-                                <h3 className="h5 fw-bold text-dark mb-0">Nome</h3>
-                                <h3 className="h5 fw-bold text-dark mb-0">Duração</h3>
-                                <h3 className="h5 fw-bold text-dark mb-0">Valor</h3>
-                                <h3 className="h5 fw-bold text-dark mb-0"></h3>
-                                <h3 className="h5 fw-bold text-dark mb-0"></h3>
+                    <div className="card border-0 shadow-sm p-4 h-100">
+                        {/* Cabeçalho da Tabela */}
+                        <div className="row align-items-center mb-3 px-3">
+                            <div className="col-5">
+                                <h3 className="h6 fw-bold text-muted mb-0">Nome</h3>
                             </div>
-
-                            <div className="d-flex flex-column gap-3">
-                                {appointments.map((appointment, idx) => (
-                                    <div key={idx} className="d-flex align-items-center justify-content-between p-3 bg-light rounded hover-shadow transition">
-                                        <div>
-                                            <div className="fw-semibold text-dark">{appointment.name}</div>
-                                        </div>
-                                        <div>
-                                            <div className="fw-semibold text-dark">{appointment.duration}</div>
-                                        </div>
-                                        <div>
-                                            <div className="fw-semibold text-dark">{appointment.value}</div>
-                                        </div>
-                                        <div className="text-end d-flex flex-column align-items-end">
-                                            <button href="#" className="btn-gold">Editar</button>
-                                        </div>
-                                    </div>
-                                ))}
+                            <div className="col-3 text-center">
+                                <h3 className="h6 fw-bold text-muted mb-0">Duração</h3>
                             </div>
+                            <div className="col-2 text-center">
+                                <h3 className="h6 fw-bold text-muted mb-0">Valor</h3>
+                            </div>
+                            <div className="col-2"></div>
                         </div>
-                    </div>
-
-                    {/* Tratamentos Populares */}
-                    <div className="col-lg-4">
-                        <div className="card border-0 shadow-sm p-4">
-                            <h3 className="h5 fw-bold text-dark mb-4">Tratamentos Populares</h3>
-                            <div className="d-flex flex-column gap-3">
-                                {treatments.map((treatment, idx) => (
-                                    <div key={idx}>
-                                        <div className="d-flex justify-content-between small fw-medium text-secondary mb-1">
-                                            <span>{treatment.name}</span>
-                                            <span>{treatment.percentage}%</span>
-                                        </div>
-                                        <div className="progress" style={{ height: '8px' }}>
-                                            <div
-                                                className="progress-bar rounded-pill"
-                                                role="progressbar"
-                                                style={{ width: `${treatment.percentage}%`, backgroundColor: '#1F3A2F', opacity: 0.8 }}
-                                            ></div>
-                                        </div>
+ 
+                        <div className="d-flex flex-column gap-3">
+                            {appointments.map((appointment, idx) => (
+                                <div key={idx} className="row align-items-center p-3 bg-light rounded mx-0 transition hover-shadow border-0">
+                                    {/* Nome - Alinhado à Esquerda */}
+                                    <div className="col-5">
+                                        <div className="fw-semibold text-dark">{appointment.name}</div>
                                     </div>
-                                ))}
-                            </div>
+ 
+                                    {/* Duração - Centralizada */}
+                                    <div className="col-3 text-center">
+                                        <div className="text-secondary fw-medium">{appointment.duration}</div>
+                                    </div>
+ 
+                                    {/* Valor - Centralizado */}
+                                    <div className="col-2 text-center">
+                                        <div className="fw-bold text-dark">{appointment.value} €</div>
+                                    </div>
+ 
+                                    {/* Ação - Alinhada à Direita */}
+                                    <div className="col-2 text-end">
+                                        <button className="btn btn-sm text-white px-3" style={{ backgroundColor: 'var(--primary-button)' }}>
+                                            Editar
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
+ 
+                {/* Tratamentos Populares */}
+                <div className="col-lg-4">
+                    <div className="card border-0 shadow-sm p-4 h-100">
+                        <h3 className="h5 fw-bold text-dark mb-4">Tratamentos Populares</h3>
+                        <div className="d-flex flex-column gap-4">
+                            {treatments.map((treatment, idx) => (
+                                <div key={idx}>
+                                    <div className="d-flex justify-content-between small fw-medium text-secondary mb-2">
+                                        <span>{treatment.name}</span>
+                                        <span className="fw-bold text-dark">{treatment.percentage}%</span>
+                                    </div>
+                                    <div className="progress" style={{ height: '8px', backgroundColor: 'var(--main-green-light)' }}>
+                                        <div
+                                            className="progress-bar rounded-pill"
+                                            role="progressbar"
+                                            style={{ width: `${treatment.percentage}%`, backgroundColor: 'var(--dark-green)', opacity: 0.8 }}
+                                        ></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </AuthenticatedLayout>
     );
 }
-
-
