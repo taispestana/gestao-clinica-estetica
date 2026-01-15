@@ -5,12 +5,12 @@ import { Head } from '@inertiajs/react';
 export default function Agendamentos() {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [view, setView] = useState('month'); // 'month', 'week', 'day'
+    const [view, setView] = useState('month'); // 'mês', 'semana', 'dia'
 
     const stats = [
-        { title: 'Agendamentos Hoje', value: '0', icon: 'calendar', color: 'bg-teal-50 text-teal-700' },
-        { title: 'Agendamentos Semanal', value: '0', icon: 'calendar-week', color: 'bg-emerald-50 text-emerald-700' },
-        { title: 'Agendamento Mensal', value: '0', icon: 'calendar-month', color: 'bg-emerald-50 text-emerald-700' },
+        { title: 'Agendamentos Hoje', value: '0', icon: 'calendar', color: 'var(--status-green)' },
+        { title: 'Agendamentos Semanal', value: '0', icon: 'calendar-week', color: 'var(--status-green)' },
+        { title: 'Agendamento Mensal', value: '0', icon: 'calendar-month', color: 'var(--status-green)' },
     ];
 
     // Helpers
@@ -19,7 +19,7 @@ export default function Agendamentos() {
 
     const getStartOfWeek = (date) => {
         const day = date.getDay();
-        const diff = date.getDate() - day; // adjust when day is sunday
+        const diff = date.getDate() - day; // ajustar quando o dia for domingo
         return new Date(date.getFullYear(), date.getMonth(), diff);
     };
 
@@ -29,7 +29,7 @@ export default function Agendamentos() {
         return result;
     };
 
-    // Portuguese Holidays Logic
+    // Feriados em Portugal
     const getPortugueseHolidays = (year) => {
         const holidays = {
             [`${year}-01-01`]: 'Ano Novo',
@@ -44,7 +44,7 @@ export default function Agendamentos() {
             [`${year}-12-25`]: 'Natal',
         };
 
-        // Calculate Easter (Meeus/Jones/Butcher algorithm)
+        // Calcular a Páscoa
         const a = year % 19;
         const b = Math.floor(year / 100);
         const c = year % 100;
@@ -62,7 +62,7 @@ export default function Agendamentos() {
 
         const easterDate = new Date(year, month - 1, day);
 
-        // Helper to format date key
+        // Formatar chave de data
         const formatDateKey = (date) => {
             const y = date.getFullYear();
             const mo = String(date.getMonth() + 1).padStart(2, '0');
@@ -70,7 +70,7 @@ export default function Agendamentos() {
             return `${y}-${mo}-${da}`;
         };
 
-        // Add Easter related holidays
+        // Adicionar feriados relacionados à Páscoa
         holidays[formatDateKey(easterDate)] = 'Páscoa';
 
         const goodFriday = new Date(easterDate);
@@ -95,7 +95,7 @@ export default function Agendamentos() {
         return holidays[key];
     };
 
-    // Navigation Handles
+    // Menu navegação
     const handlePrev = () => {
         if (view === 'month') {
             setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
@@ -129,7 +129,7 @@ export default function Agendamentos() {
 
     const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
-    // Dynamic Header Text
+    // Texto de cabeçalho dinâmico
     const getHeaderText = () => {
         if (view === 'day') {
             return `${currentDate.getDate()} de ${months[currentDate.getMonth()]} de ${currentDate.getFullYear()}`;
@@ -155,7 +155,7 @@ export default function Agendamentos() {
     };
 
 
-    // Render Generators
+    // Geradores de renderização
     const renderMonthGrid = () => {
         const daysInMonth = getDaysInMonth(currentDate);
         const firstDay = getFirstDayOfMonth(currentDate);
@@ -182,10 +182,10 @@ export default function Agendamentos() {
                                 style={{
                                     height: '90px',
                                     cursor: 'pointer',
-                                    backgroundColor: selected ? '#C5A365' : '#fff',
-                                    borderColor: selected ? '#C5A365' : (today ? '#C5A365' : '#eaecf0'),
+                                    backgroundColor: selected ? 'var(--primary-button)' : 'var(--white)',
+                                    borderColor: selected ? 'var(--primary-button)' : (today ? 'var(--primary-button)' : '#eaecf0'),
                                     borderWidth: today && !selected ? '2px' : '1px',
-                                    color: selected ? '#fff' : '#1F3A2F'
+                                    color: selected ? 'var(--white)' : 'var(--main-green)'
                                 }}
                             >
                                 <span className={`${selected ? 'h4 fw-bold mb-0' : 'fw-medium'}`}>{dayNum}</span>
@@ -224,10 +224,10 @@ export default function Agendamentos() {
                                 style={{
                                     height: '150px',
                                     cursor: 'pointer',
-                                    backgroundColor: selected ? '#C5A365' : '#fff',
-                                    borderColor: selected ? '#C5A365' : (today ? '#C5A365' : '#eaecf0'),
+                                    backgroundColor: selected ? 'var(--primary-button)' : 'var(--white)',
+                                    borderColor: selected ? 'var(--primary-button)' : (today ? 'var(--primary-button)' : 'var(--white)'),
                                     borderWidth: today && !selected ? '2px' : '1px',
-                                    color: selected ? '#fff' : '#1F3A2F'
+                                    color: selected ? 'var(--white)' : 'var(--main-green)'
                                 }}
                             >
                                 <span className="small mb-2 fw-bold text-uppercase opacity-75">{['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'][date.getDay()]}</span>
@@ -271,31 +271,52 @@ export default function Agendamentos() {
 
             {/* Cabeçalho */}
             <div className="mb-4">
-                <h2 className="display-6 mb-2" style={{ color: '#000000ff', fontFamily: 'serif' }}>Agendamentos</h2>
+                <h2 className="display-6 mb-2" style={{ color: 'var(--main-text)' }}>Agendamentos</h2>
                 <p className="text-secondary">Gerencie todos as sessões</p>
             </div>
 
-            {/* Stats */}
+
+            {/* Cards de Estatísticas */}
             <div className="row g-4 mb-4">
                 {stats.map((stat, index) => (
                     <div key={index} className="col-md-4">
-                        <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: '#F0FDF4' }}>
+                        <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
                             <div className="card-body">
                                 <div className="d-flex align-items-start justify-content-between mb-3">
-                                    <div className="p-3 rounded" style={{ backgroundColor: '#D1E7DD', color: '#1F3A2F' }}>
-                                        {stat.icon === 'calendar' && <i className="bi bi-calendar"></i>}
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style={{ width: '24px', height: '24px' }}>
-                                            <path fillRule="evenodd" d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0117.25 3v1.5h1.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-13.5A1.125 1.125 0 014.5 15.375V5.625c0-.621.504-1.125 1.125-1.125h1.375V3a.75.75 0 01.75-.75zM4.5 12a.75.75 0 01.75-.75h13.5a.75.75 0 010 1.5H5.25A.75.75 0 014.5 12zM5.25 16.5a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H6a.75.75 0 01-.75-.75z" clipRule="evenodd" />
-                                        </svg>
+                                    <div className="p-3 rounded" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
+
+                                        {/* Ícone Hoje */}
+                                        {stat.icon === 'calendar' && (
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-calendar-event-fill" viewBox="0 0 16 16">
+                                                <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5h16v9zm-4.5-6.5a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z" />
+                                            </svg>
+                                        )}
+
+                                        {/* Ícone Semanal (Calendar-Week) */}
+                                        {stat.icon === 'calendar-week' && (
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-calendar-week-fill" viewBox="0 0 16 16">
+                                                <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5h16v9zM11 7.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V8a.5.5 0 0 0-.5-.5h-1zm-3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V8a.5.5 0 0 0-.5-.5h-1zm-5 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z" />
+                                            </svg>
+                                        )}
+
+                                        {/* Ícone Mensal (Calendar-Month / Calendar3) */}
+                                        {stat.icon === 'calendar-month' && (
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-calendar3" viewBox="0 0 16 16">
+                                                <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857z" />
+                                                <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
+                                            </svg>
+                                        )}
+
                                     </div>
                                 </div>
-                                <div className="h3 font-weight-bold mb-1" style={{ color: '#1F3A2F' }}>{stat.value}</div>
+                                <div className="h3 font-weight-bold mb-1" style={{ color: 'var(--main-text)' }}>{stat.value}</div>
                                 <div className="text-muted small fw-medium">{stat.title}</div>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
+
 
             {/* Main Content Grid */}
             <div className="row g-4">
@@ -380,12 +401,12 @@ export default function Agendamentos() {
                                     <input type="date" className="form-control bg-light border-0 text-muted small" />
                                 </div>
                             </div>
-                            <button type="button" className="btn w-100 text-white fw-medium" style={{ backgroundColor: '#C5A365' }}>+ Agendar</button>
+                            <button type="button" className="btn w-100 text-white fw-medium" style={{ backgroundColor: 'var(--primary-button)' }}>+ Agendar</button>
                         </form>
                     </div>
 
                     {/* Add Absence */}
-                    <div className="card border-0 shadow-sm p-4">
+                    <div className="card border-0 shadow-sm p-4 mb-5">
                         <h5 className="card-title fw-bold mb-3">Adicionar Ausência</h5>
                         <form>
                             <div className="mb-3">
@@ -407,7 +428,7 @@ export default function Agendamentos() {
                                     <input type="date" className="form-control bg-light border-0 text-muted small" />
                                 </div>
                             </div>
-                            <button type="button" className="btn w-100 text-white fw-medium" style={{ backgroundColor: '#C5A365' }}>+ Agendar</button>
+                            <button type="button" className="btn w-100 text-white fw-medium" style={{ backgroundColor: 'var(--primary-button)' }}>+ Agendar</button>
                         </form>
                     </div>
                 </div>
@@ -415,3 +436,4 @@ export default function Agendamentos() {
         </AuthenticatedLayout>
     );
 }
+

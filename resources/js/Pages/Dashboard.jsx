@@ -1,23 +1,25 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
+
 
 export default function Dashboard() {
     const stats = [
-        { title: 'Clientes Ativos', value: '0', icon: 'users', color: 'bg-teal-50 text-teal-700' },
-        { title: 'Agendamentos Hoje', value: '0', icon: 'calendar', color: 'bg-emerald-50 text-emerald-700' },
-        { title: 'Agendamento Mensal', value: '0', icon: 'calendar-days', color: 'bg-emerald-50 text-emerald-700' },
+        { title: 'Clientes Ativos', value: '0', icon: 'users', color: 'var(--status-green)' },
+        { title: 'Agendamentos Hoje', value: '0', icon: 'calendar', color: 'var(--status-green)' },
+        { title: 'Agendamento Mensal', value: '0', icon: 'calendar-days', color: 'var(--status-green)' },
     ];
 
     const appointments = [
-        { name: 'Nome do Cliente', service: 'Limpeza de Pele', time: '00:00', status: 'STATUS', statusColor: 'bg-green-500' },
-        { name: 'Nome do Cliente', service: 'Massagem Terapêutica', time: '00:00', status: 'STATUS', statusColor: 'bg-yellow-400' },
-        { name: 'Nome do Cliente', service: 'Preenchimento', time: '00:00', status: 'STATUS', statusColor: 'bg-red-500' },
+        { name: 'Ana Maria', service: 'Limpeza de Pele', time: '00:00', status: 'CONFIRMADO', color: 'var(--status-green)' },
+        { name: 'Ana Maria', service: 'Massagem Terapêutica', time: '00:00', status: 'PENDENTE', color: 'var(--status-yellow)' },
+        { name: 'Ana Maria', service: 'Preenchimento', time: '00:00', status: 'CANCELADO', color: 'var(--status-red)' },
     ];
 
     const treatments = [
-        { name: 'tratamento', percentage: 0 },
-        { name: 'tratamento', percentage: 0 },
-        { name: 'tratamento', percentage: 0 },
+        { name: 'Limpeza de Pele', percentage: 75 },
+        { name: 'Massagem Terapêutica', percentage: 40 },
+        { name: 'Preenchimento', percentage: 25 },
+
     ];
 
     return (
@@ -26,7 +28,8 @@ export default function Dashboard() {
 
             {/* Cabeçalho da Página */}
             <div className="mb-4">
-                <h2 className="display-6 mb-2" style={{ color: '#000000ff', fontFamily: 'serif' }}>Dashboard</h2>
+                <h2 className="display-6 mb-2"
+                >Dashboard</h2>
                 <p className="text-secondary">Visão geral da sua clínica de estética</p>
             </div>
 
@@ -34,28 +37,28 @@ export default function Dashboard() {
             <div className="row g-4 mb-4">
                 {stats.map((stat, index) => (
                     <div key={index} className="col-md-4">
-                        <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: '#F0FDF4' }}>
+                        <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
                             <div className="card-body">
                                 <div className="d-flex align-items-start justify-content-between mb-3">
-                                    <div className="p-3 rounded" style={{ backgroundColor: '#D1E7DD', color: '#1F3A2F' }}>
+                                    <div className="p-3 rounded" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
                                         {stat.icon === 'users' && (
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style={{ width: '24px', height: '24px' }}>
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                                                <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
                                             </svg>
                                         )}
                                         {stat.icon === 'calendar' && (
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style={{ width: '24px', height: '24px' }}>
-                                                <path fillRule="evenodd" d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0117.25 3v1.5h1.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-13.5A1.125 1.125 0 014.5 15.375V5.625c0-.621.504-1.125 1.125-1.125h1.375V3a.75.75 0 01.75-.75zM4.5 12a.75.75 0 01.75-.75h13.5a.75.75 0 010 1.5H5.25A.75.75 0 014.5 12zM5.25 16.5a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H6a.75.75 0 01-.75-.75z" clipRule="evenodd" />
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-calendar-event-fill" viewBox="0 0 16 16">
+                                                <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5h16v9zm-4.5-6.5a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z" />
                                             </svg>
                                         )}
                                         {stat.icon === 'calendar-days' && (
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style={{ width: '24px', height: '24px' }}>
-                                                <path fillRule="evenodd" d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0117.25 3v1.5h1.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-13.5A1.125 1.125 0 014.5 15.375V5.625c0-.621.504-1.125 1.125-1.125h1.375V3a.75.75 0 01.75-.75zM4.5 12a.75.75 0 01.75-.75h13.5a.75.75 0 010 1.5H5.25A.75.75 0 014.5 12z" clipRule="evenodd" />
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-calendar-event-fill" viewBox="0 0 16 16">
+                                                <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5h16v9zm-4.5-6.5a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z" />
                                             </svg>
                                         )}
                                     </div>
                                 </div>
-                                <div className="h3 font-weight-bold mb-1" style={{ color: '#1F3A2F' }}>{stat.value}</div>
+                                <div className="h3 font-weight-bold mb-1" style={{ color: 'var(--main-text' }}>{stat.value}</div>
                                 <div className="text-muted small fw-medium">{stat.title}</div>
                             </div>
                         </div>
@@ -81,7 +84,12 @@ export default function Dashboard() {
                                     </div>
                                     <div className="text-end d-flex flex-column align-items-end">
                                         <span className="small fw-bold text-secondary mb-1">{appointment.time}</span>
-                                        <span className={`badge rounded-pill ${appointment.statusColor.replace('bg-', 'bg-').replace('text-', '')}`}>
+                                        <span className="badge rounded-pill text-dark" style={{
+                                            backgroundColor: appointment.color,
+                                            fontSize: '0.65rem',
+                                            fontWeight: '600'
+                                        }}
+                                        >
                                             {appointment.status}
                                         </span>
                                     </div>
@@ -102,11 +110,11 @@ export default function Dashboard() {
                                         <span>{treatment.name}</span>
                                         <span>{treatment.percentage}%</span>
                                     </div>
-                                    <div className="progress" style={{ height: '8px' }}>
+                                    <div className="progress" style={{ height: '8px', backgroundColor: 'var(--main-green-light)' }}>
                                         <div
                                             className="progress-bar rounded-pill"
                                             role="progressbar"
-                                            style={{ width: `${treatment.percentage}%`, backgroundColor: '#1F3A2F', opacity: 0.8 }}
+                                            style={{ width: `${treatment.percentage}%`, backgroundColor: 'var(--dark-green)', opacity: 0.8 }}
                                         ></div>
                                     </div>
                                 </div>
@@ -120,37 +128,3 @@ export default function Dashboard() {
 }
 
 
-
-
-
-
-
-
-
-
-// import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-// import { Head } from '@inertiajs/react';
-
-// export default function Dashboard() {
-//     return (
-//         <AuthenticatedLayout
-//             header={
-//                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-//                     Dashboard
-//                 </h2>
-//             }
-//         >
-//             <Head title="Dashboard" />
-
-//             <div className="py-12">
-//                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-//                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-//                         <div className="p-6 text-gray-900">
-//                             You're logged in!
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>
-//         </AuthenticatedLayout>
-//     );
-// }
