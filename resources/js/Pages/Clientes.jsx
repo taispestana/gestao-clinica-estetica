@@ -82,7 +82,7 @@ export default function Clientes() {
                 <div className="col-12">
                     <div className="card border-0 shadow-sm p-4">
                         {/* Cabeçalho da Tabela - Usando Grid para alinhar com o conteúdo */}
-                        <div className="row px-3 mb-3 text-dark fw-bold">
+                        <div className="row px-3 mb-3 text-muted fw-semibold">
                             <div className="col-4">Nome</div>
                             <div className="col-3 text-center">Contacto</div>
                             <div className="col-3 text-center">Status</div>
