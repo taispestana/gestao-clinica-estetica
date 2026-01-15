@@ -118,7 +118,7 @@ import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
-export default function Login({ status, canRegister }) {
+export default function Login({ status }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -147,6 +147,7 @@ export default function Login({ status, canRegister }) {
                 
                 <div className="mb-4">
                     <ApplicationLogo />
+                    <ApplicationLogo className="logo-white"/>
                     <p className="text-muted small mt-0 mb-4">A gestão da sua Clínica de forma eficiente</p>
                     <h2 className="mb-5 fw-normal">Bem-vinda</h2>
                 </div>
@@ -170,7 +171,7 @@ export default function Login({ status, canRegister }) {
                                 placeholder="usuario@exemplo.com" 
                                 autoComplete="username"
                                 isFocused={true}
-                                onChange={(e) => setData('email', e.target.value)} requerid
+                                onChange={(e) => setData('email', e.target.value)} requirid
                             />
                     </div>
                         <InputError message={errors.email} className="mt-1" />
@@ -259,6 +260,7 @@ export default function Login({ status, canRegister }) {
                     </div> */}
                 </form>
             </div>
+            
         </GuestLayout>
     );
 }
