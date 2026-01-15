@@ -1,33 +1,27 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 
-export default function Dashboard() {
+export default function Mensagens() {
     const stats = [
-        { title: 'Clientes Ativos', value: '0', icon: 'users', color: 'bg-teal-50 text-teal-700' },
-        { title: 'Agendamentos Hoje', value: '0', icon: 'calendar', color: 'bg-emerald-50 text-emerald-700' },
-        { title: 'Agendamento Mensal', value: '0', icon: 'calendar-days', color: 'bg-emerald-50 text-emerald-700' },
+        { title: 'Aniversariantes do Mês', value: '0', icon: 'users', color: 'bg-teal-50 text-teal-700' },
+        { title: 'Lembrete de Marcação', value: '0', icon: 'calendar', color: 'bg-emerald-50 text-emerald-700' },
     ];
 
     const appointments = [
-        { name: 'Nome do Cliente', service: 'Limpeza de Pele', time: '00:00', status: 'STATUS', statusColor: 'bg-green-500' },
-        { name: 'Nome do Cliente', service: 'Massagem Terapêutica', time: '00:00', status: 'STATUS', statusColor: 'bg-yellow-400' },
-        { name: 'Nome do Cliente', service: 'Preenchimento', time: '00:00', status: 'STATUS', statusColor: 'bg-red-500' },
+        { name: 'Nome do Cliente', contacto: 'contacto', data: '00/00/0000' },
+        { name: 'Nome do Cliente', contacto: 'contacto', data: '00/00/0000' },
+        { name: 'Nome do Cliente', contacto: 'contacto', data: '00/00/0000' },
     ];
 
-    const treatments = [
-        { name: 'tratamento', percentage: 0 },
-        { name: 'tratamento', percentage: 0 },
-        { name: 'tratamento', percentage: 0 },
-    ];
 
     return (
         <AuthenticatedLayout>
-            <Head title="Dashboard" />
+            <Head title="Mensagens" />
 
             {/* Cabeçalho da Página */}
             <div className="mb-4">
-                <h2 className="display-6 mb-2" style={{ color: '#000000ff', fontFamily: 'serif' }}>Dashboard</h2>
-                <p className="text-secondary">Visão geral da sua clínica de estética</p>
+                <h2 className="display-6 mb-2" style={{ color: '#000000ff', fontFamily: 'serif' }}>Mensagens</h2>
+                <p className="text-secondary">Gerencie todas as mensagens</p>
             </div>
 
             {/* Cards de Estatísticas */}
@@ -64,12 +58,16 @@ export default function Dashboard() {
             </div>
 
             <div className="row g-4">
-                {/* Lista de Agendamentos */}
+                {/* Lista de Aniversariantes */}
+                <h2 className="h5 fw-bold text-dark mb-0">Aniversariantes do Mês</h2>
                 <div className="col-lg-8">
                     <div className="card border-0 shadow-sm p-4">
                         <div className="d-flex align-items-center justify-content-between mb-4">
-                            <h3 className="h5 fw-bold text-dark mb-0">Agendamentos de Hoje</h3>
-                            <a href="#" className="small fw-medium text-secondary text-decoration-none">Ver todos</a>
+                            <h3 className="h5 fw-bold text-dark mb-0">Nome</h3>
+                            <h3 className="h5 fw-bold text-dark mb-0">Contacto</h3>
+                            <h3 className="h5 fw-bold text-dark mb-0">Data</h3>
+                            <h3 className="h5 fw-bold text-dark mb-0"></h3>
+                            <h3 className="h5 fw-bold text-dark mb-0"></h3>
                         </div>
 
                         <div className="d-flex flex-column gap-3">
@@ -77,37 +75,50 @@ export default function Dashboard() {
                                 <div key={idx} className="d-flex align-items-center justify-content-between p-3 bg-light rounded hover-shadow transition">
                                     <div>
                                         <div className="fw-semibold text-dark">{appointment.name}</div>
-                                        <div className="small text-muted">{appointment.service}</div>
+                                    </div>
+                                    <div>
+                                        <div className="fw-semibold text-dark">{appointment.contacto}</div>
+                                    </div>
+                                    <div>
+                                        <div className="fw-semibold text-dark">{appointment.data}</div>
                                     </div>
                                     <div className="text-end d-flex flex-column align-items-end">
-                                        <span className="small fw-bold text-secondary mb-1">{appointment.time}</span>
-                                        <span className={`badge rounded-pill ${appointment.statusColor.replace('bg-', 'bg-').replace('text-', '')}`}>
-                                            {appointment.status}
-                                        </span>
+                                        <button href="#" className="btn-gold">Enviar Mensagem</button>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </div>
                 </div>
-
-                {/* Tratamentos Populares */}
-                <div className="col-lg-4">
+            </div>
+            <br />
+            <div className="row g-4">
+                {/* Lista de marcacoes */}
+                <h2 className="h5 fw-bold text-dark mb-0">Lembrar Marcação</h2>
+                <div className="col-lg-8">
                     <div className="card border-0 shadow-sm p-4">
-                        <h3 className="h5 fw-bold text-dark mb-4">Tratamentos Populares</h3>
+                        <div className="d-flex align-items-center justify-content-between mb-4">
+                            <h3 className="h5 fw-bold text-dark mb-0">Nome</h3>
+                            <h3 className="h5 fw-bold text-dark mb-0">Contacto</h3>
+                            <h3 className="h5 fw-bold text-dark mb-0">Data</h3>
+                            <h3 className="h5 fw-bold text-dark mb-0"></h3>
+                            <h3 className="h5 fw-bold text-dark mb-0"></h3>
+                        </div>
+
                         <div className="d-flex flex-column gap-3">
-                            {treatments.map((treatment, idx) => (
-                                <div key={idx}>
-                                    <div className="d-flex justify-content-between small fw-medium text-secondary mb-1">
-                                        <span>{treatment.name}</span>
-                                        <span>{treatment.percentage}%</span>
+                            {appointments.map((appointment, idx) => (
+                                <div key={idx} className="d-flex align-items-center justify-content-between p-3 bg-light rounded hover-shadow transition">
+                                    <div>
+                                        <div className="fw-semibold text-dark">{appointment.name}</div>
                                     </div>
-                                    <div className="progress" style={{ height: '8px' }}>
-                                        <div
-                                            className="progress-bar rounded-pill"
-                                            role="progressbar"
-                                            style={{ width: `${treatment.percentage}%`, backgroundColor: '#1F3A2F', opacity: 0.8 }}
-                                        ></div>
+                                    <div>
+                                        <div className="fw-semibold text-dark">{appointment.contacto}</div>
+                                    </div>
+                                    <div>
+                                        <div className="fw-semibold text-dark">{appointment.data}</div>
+                                    </div>
+                                    <div className="text-end d-flex flex-column align-items-end">
+                                        <button href="#" className="btn-gold">Enviar Mensagem</button>
                                     </div>
                                 </div>
                             ))}
@@ -118,39 +129,3 @@ export default function Dashboard() {
         </AuthenticatedLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-// import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-// import { Head } from '@inertiajs/react';
-
-// export default function Dashboard() {
-//     return (
-//         <AuthenticatedLayout
-//             header={
-//                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-//                     Dashboard
-//                 </h2>
-//             }
-//         >
-//             <Head title="Dashboard" />
-
-//             <div className="py-12">
-//                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-//                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-//                         <div className="p-6 text-gray-900">
-//                             You're logged in!
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>
-//         </AuthenticatedLayout>
-//     );
-// }
