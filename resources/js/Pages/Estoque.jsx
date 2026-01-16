@@ -61,10 +61,10 @@ export default function Estoque() {
             </div>
 
             <div className="row g-4">
-                {/* Lista de Produtos Centralizada */}
+                {/* Lista de Produtos */}
                 <div className="col-lg-8">
                     <div className="card border-0 shadow-sm p-4">
-                        {/* Cabeçalho da Tabela Alinhado */}
+                        {/* Cabeçalho da Tabela  */}
                         <div className="row align-items-center mb-3 px-3">
                             <div className="col-5">
                                 <h3 className="h6 fw-bold text-muted  mb-0">Produto</h3>
@@ -87,15 +87,15 @@ export default function Estoque() {
                                         <div className="small text-muted">{stock.code}</div>
                                     </div>
 
-                                    {/* Quantidade Centralizada */}
+                                    {/* Quantidade*/}
                                     <div className="col-3 text-center">
                                         <span className={` ${parseInt(stock.quantidade) <= 1 }`}>
                                             {stock.quantidade}
                                         </span>
                                     </div>
 
-                                    {/* Validade Centralizada */}
-                                    <div className="col-2 text-center text-secondary fw-medium">
+                                    {/* Validade*/}
+                                    <div className="col-2 text-center ">
                                         {stock.validade}
                                     </div>
 
@@ -117,7 +117,7 @@ export default function Estoque() {
                         <h3 className="h5 fw-bold text-dark mb-4">Alertas de Estoque</h3>
                         <div className="d-flex flex-column gap-3">
                             {alerts.map((item, idx) => {
-                                // Lógica para definir a cor de fundo
+                                // Lógica para definir a cor de fundo de acordo com o tipo de alerta
                                 const isQuantidade = item.alert.toLowerCase().includes('unidade');
                                 const isValidade = item.alert.toLowerCase().includes('validade');
 

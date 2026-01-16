@@ -391,14 +391,14 @@ export default function Agendamentos() {
                                     <label className="form-label small text-muted">Início</label>
                                     <input
                                         type="date"
-                                        className="form-control bg-light border-0 text-muted small"
+                                        className="form-date bg-light border-0 text-muted small"
                                         key={`start-${selectedDate.getTime()}`}
                                         defaultValue={formatDateForInput(selectedDate)}
                                     />
                                 </div>
                                 <div className="col-6">
                                     <label className="form-label small text-muted">Fim</label>
-                                    <input type="date" className="form-control bg-light border-0 text-muted small" />
+                                    <input type="date" className="form-date bg-light border-0 text-muted small" />
                                 </div>
                             </div>
                             <button type="button" className="btn w-100 text-white fw-medium" style={{ backgroundColor: 'var(--primary-button)' }}>+ Agendar</button>
@@ -418,14 +418,14 @@ export default function Agendamentos() {
                                     <label className="form-label small text-muted">Início</label>
                                     <input
                                         type="date"
-                                        className="form-control bg-light border-0 text-muted small"
+                                        className="form-date bg-light border-0 text-muted small"
                                         key={`abs-start-${selectedDate.getTime()}`}
                                         defaultValue={formatDateForInput(selectedDate)}
                                     />
                                 </div>
                                 <div className="col-6">
                                     <label className="form-label small text-muted">Fim</label>
-                                    <input type="date" className="form-control bg-light border-0 text-muted small" />
+                                    <input type="date" className="form-date bg-light border-0 text-muted small" />
                                 </div>
                             </div>
                             <button type="button" className="btn w-100 text-white fw-medium" style={{ backgroundColor: 'var(--primary-button)' }}>+ Agendar</button>

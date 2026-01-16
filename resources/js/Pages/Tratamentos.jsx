@@ -1,35 +1,35 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
- 
+
 export default function Tratamentos() {
     const stats = [
         { title: 'Total de Tratamentos', value: '0', icon: 'flower1' },
         { title: 'Tratamentos Semanais', value: '0', icon: 'flower2' },
         { title: 'Tratamentos Mensais', value: '0', icon: 'flower3' },
     ];
- 
+
     const appointments = [
         { name: 'Limpeza de Pele Deep', duration: '60min', value: '150,00' },
         { name: 'Massagem Relaxante', duration: '45min', value: '120,00' },
         { name: 'Drenagem Linfática', duration: '90min', value: '200,00' },
     ];
- 
+
     const treatments = [
         { name: 'Limpeza de Pele', percentage: 45 },
         { name: 'Massagem', percentage: 30 },
         { name: 'Drenagem', percentage: 25 },
     ];
- 
+
     return (
         <AuthenticatedLayout>
             <Head title="Tratamentos" />
- 
+
             {/* Cabeçalho da Página */}
             <div className="mb-4">
                 <h2 className="display-6 mb-2">Tratamentos</h2>
                 <p className="text-secondary">Gerencie todos os tratamentos disponíveis</p>
             </div>
- 
+
             {/* Cards de Estatísticas */}
             <div className="row g-4 mb-4">
                 {stats.map((stat, index) => (
@@ -50,13 +50,13 @@ export default function Tratamentos() {
                     </div>
                 ))}
             </div>
- 
+
             <div className="mb-4">
                 <button className="btn text-white px-4 shadow-sm" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>
                     + Novo Tratamento
                 </button>
             </div>
- 
+
             <div className="row g-4 mb-5">
                 {/* Lista de Agendamentos (Tratamentos) */}
                 <div className="col-lg-8">
@@ -74,7 +74,7 @@ export default function Tratamentos() {
                             </div>
                             <div className="col-2"></div>
                         </div>
- 
+
                         <div className="d-flex flex-column gap-3">
                             {appointments.map((appointment, idx) => (
                                 <div key={idx} className="row align-items-center p-3 bg-light rounded mx-0 transition hover-shadow border-0">
@@ -82,17 +82,17 @@ export default function Tratamentos() {
                                     <div className="col-5">
                                         <div className="fw-semibold text-dark">{appointment.name}</div>
                                     </div>
- 
+
                                     {/* Duração - Centralizada */}
                                     <div className="col-3 text-center">
                                         <div className="text-secondary fw-medium">{appointment.duration}</div>
                                     </div>
- 
+
                                     {/* Valor - Centralizado */}
                                     <div className="col-2 text-center">
-                                        <div className="fw-bold text-dark">{appointment.value} €</div>
+                                        <div className="text-secondary fw-medium">{appointment.value} €</div>
                                     </div>
- 
+
                                     {/* Ação - Alinhada à Direita */}
                                     <div className="col-2 text-end">
                                         <button className="btn btn-sm text-white px-3" style={{ backgroundColor: 'var(--primary-button)' }}>
@@ -104,7 +104,7 @@ export default function Tratamentos() {
                         </div>
                     </div>
                 </div>
- 
+
                 {/* Tratamentos Populares */}
                 <div className="col-lg-4">
                     <div className="card border-0 shadow-sm p-4 h-100">
