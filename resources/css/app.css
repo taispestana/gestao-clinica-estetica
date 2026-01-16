@@ -92,6 +92,15 @@ body {
   text-shadow: var(--primary-button-hover);
 }
 
+.form-date {
+  background-color: var(--white);
+  border: 1px solid #D1D5DB;
+  padding: 0.75rem 0.8rem 0.75rem 1rem !important;
+  font-size: 0.85rem;
+  font-size: 0.85rem;
+
+}
+
 /* Ajuste global para mensagens de erro */
 .invalid-feedback,
 .text-danger,
