@@ -24,13 +24,13 @@ export default function Clientes() {
                 <p className="text-secondary">Gerencie todos os clientes</p>
             </div>
 
-            {/* Cards de Estatísticas */}
-            <div className="row g-4 mb-4">
+            <div className="row g-2 g-md-4 mb-4">
                 {stats.map((stat, index) => (
-                    <div key={index} className="col-md-4">
+                    <div key={index} className="col-4 col-md-4 px-1 px-md-3">
                         <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
-                            <div className="card-body">
-                                <div className="d-flex align-items-start justify-content-between mb-3">
+                            <div className="card-body p-2 p-md-4 text-md-start">
+                                {/* Desktop/Tablet Icon */}
+                                <div className="d-none d-md-flex align-items-start justify-content-between mb-3">
                                     <div className="p-3 rounded" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
                                         {stat.icon === 'users' && (
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-people-fill" viewBox="0 0 16 16">
@@ -44,14 +44,21 @@ export default function Clientes() {
                                         )}
                                         {stat.icon === 'calendar-month' && (
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-calendar3" viewBox="0 0 16 16">
-                                                <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857z"/>
-                                                <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+                                                <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857z" />
+                                                <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
                                             </svg>
                                         )}
                                     </div>
                                 </div>
-                                <div className="h3 font-weight-bold mb-1" style={{ color: 'var(--main-text)' }}>{stat.value}</div>
-                                <div className="text-muted small fw-medium">{stat.title}</div>
+
+                                {/* Mobile Icon */}
+                                <div className="d-md-none mb-2">
+                                    <div className="p-2 rounded d-inline-block" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
+                                        <i className={`bi bi-${stat.icon === 'users' ? 'people' : (stat.icon === 'calendar' ? 'calendar-event' : 'calendar3')} fs-6`}></i>
+                                    </div>
+                                </div>
+                                <div className="h4 fw-bold mb-1" style={{ color: 'var(--main-text)' }}>{stat.value}</div>
+                                <div className="text-muted d-block" style={{ fontSize: '10px', lineHeight: '1.2' }}>{stat.title}</div>
                             </div>
                         </div>
                     </div>
@@ -59,20 +66,21 @@ export default function Clientes() {
             </div>
 
             {/* Filtros e Ações */}
-            <div className="d-flex align-items-center gap-5 mb-4">
-                <button className="btn text-white px-4" style={{ backgroundColor: 'var(--primary-button)' }}>+ Novo Cliente</button>
-
-                <div className="flex-grow-1" style={{ maxWidth: '300px' }}>
-                    <select className="form-select bg-light border-1 text-muted">
-                        <option defaultValue>Pesquisar por nome</option>
+            <div className="row g-3 mb-4 align-items-center">
+                <div className="col-12 col-md-auto order-1">
+                    <button className="btn text-white px-4 py-2 w-100" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '10px' }}>
+                        <span className="me-2">+</span> Novo Cliente
+                    </button>
+                </div>
+                <div className="col-8 col-md-4 order-2">
+                    <select className="form-select border-1 bg-white text-secondary py-2" style={{ borderRadius: '10px' }}>
+                        <option>Pesquisar por nome</option>
                     </select>
                 </div>
-
-                <div style={{ width: '150px' }}>
-                    <select className="form-select bg-light border-1 text-muted">
-                        <option value="ativo">Ativo</option>
-                        <option value="inativo">Inativo</option>
-                        <option value="pendente">Pendente</option>
+                <div className="col-4 col-md-2 ms-md-auto order-3">
+                    <select className="form-select border-1 bg-white text-secondary py-2" style={{ borderRadius: '10px' }}>
+                        <option>Ativo</option>
+                        <option>Inativo</option>
                     </select>
                 </div>
             </div>
@@ -82,40 +90,45 @@ export default function Clientes() {
                 <div className="col-12">
                     <div className="card border-0 shadow-sm p-4">
                         {/* Cabeçalho da Tabela - Usando Grid para alinhar com o conteúdo */}
-                        <div className="row px-3 mb-3 text-muted fw-semibold">
+                        <div className="row px-3 mb-3 text-muted fw-semibold d-none d-md-flex">
                             <div className="col-4">Nome</div>
                             <div className="col-3 text-center">Contacto</div>
                             <div className="col-3 text-center">Status</div>
-
                         </div>
 
                         <div className="d-flex flex-column gap-3">
                             {appointments.map((appointment, idx) => (
-                                <div key={idx} className="row align-items-center p-3 bg-light rounded mx-0 transition hover-shadow">
-                                    <div className="col-4">
-                                        <div className="fw-semibold text-dark">{appointment.name}</div>
-                                    </div>
+                                <div key={idx} className="card border-0 shadow-sm p-4 bg-white rounded-4">
+                                    <div className="row align-items-center mb-3">
+                                        <div className="col-12 mb-3 d-md-none">
+                                            <div className="fw-bold fs-5 text-dark mb-1">{appointment.name}</div>
+                                            <div className="d-flex justify-content-between align-items-center">
+                                                <div className="text-secondary small">{appointment.contacto}</div>
+                                                <div className="badge rounded-pill text-dark small fw-medium" style={{ backgroundColor: appointment.color }}>{appointment.status || 'Ativo'}</div>
+                                            </div>
+                                        </div>
 
-                                    {/* Centralizado */}
-                                    <div className="col-3 text-center">
-                                        <div className="text-secondary">{appointment.contacto}</div>
-                                    </div>
-
-                                    {/* Centralizado */}
-                                    <div className="col-3 text-center">
-                                        <span className="badge rounded-pill text-dark" style={{
-                                            backgroundColor: appointment.color,
-                                            fontSize: '0.7rem',
-                                            padding: '6px 12px'
-                                        }}>
-                                            {appointment.status}
-                                        </span>
-                                    </div>
-
-                                    <div className="col-2 text-end">
-                                        <button className="btn btn-sm text-white px-3" style={{ backgroundColor: 'var(--primary-button)' }}>
-                                            Ver Mais
-                                        </button>
+                                        {/* Desktop View Row */}
+                                        <div className="d-none d-md-flex row align-items-center w-100 mx-0">
+                                            <div className="col-md-4">
+                                                <div className="fw-semibold text-dark">{appointment.name}</div>
+                                            </div>
+                                            <div className="col-md-3 text-center">
+                                                <div className="text-secondary">{appointment.contacto}</div>
+                                            </div>
+                                            <div className="col-md-3 text-center">
+                                                <span className="badge rounded-pill text-dark" style={{ backgroundColor: appointment.color || 'var(--status-green)' }}>
+                                                    {appointment.status || 'Ativo'}
+                                                </span>
+                                            </div>
+                                            <div className="col-md-2 text-end">
+                                                <button className="btn btn-sm text-white px-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>Ver Mais</button>
+                                            </div>
+                                        </div>
+                                        {/* Mobile Button */}
+                                        <div className="col-12 text-end d-md-none">
+                                            <button className="btn btn-sm text-white px-4 py-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>Ver Mais</button>
+                                        </div>
                                     </div>
                                 </div>
                             ))}

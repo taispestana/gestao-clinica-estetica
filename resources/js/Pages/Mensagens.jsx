@@ -1,36 +1,45 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
- 
+
 export default function Mensagens() {
     const stats = [
         { title: 'Aniversariantes do Mês', value: '0', icon: 'users', color: 'var(--status-green)' },
         { title: 'Lembrete de Marcação', value: '0', icon: 'calendar-month', color: 'var(--status-green)' },
     ];
- 
+
     const appointments = [
         { name: 'Nome do Cliente', contacto: '912 345 678', data: '15/05/1990' },
         { name: 'Nome do Cliente', contacto: '912 345 678', data: '20/05/1985' },
         { name: 'Nome do Cliente', contacto: '912 345 678', data: '22/05/1992' },
     ];
- 
+
+
+
+    const appointment = [
+        { name: 'Limpeza de Pele Deep', duration: '60min', value: '150,00' },
+        { name: 'Massagem Relaxante', duration: '45min', value: '120,00' },
+        { name: 'Drenagem Linfática', duration: '90min', value: '200,00' },
+    ];
+
     return (
         <AuthenticatedLayout>
             <Head title="Mensagens" />
- 
+
             {/* Cabeçalho da Página */}
             <div className="mb-4">
                 <h2 className="display-6 mb-2">Mensagens</h2>
                 <p className="text-secondary">Gerencie todas as mensagens</p>
             </div>
- 
+
             {/* Cards de Estatísticas */}
-            <div className="row g-4 mb-5">
+            <div className="row g-2 g-md-4 mb-4">
                 {stats.map((stat, index) => (
-                    <div key={index} className="col-md-6 col-lg-4">
-                        <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: '#F0FDF4' }}>
-                            <div className="card-body">
-                                <div className="d-flex align-items-start justify-content-between mb-3">
-                                    <div className="p-3 rounded" style={{ backgroundColor: '#D1E7DD', color: '#1F3A2F' }}>
+                    <div key={index} className="col-4 col-md-4 px-1 px-md-3">
+                        <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
+                            <div className="card-body p-2 p-md-4 text-md-start">
+                                {/* Desktop/Tablet Icon */}
+                                <div className="d-none d-md-flex align-items-start justify-content-between mb-3">
+                                    <div className="p-3 rounded" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
                                         {stat.icon === 'users' && (
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-people-fill" viewBox="0 0 16 16">
                                                 <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
@@ -44,88 +53,120 @@ export default function Mensagens() {
                                         )}
                                     </div>
                                 </div>
-                                <div className="h3 font-weight-bold mb-1" style={{ color: '#1F3A2F' }}>{stat.value}</div>
-                                <div className="text-muted small fw-medium">{stat.title}</div>
+                                {/* Mobile Icon */}
+                                <div className="d-md-none mb-2">
+                                    <div className="p-2 rounded d-inline-block" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
+                                        <i className={`bi bi-${stat.icon === 'users' ? 'people' : (stat.icon === 'calendar' ? 'calendar-event' : 'calendar3')} fs-6`}></i>
+                                    </div>
+                                </div>
+                                <div className="h4 fw-bold mb-1" style={{ color: 'var(--main-text)' }}>{stat.value}</div>
+                                <div className="text-muted d-block" style={{ fontSize: '10px', lineHeight: '1.2' }}>{stat.title}</div>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
- 
-            {/* Seção Aniversariantes */}
-            <div className="mb-5">
-                <h2 className="h5 fw-bold text-dark mb-3">Aniversariantes do Mês</h2>
-                <div className="row">
-                    <div className="col-lg-10">
-                        <div className="card border-0 shadow-sm p-4">
-                            {/* Cabeçalho da Tabela */}
-                            <div className="row align-items-center mb-3 px-3">
-                                <div className="col-4"><h3 className="h6 fw-bold text-muted mb-0">Nome</h3></div>
-                                <div className="col-3 text-center"><h3 className="h6 fw-bold text-muted mb-0">Contacto</h3></div>
-                                <div className="col-2 text-center"><h3 className="h6 fw-bold text-muted mb-0">Data</h3></div>
-                                <div className="col-3"></div>
-                            </div>
- 
-                            {/* Conteúdo da Tabela */}
-                            <div className="d-flex flex-column gap-2">
-                                {appointments.map((appointment, idx) => (
-                                    <div key={idx} className="row align-items-center p-3 bg-light rounded mx-0 transition hover-shadow border-0">
-                                        <div className="col-4">
-                                            <div className="fw-semibold text-dark">{appointment.name}</div>
+
+            {/* Tabela de Clientes */}
+            <h2 className="h5 fw-bold text-dark mb-3">Aniversariantes do Mês</h2>
+            <div className="row mb-5">
+                <div className="col-12">
+                    <div className="card border-0 shadow-sm p-4">
+                        {/* Cabeçalho da Tabela - Usando Grid para alinhar com o conteúdo */}
+                        <div className="row px-3 mb-3 text-muted fw-semibold d-none d-md-flex">
+                            <div className="col-4">Nome</div>
+                            <div className="col-3 text-center">Contacto</div>
+                            <div className="col-3 text-center">Data</div>
+                        </div>
+
+                        <div className="d-flex flex-column gap-3">
+                            {appointments.map((appointment, idx) => (
+                                <div key={idx} className="card border-0 shadow-sm p-4 bg-white rounded-4">
+                                    <div className="row align-items-center mb-3">
+                                        <div className="col-12 mb-3 d-md-none">
+                                            <div className="fw-bold fs-5 text-dark mb-1">{appointment.name}</div>
+                                            <div className="d-flex justify-content-between align-items-center">
+                                                <div className="text-secondary small">{appointment.contacto}</div>
+                                                <div className="text-secondary small">{appointment.data}</div>
+                                            </div>
                                         </div>
-                                        <div className="col-3 text-center">
-                                            <div className="text-secondary">{appointment.contacto}</div>
+
+                                        {/* Desktop View Row */}
+                                        <div className="d-none d-md-flex row align-items-center w-100 mx-0">
+                                            <div className="col-md-4">
+                                                <div className="fw-semibold text-dark">{appointment.name}</div>
+                                            </div>
+                                            <div className="col-md-3 text-center">
+                                                <div className="text-secondary">{appointment.contacto}</div>
+                                            </div>
+                                            <div className="col-md-3 text-center">
+                                                <span className="text-secondary">{appointment.data}</span>
+                                            </div>
+                                            <div className="col-md-2 text-end">
+                                                <button className="btn btn-sm text-white px-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>Enviar Mensagem</button>
+                                            </div>
                                         </div>
-                                        <div className="col-2 text-center">
-                                            <div className="text-secondary">{appointment.data}</div>
-                                        </div>
-                                        <div className="col-3 text-end">
-                                            <button className="btn btn-sm text-white px-3" style={{ backgroundColor: 'var(--primary-button)' }}>
-                                                Enviar Mensagem
-                                            </button>
+
+                                        {/* Mobile Button */}
+                                        <div className="col-12 text-end d-md-none">
+                                            <button className="btn btn-sm text-white px-4 py-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>Enviar Mensagem</button>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
             </div>
- 
-            {/* Seção Lembrar Marcação */}
-            <div className="mb-5">
-                <h2 className="h5 fw-bold text-dark mb-3">Lembrar Marcação</h2>
-                <div className="row">
-                    <div className="col-lg-10">
-                        <div className="card border-0 shadow-sm p-4">
-                            {/* Cabeçalho da Tabela */}
-                            <div className="row align-items-center mb-3 px-3">
-                                <div className="col-4"><h3 className="h6 fw-bold text-muted mb-0">Nome</h3></div>
-                                <div className="col-3 text-center"><h3 className="h6 fw-bold text-muted mb-0">Contacto</h3></div>
-                                <div className="col-2 text-center"><h3 className="h6 fw-bold text-muted mb-0">Data</h3></div>
-                                <div className="col-3"></div>
-                            </div>
- 
-                            <div className="d-flex flex-column gap-2">
-                                {appointments.map((appointment, idx) => (
-                                    <div key={idx} className="row align-items-center p-3 bg-light rounded mx-0 transition hover-shadow border-0">
-                                        <div className="col-4">
-                                            <div className="fw-semibold text-dark">{appointment.name}</div>
+
+            {/* Lista de Marcações */}
+            <h2 className="h5 fw-bold text-dark mb-3">Lembrar Marcação</h2>
+            <div className="row mb-5">
+                <div className="col-12">
+                    <div className="card border-0 shadow-sm p-4">
+
+                        {/* Cabeçalho da Tabela - Usando Grid para alinhar com o conteúdo */}
+                        <div className="row px-3 mb-3 text-muted fw-semibold d-none d-md-flex">
+                            <div className="col-4">Nome</div>
+                            <div className="col-3 text-center">Contacto</div>
+                            <div className="col-3 text-center">Data</div>
+                        </div>
+
+                        <div className="d-flex flex-column gap-3">
+                            {appointments.map((appointment, idx) => (
+                                <div key={idx} className="card border-0 shadow-sm p-4 bg-white rounded-4">
+                                    <div className="row align-items-center mb-3">
+                                        <div className="col-12 mb-3 d-md-none">
+                                            <div className="fw-bold fs-5 text-dark mb-1">{appointment.name}</div>
+                                            <div className="d-flex justify-content-between align-items-center">
+                                                <div className="text-secondary small">{appointment.contacto}</div>
+                                                <div className="text-secondary small">{appointment.data}</div>
+                                            </div>
                                         </div>
-                                        <div className="col-3 text-center">
-                                            <div className="text-secondary">{appointment.contacto}</div>
+
+                                        {/* Desktop View Row */}
+                                        <div className="d-none d-md-flex row align-items-center w-100 mx-0">
+                                            <div className="col-md-4">
+                                                <div className="fw-semibold text-dark">{appointment.name}</div>
+                                            </div>
+                                            <div className="col-md-3 text-center">
+                                                <div className="text-secondary">{appointment.contacto}</div>
+                                            </div>
+                                            <div className="col-md-3 text-center">
+                                                <span className="text-secondary">{appointment.data}</span>
+                                            </div>
+                                            <div className="col-md-2 text-end">
+                                                <button className="btn btn-sm text-white px-2" style={{ backgroundColor: 'var(--primary-button)' }}>Enviar Mensagem</button>
+                                            </div>
                                         </div>
-                                        <div className="col-2 text-center">
-                                            <div className="text-secondary">{appointment.data}</div>
-                                        </div>
-                                        <div className="col-3 text-end">
-                                            <button className="btn btn-sm text-white px-3" style={{ backgroundColor: 'var(--primary-button)' }}>
-                                                Enviar Mensagem
-                                            </button>
+
+                                        {/* Mobile Button */}
+                                        <div className="col-12 text-end d-md-none">
+                                            <button className="btn btn-sm text-white px-4 py-2" style={{ backgroundColor: 'var(--primary-button)' }}>Enviar Mensagem</button>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -133,3 +174,6 @@ export default function Mensagens() {
         </AuthenticatedLayout>
     );
 }
+
+
+

@@ -6,7 +6,7 @@ export default function Dashboard() {
     const stats = [
         { title: 'Clientes Ativos', value: '0', icon: 'users', color: 'var(--status-green)' },
         { title: 'Agendamentos Hoje', value: '0', icon: 'calendar', color: 'var(--status-green)' },
-        { title: 'Agendamento Mensal', value: '0', icon: 'calendar-days', color: 'var(--status-green)' },
+        { title: 'Agendamento Mensal', value: '0', icon: 'calendar-month', color: 'var(--status-green)' },
     ];
 
     const appointments = [
@@ -33,33 +33,40 @@ export default function Dashboard() {
                 <p className="text-secondary">Visão geral da sua clínica de estética</p>
             </div>
 
-            {/* Cards de Estatísticas */}
-            <div className="row g-4 mb-4">
+            <div className="row g-2 g-md-4 mb-4">
                 {stats.map((stat, index) => (
-                    <div key={index} className="col-md-4">
+                    <div key={index} className="col-4 col-md-4 px-1 px-md-3">
                         <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
-                            <div className="card-body">
-                                <div className="d-flex align-items-start justify-content-between mb-3">
+                            <div className="card-body p-2 p-md-4 text-md-start">
+                                {/* Desktop/Tablet Icon */}
+                                <div className="d-none d-md-flex align-items-start justify-content-between mb-3">
                                     <div className="p-3 rounded" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
                                         {stat.icon === 'users' && (
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-people-fill" viewBox="0 0 16 16">
                                                 <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
                                             </svg>
                                         )}
                                         {stat.icon === 'calendar' && (
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-calendar-event-fill" viewBox="0 0 16 16">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-calendar-event-fill" viewBox="0 0 16 16">
                                                 <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5h16v9zm-4.5-6.5a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z" />
                                             </svg>
                                         )}
-                                        {stat.icon === 'calendar-days' && (
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-calendar-event-fill" viewBox="0 0 16 16">
-                                                <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5h16v9zm-4.5-6.5a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z" />
+                                        {stat.icon === 'calendar-month' && (
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-calendar3" viewBox="0 0 16 16">
+                                                <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857z" />
+                                                <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
                                             </svg>
                                         )}
                                     </div>
                                 </div>
-                                <div className="h3 font-weight-bold mb-1" style={{ color: 'var(--main-text' }}>{stat.value}</div>
-                                <div className="text-muted small fw-medium">{stat.title}</div>
+                                {/* Mobile Icon */}
+                                <div className="d-md-none mb-2">
+                                    <div className="p-2 rounded d-inline-block" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
+                                        <i className={`bi bi-${stat.icon === 'users' ? 'people' : (stat.icon === 'calendar' ? 'calendar-event' : 'calendar3')} fs-6`}></i>
+                                    </div>
+                                </div>
+                                <div className="h4 fw-bold mb-1" style={{ color: 'var(--main-text)' }}>{stat.value}</div>
+                                <div className="text-muted d-block" style={{ fontSize: '10px', lineHeight: '1.2' }}>{stat.title}</div>
                             </div>
                         </div>
                     </div>

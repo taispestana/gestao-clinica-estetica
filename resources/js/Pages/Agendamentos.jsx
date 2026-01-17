@@ -277,14 +277,14 @@ export default function Agendamentos() {
 
 
             {/* Cards de Estatísticas */}
-            <div className="row g-4 mb-4">
+            <div className="row g-2 g-md-4 mb-4">
                 {stats.map((stat, index) => (
-                    <div key={index} className="col-md-4">
+                    <div key={index} className="col-4 col-md-4 px-1 px-md-3">
                         <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
-                            <div className="card-body">
-                                <div className="d-flex align-items-start justify-content-between mb-3">
+                            <div className="card-body p-2 p-md-4 text-center text-md-start">
+                                {/* Desktop/Tablet Icon */}
+                                <div className="d-none d-md-flex align-items-start justify-content-between mb-3">
                                     <div className="p-3 rounded" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
-
                                         {/* Ícone Hoje */}
                                         {stat.icon === 'calendar' && (
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-calendar-event-fill" viewBox="0 0 16 16">
@@ -306,11 +306,18 @@ export default function Agendamentos() {
                                                 <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
                                             </svg>
                                         )}
-
                                     </div>
                                 </div>
-                                <div className="h3 font-weight-bold mb-1" style={{ color: 'var(--main-text)' }}>{stat.value}</div>
-                                <div className="text-muted small fw-medium">{stat.title}</div>
+                                {/* Mobile Icon */}
+                                <div className="d-md-none mb-2">
+                                    <div className="p-2 rounded d-inline-block" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
+                                        {stat.icon === 'calendar' && (<i className="bi bi-calendar-event-fill fs-6"></i>)}
+                                        {stat.icon === 'calendar-week' && (<i className="bi bi-calendar-week-fill fs-6"></i>)}
+                                        {stat.icon === 'calendar-month' && (<i className="bi bi-calendar3 fs-6"></i>)}
+                                    </div>
+                                </div>
+                                <div className="h4 fw-bold mb-1" style={{ color: 'var(--main-text)' }}>{stat.value}</div>
+                                <div className="text-muted d-block" style={{ fontSize: '10px', lineHeight: '1.2' }}>{stat.title}</div>
                             </div>
                         </div>
                     </div>
@@ -318,10 +325,10 @@ export default function Agendamentos() {
             </div>
 
 
-            {/* Main Content Grid */}
+            {/* Main Content Layout */}
             <div className="row g-4">
-                {/* Left Column: Calendar */}
-                <div className="col-lg-8">
+                {/* Calendário - Ocupa col-12 no mobile e col-xl-8 no desktop */}
+                <div className="col-12 col-xl-8">
                     <div className="card border-0 shadow-sm p-4">
                         {/* Calendar Header with View Switcher */}
                         <div className="d-flex align-items-center justify-content-between mb-4">
@@ -361,75 +368,81 @@ export default function Agendamentos() {
                 </div>
 
                 {/* Right Column: Forms */}
-                <div className="col-lg-4">
-                    {/* Add Appointment */}
-                    <div className="card border-0 shadow-sm p-4 mb-4">
-                        <h5 className="card-title fw-bold mb-3">Adicionar Marcação</h5>
-                        <form>
-                            <div className="mb-3">
-                                <label className="form-label small text-muted">Tratamento</label>
-                                <select className="form-select bg-light border-0">
-                                    <option></option>
-                                    <option>Limpeza de Pele</option>
-                                    <option>Massagem</option>
-                                </select>
+                <div className="col-12 col-xl-4">
+                    <div className="row g-4">
+                        {/* Formulário de Marcação */}
+                        <div className="col-12 col-md-6 col-xl-12">
+                            <div className="card border-0 shadow-sm p-4 h-100">
+                                <h5 className="card-title fw-bold mb-3">Adicionar Marcação</h5>
+                                <form>
+                                    <div className="mb-3">
+                                        <label className="form-label small text-muted">Tratamento</label>
+                                        <select className="form-select bg-light border-0">
+                                            <option></option>
+                                            <option>Limpeza de Pele</option>
+                                            <option>Massagem</option>
+                                        </select>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label small text-muted">Cliente</label>
+                                        <select className="form-select bg-light border-0">
+                                            <option></option>
+                                            <option>Ana Costa</option>
+                                            <option>Carla Santos</option>
+                                        </select>
+                                    </div>
+                                    <div className="mb-3 form-check">
+                                        <input type="checkbox" className="form-check-input" id="voucherCheck" />
+                                        <label className="form-check-label small" htmlFor="voucherCheck">Voucher</label>
+                                    </div>
+                                    <div className="row mb-4">
+                                        <div className="col-6">
+                                            <label className="form-label small text-muted">Início</label>
+                                            <input
+                                                type="date"
+                                                className="form-date bg-light border-0 text-muted small w-100"
+                                                key={`start-${selectedDate.getTime()}`}
+                                                defaultValue={formatDateForInput(selectedDate)}
+                                            />
+                                        </div>
+                                        <div className="col-6">
+                                            <label className="form-label small text-muted">Fim</label>
+                                            <input type="date" className="form-date bg-light border-0 text-muted small w-100" />
+                                        </div>
+                                    </div>
+                                    <button type="button" className="btn w-100 text-white fw-medium" style={{ backgroundColor: 'var(--primary-button)' }}>+ Agendar</button>
+                                </form>
                             </div>
-                            <div className="mb-3">
-                                <label className="form-label small text-muted">Cliente</label>
-                                <select className="form-select bg-light border-0">
-                                    <option></option>
-                                    <option>Ana Costa</option>
-                                    <option>Carla Santos</option>
-                                </select>
-                            </div>
-                            <div className="mb-3 form-check">
-                                <input type="checkbox" className="form-check-input" id="voucherCheck" />
-                                <label className="form-check-label small" htmlFor="voucherCheck">Voucher</label>
-                            </div>
-                            <div className="row mb-4">
-                                <div className="col-6">
-                                    <label className="form-label small text-muted">Início</label>
-                                    <input
-                                        type="date"
-                                        className="form-date bg-light border-0 text-muted small"
-                                        key={`start-${selectedDate.getTime()}`}
-                                        defaultValue={formatDateForInput(selectedDate)}
-                                    />
-                                </div>
-                                <div className="col-6">
-                                    <label className="form-label small text-muted">Fim</label>
-                                    <input type="date" className="form-date bg-light border-0 text-muted small" />
-                                </div>
-                            </div>
-                            <button type="button" className="btn w-100 text-white fw-medium" style={{ backgroundColor: 'var(--primary-button)' }}>+ Agendar</button>
-                        </form>
-                    </div>
+                        </div>
 
-                    {/* Add Absence */}
-                    <div className="card border-0 shadow-sm p-4 mb-5">
-                        <h5 className="card-title fw-bold mb-3">Adicionar Ausência</h5>
-                        <form>
-                            <div className="mb-3">
-                                <label className="form-label small text-muted">Motivo</label>
-                                <input type="text" className="form-control bg-light border-0" />
+                        {/* Formulário de Ausência */}
+                        <div className="col-12 col-md-6 col-xl-12">
+                            <div className="card border-0 shadow-sm p-4 h-100">
+                                <h5 className="card-title fw-bold mb-3">Adicionar Ausência</h5>
+                                <form>
+                                    <div className="mb-3">
+                                        <label className="form-label small text-muted">Motivo</label>
+                                        <input type="text" className="form-control bg-light border-0" />
+                                    </div>
+                                    <div className="row mb-4">
+                                        <div className="col-6">
+                                            <label className="form-label small text-muted">Início</label>
+                                            <input
+                                                type="date"
+                                                className="form-date bg-light border-0 text-muted small w-100"
+                                                key={`abs-start-${selectedDate.getTime()}`}
+                                                defaultValue={formatDateForInput(selectedDate)}
+                                            />
+                                        </div>
+                                        <div className="col-6">
+                                            <label className="form-label small text-muted">Fim</label>
+                                            <input type="date" className="form-date bg-light border-0 text-muted small w-100" />
+                                        </div>
+                                    </div>
+                                    <button type="button" className="btn w-100 text-white fw-medium" style={{ backgroundColor: 'var(--primary-button)' }}>+ Agendar</button>
+                                </form>
                             </div>
-                            <div className="row mb-4">
-                                <div className="col-6">
-                                    <label className="form-label small text-muted">Início</label>
-                                    <input
-                                        type="date"
-                                        className="form-date bg-light border-0 text-muted small"
-                                        key={`abs-start-${selectedDate.getTime()}`}
-                                        defaultValue={formatDateForInput(selectedDate)}
-                                    />
-                                </div>
-                                <div className="col-6">
-                                    <label className="form-label small text-muted">Fim</label>
-                                    <input type="date" className="form-date bg-light border-0 text-muted small" />
-                                </div>
-                            </div>
-                            <button type="button" className="btn w-100 text-white fw-medium" style={{ backgroundColor: 'var(--primary-button)' }}>+ Agendar</button>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
