@@ -15,7 +15,7 @@ export default function Header() {
             </div>
 
             <div className="d-flex align-items-center gap-4">
-                <span className="small fw-light d-none d-sm-block">Olá, {user.name}</span>
+                <span className="small fw-light">Olá, {user.name}</span>
                 <Link
                     method="post"
                     href={route('logout')}
@@ -38,6 +38,6 @@ export default function Header() {
             </div>
         </header>
 
-        
+
     );
 }

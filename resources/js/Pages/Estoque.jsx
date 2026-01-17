@@ -31,108 +31,127 @@ export default function Estoque() {
                 <p className="text-secondary">Gerencie todos os produtos e prazos</p>
             </div>
 
-            {/* Cards de Estatísticas */}
-            <div className="row g-4 mb-4">
+            {/* Top Row: Cards and Alerts */}
+            <div className="row g-2 mb-4 align-items-stretch">
+                {/* Stats Cards - each col-6 takes 50% on mobile */}
                 {stats.map((stat, index) => (
-                    <div key={index} className="col-md-4">
+                    <div key={index} className="col-6 col-md-3 px-1 px-md-3">
                         <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
-                            <div className="card-body">
-                                <div className="d-flex align-items-start justify-content-between mb-3">
-                                    <div className="p-3 rounded" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
+                            <div className="card-body p-2 p-md-4 d-flex flex-column justify-content-center text-center text-md-start">
+                                <div className="mb-2 mb-md-3">
+                                    <div className="p-2 p-md-3 rounded-3 d-inline-flex" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-green)' }}>
                                         {stat.icon === 'box' ? (
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><path d="m3.3 7 8.7 5 8.7-5" /><path d="M12 22V12" /></svg>
                                         ) : (
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
                                         )}
                                     </div>
                                 </div>
-                                <div className="h3 font-weight-bold mb-1" style={{ color: 'var(--main-text)' }}>{stat.value}</div>
-                                <div className="text-muted small fw-medium">{stat.title}</div>
+                                <div className="h3 fw-bold mb-0 mb-md-1" style={{ color: 'var(--main-text)' }}>{stat.value}</div>
+                                <div className="text-secondary" style={{ fontSize: '10px' }}>{stat.title}</div>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
 
-            <div className="mb-4">
-                <button className="btn text-white px-4 shadow-sm" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>
-                    + Novo Produto
-                </button>
+            {/* Alerts Section - Full width on mobile */}
+            <div className="col-12 mb-4 d-md-none">
+                <div className="card border-0 shadow-sm p-4 h-100">
+                    <h3 className="h6 fw-bold text-dark mb-3">Alertas de Estoque</h3>
+                    <div className="d-flex flex-column gap-3">
+                        {alerts.slice(0, 2).map((item, idx) => {
+                            const isQuantidade = item.alert.toLowerCase().includes('unidade');
+                            const bgColor = isQuantidade ? '#F8D7DA' : '#FFF3CD';
+                            const iconColor = isQuantidade ? '#DC3545' : '#856404';
+                            const textColor = isQuantidade ? '#721C24' : '#856404';
+
+                            return (
+                                <div key={idx} className="p-3 rounded-3 d-flex align-items-center gap-3" style={{ backgroundColor: bgColor }}>
+                                    <div style={{ color: iconColor }}>
+                                        {isQuantidade ? (
+                                            <i className="bi bi-exclamation-triangle-fill fs-5"></i>
+                                        ) : (
+                                            <i className="bi bi-exclamation-circle-fill fs-5"></i>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <div className="fw-bold small" style={{ color: textColor }}>{item.name}</div>
+                                        <div className="small opacity-75" style={{ color: textColor }}>{item.alert}</div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
             </div>
 
+
             <div className="row g-4">
-                {/* Lista de Produtos */}
-                <div className="col-lg-8">
-                    <div className="card border-0 shadow-sm p-4">
-                        {/* Cabeçalho da Tabela  */}
-                        <div className="row align-items-center mb-3 px-3">
-                            <div className="col-5">
-                                <h3 className="h6 fw-bold text-muted  mb-0">Produto</h3>
+                <div className="col-12">
+                    <div className="card border-0 shadow-sm p-3 p-md-4">
+                        <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                            <h3 className="h5 fw-bold text-dark mb-0">Produtos em Estoque</h3>
+                            <div className="d-flex gap-2">
+                                <div className="input-group" style={{ maxWidth: '100%' }}>
+                                    <input type="text" className="form-control bg-light border-1 py-2" placeholder="Buscar produto..." style={{ borderRadius: '10px 0 0 10px' }} />
+                                    <button className="btn btn-light border-1 border-start-0 px-3" style={{ borderRadius: '0 10px 10px 0' }}>
+                                        <i className="bi bi-filter"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <div className="col-3 text-center">
-                                <h3 className="h6 fw-bold text-muted e mb-0">Quantidade</h3>
-                            </div>
-                            <div className="col-2 text-center">
-                                <h3 className="h6 fw-bold text-muted  mb-0">Validade</h3>
-                            </div>
-                            <div className="col-2"></div>
                         </div>
 
-                        <div className="d-flex flex-column gap-2">
+                        {/* List of Products as Cards for Mobile */}
+                        <div className="d-flex flex-column gap-3">
                             {stocks.map((stock, idx) => (
-                                <div key={idx} className="row align-items-center p-3 bg-light rounded mx-0 transition hover-shadow">
-                                    {/* Nome e Código */}
-                                    <div className="col-5">
-                                        <div className="fw-bold text-dark">{stock.produto}</div>
-                                        <div className="small text-muted">{stock.code}</div>
+                                <div key={idx} className="card border-0 shadow-sm p-4 bg-white rounded-4">
+                                    {/* Mobile Card Layout */}
+                                    <div className="d-md-none">
+                                        <div className="row mb-2">
+                                            <div className="col-4 text-muted small fw-bold">ID:</div>
+                                            <div className="col-8 text-secondary small">{stock.code}</div>
+                                        </div>
+                                        <div className="row mb-2">
+                                            <div className="col-4 text-muted small fw-bold">Produto:</div>
+                                            <div className="col-8 text-dark fw-bold">{stock.produto}</div>
+                                        </div>
+                                        <div className="row mb-2">
+                                            <div className="col-4 text-muted small fw-bold">Quantidade:</div>
+                                            <div className="col-8 text-secondary small">{stock.quantidade}</div>
+                                        </div>
+                                        <div className="row mb-3">
+                                            <div className="col-4 text-muted small fw-bold">Validade:</div>
+                                            <div className="col-8 text-secondary small">{stock.validade}</div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-12 text-end">
+                                                <button className="btn btn-sm text-white px-4 py-2" style={{ backgroundColor: '#C5A365', borderRadius: '8px' }}>
+                                                    <i className="bi bi-pencil-square me-1"></i> Editar
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    {/* Quantidade*/}
-                                    <div className="col-3 text-center">
-                                        <span className={` ${parseInt(stock.quantidade) <= 1 }`}>
-                                            {stock.quantidade}
-                                        </span>
-                                    </div>
-
-                                    {/* Validade*/}
-                                    <div className="col-2 text-center ">
-                                        {stock.validade}
-                                    </div>
-
-                                    {/* Ação */}
-                                    <div className="col-2 text-end">
-                                        <button className="btn btn-sm text-white px-3" style={{ backgroundColor: 'var(--primary-button)' }}>
-                                            Editar
-                                        </button>
+                                    {/* Desktop/Tablet Row View */}
+                                    <div className="d-none d-md-flex row align-items-center w-100 mx-0">
+                                        <div className="col-4">
+                                            <div className="fw-bold text-dark">{stock.produto}</div>
+                                            <div className="small text-muted">{stock.code}</div>
+                                        </div>
+                                        <div className="col-2 text-center small text-secondary">
+                                            {idx === 0 ? 'Séruns' : idx === 1 ? 'Peelings' : idx === 2 ? 'Hidratantes' : idx === 3 ? 'Proteção' : 'Máscaras'}
+                                        </div>
+                                        <div className="col-2 text-center">{stock.quantidade}</div>
+                                        <div className="col-2 text-center">{stock.validade}</div>
+                                        <div className="col-2 text-end">
+                                            <button className="btn btn-sm text-white px-3 d-flex align-items-center gap-1 ms-auto" style={{ backgroundColor: '#C5A365' }}>
+                                                <i className="bi bi-pencil-square"></i> Editar
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Coluna de Alertas com Lógica de Cores */}
-                <div className="col-lg-4">
-                    <div className="card border-0 shadow-sm p-4">
-                        <h3 className="h5 fw-bold text-dark mb-4">Alertas de Estoque</h3>
-                        <div className="d-flex flex-column gap-3">
-                            {alerts.map((item, idx) => {
-                                // Lógica para definir a cor de fundo de acordo com o tipo de alerta
-                                const isQuantidade = item.alert.toLowerCase().includes('unidade');
-                                const isValidade = item.alert.toLowerCase().includes('validade');
-
-                                const bgColor = isQuantidade ? '#FEE2E2' : (isValidade ? '#FEF9C3' : '#F3F4F6');
-                                const borderColor = isQuantidade ? '#EF4444' : (isValidade ? '#FACC15' : '#D1D5DB');
-
-                                return (
-                                    <div key={idx}
-                                         className="p-3 rounded  border-4 shadow-sm"
-                                         style={{ backgroundColor: bgColor, borderLeftColor: borderColor }}>
-                                        <div className="fw-bold text-dark small">{item.name}</div>
-                                        <div className="small text-muted">{item.alert}</div>
-                                    </div>
-                                );
-                            })}
                         </div>
                     </div>
                 </div>

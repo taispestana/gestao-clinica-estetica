@@ -1,7 +1,7 @@
 import { Link } from '@inertiajs/react';
 
-export default function Sidebar() {
-    const sidebarItems = [
+export default function HorizontalNav() {
+    const navItems = [
         {
             name: 'Dashboard', icon: (
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -47,37 +47,30 @@ export default function Sidebar() {
     ];
 
     return (
-        <aside className="d-flex flex-column flex-shrink-0 p-3 bg-white shadow-sm h-100" style={{ width: '280px', overflowY: 'auto' }}>
-            <div className="mb-3 px-3">
-                <h3 className="h6 text-uppercase text-muted ls-1" style={{ letterSpacing: '2px', fontSize: '0.75rem', fontWeight: 'bold' }}>Gestão</h3>
-            </div>
-
-            <nav>
-                <ul className="nav nav-pills flex-column mb-auto">
-                    {sidebarItems.map((item) => (
-                        <li className="nav-item" key={item.name}>
-                            <Link
-                                href={item.route !== '#' ? route(item.route) : '#'}
-                                className={`nav-link d-flex align-items-center gap-2 mb-1 ${item.route !== '#' && route().current(item.route)
-                                    ? 'active text-white'
-                                    : 'link-dark text-secondary'
-                                    }`}
-                                aria-current={item.route !== '#' && route().current(item.route) ? 'page' : undefined}
-                                style={
-                                    item.route !== '#' && route().current(item.route)
-                                        ? { backgroundColor: '#C5A365', border: 'none' }
-                                        : {}
-                                }
-                            >
-                                <span style={{ width: '20px', height: '20px' }}>
-                                    {item.icon}
-                                </span>
-                                {item.name}
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            </nav>
-        </aside>
+        <nav className="d-none d-sm-block d-lg-none overflow-x-auto mt-3">
+            <ul className="nav nav-pills flex-nowrap p-2 gap-2" style={{ whiteSpace: 'nowrap' }}>
+                {navItems.map((item) => (
+                    <li className="nav-item" key={item.name}>
+                        <Link
+                            href={item.route !== '#' ? route(item.route) : '#'}
+                            className={`nav-link d-flex align-items-center gap-2 py-2 px-3 ${item.route !== '#' && route().current(item.route)
+                                ? 'active text-white'
+                                : 'link-dark text-secondary'
+                                }`}
+                            style={
+                                item.route !== '#' && route().current(item.route)
+                                    ? { backgroundColor: '#C5A365', border: 'none' }
+                                    : {}
+                            }
+                        >
+                            <span style={{ width: '18px', height: '18px' }}>
+                                {item.icon}
+                            </span>
+                            <span className="small fw-medium">{item.name}</span>
+                        </Link>
+                    </li>
+                ))}
+            </ul>
+        </nav>
     );
 }
