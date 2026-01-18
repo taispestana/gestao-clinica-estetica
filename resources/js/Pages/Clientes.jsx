@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 
 export default function Clientes() {
     const stats = [
@@ -125,12 +125,12 @@ export default function Clientes() {
                                                 </span>
                                             </div>
                                             <div className="col-md-2 text-end">
-                                                <button className="btn btn-gold btn-sm px-2" style={{ borderRadius: '8px' }}>Ver Mais</button>
+                                                <Link href={route('clientes.show')} className="btn btn-gold btn-sm px-2" style={{ borderRadius: '8px' }}>Ver Mais</Link>
                                             </div>
                                         </div>
                                         {/* Mobile Button */}
                                         <div className="col-12 text-end d-md-none">
-                                            <button className="btn btn-gold btn-sm px-4 py-2" style={{ borderRadius: '8px' }}>Ver Mais</button>
+                                            <Link href={route('clientes.show')} className="btn btn-gold btn-sm px-4 py-2" style={{ borderRadius: '8px' }}>Ver Mais</Link>
                                         </div>
                                     </div>
                                 </div>
