@@ -28,7 +28,7 @@ export default function Clientes() {
                 {stats.map((stat, index) => (
                     <div key={index} className="col-4 col-md-4 px-1 px-md-3">
                         <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
-                            <div className="card-body p-2 p-md-4 text-md-start">
+                            <div className="card-body p-2 p-md-4 text-start">
                                 {/* Desktop/Tablet Icon */}
                                 <div className="d-none d-md-flex align-items-start justify-content-between mb-3">
                                     <div className="p-3 rounded" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
@@ -57,8 +57,8 @@ export default function Clientes() {
                                         <i className={`bi bi-${stat.icon === 'users' ? 'people' : (stat.icon === 'calendar' ? 'calendar-event' : 'calendar3')} fs-6`}></i>
                                     </div>
                                 </div>
-                                <div className="h4 fw-bold mb-1" style={{ color: 'var(--main-text)' }}>{stat.value}</div>
-                                <div className="text-muted d-block" style={{ fontSize: '10px', lineHeight: '1.2' }}>{stat.title}</div>
+                                <div className="stat-card-value">{stat.value}</div>
+                                <div className="stat-card-title d-block">{stat.title}</div>
                             </div>
                         </div>
                     </div>
@@ -68,14 +68,17 @@ export default function Clientes() {
             {/* Filtros e Ações */}
             <div className="row g-3 mb-4 align-items-center">
                 <div className="col-12 col-md-auto order-1">
-                    <button className="btn text-white px-4 py-2 w-100" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '10px' }}>
+                    <button className="btn btn-gold px-4 py-2" style={{ borderRadius: '10px' }}>
                         <span className="me-2">+</span> Novo Cliente
                     </button>
                 </div>
-                <div className="col-8 col-md-4 order-2">
-                    <select className="form-select border-1 bg-white text-secondary py-2" style={{ borderRadius: '10px' }}>
-                        <option>Pesquisar por nome</option>
-                    </select>
+                <div className="col-12 col-md-4 order-2">
+                    <div className="input-group">
+                        <input type="text" className="form-control border-1 bg-white text-secondary py-2" placeholder="Pesquisar por nome..." style={{ borderRadius: '10px 0 0 10px', fontSize: '0.9rem', paddingLeft: '1rem !important' }} />
+                        <button className="btn btn-filter-gold pb-2 border-start-0">
+                            <i className="bi bi-funnel-fill"></i>
+                        </button>
+                    </div>
                 </div>
                 <div className="col-4 col-md-2 ms-md-auto order-3">
                     <select className="form-select border-1 bg-white text-secondary py-2" style={{ borderRadius: '10px' }}>
@@ -101,11 +104,11 @@ export default function Clientes() {
                                 <div key={idx} className="card border-0 shadow-sm p-4 bg-white rounded-4">
                                     <div className="row align-items-center mb-3">
                                         <div className="col-12 mb-3 d-md-none">
-                                            <div className="fw-bold fs-5 text-dark mb-1">{appointment.name}</div>
-                                            <div className="d-flex justify-content-between align-items-center">
-                                                <div className="text-secondary small">{appointment.contacto}</div>
+                                            <div className="d-flex justify-content-between align-items-center mb-1">
+                                                <div className="fw-bold fs-5 text-dark">{appointment.name}</div>
                                                 <div className="badge rounded-pill text-dark small fw-medium" style={{ backgroundColor: appointment.color }}>{appointment.status || 'Ativo'}</div>
                                             </div>
+                                            <div className="text-secondary small">{appointment.contacto}</div>
                                         </div>
 
                                         {/* Desktop View Row */}
@@ -122,12 +125,12 @@ export default function Clientes() {
                                                 </span>
                                             </div>
                                             <div className="col-md-2 text-end">
-                                                <button className="btn btn-sm text-white px-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>Ver Mais</button>
+                                                <button className="btn btn-gold btn-sm px-2" style={{ borderRadius: '8px' }}>Ver Mais</button>
                                             </div>
                                         </div>
                                         {/* Mobile Button */}
                                         <div className="col-12 text-end d-md-none">
-                                            <button className="btn btn-sm text-white px-4 py-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>Ver Mais</button>
+                                            <button className="btn btn-gold btn-sm px-4 py-2" style={{ borderRadius: '8px' }}>Ver Mais</button>
                                         </div>
                                     </div>
                                 </div>

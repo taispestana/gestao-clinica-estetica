@@ -36,7 +36,7 @@ export default function Mensagens() {
                 {stats.map((stat, index) => (
                     <div key={index} className="col-4 col-md-4 px-1 px-md-3">
                         <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
-                            <div className="card-body p-2 p-md-4 text-md-start">
+                            <div className="card-body p-2 p-md-4 text-start">
                                 {/* Desktop/Tablet Icon */}
                                 <div className="d-none d-md-flex align-items-start justify-content-between mb-3">
                                     <div className="p-3 rounded" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
@@ -59,8 +59,8 @@ export default function Mensagens() {
                                         <i className={`bi bi-${stat.icon === 'users' ? 'people' : (stat.icon === 'calendar' ? 'calendar-event' : 'calendar3')} fs-6`}></i>
                                     </div>
                                 </div>
-                                <div className="h4 fw-bold mb-1" style={{ color: 'var(--main-text)' }}>{stat.value}</div>
-                                <div className="text-muted d-block" style={{ fontSize: '10px', lineHeight: '1.2' }}>{stat.title}</div>
+                                <div className="stat-card-value">{stat.value}</div>
+                                <div className="stat-card-title d-block">{stat.title}</div>
                             </div>
                         </div>
                     </div>
@@ -103,13 +103,13 @@ export default function Mensagens() {
                                                 <span className="text-secondary">{appointment.data}</span>
                                             </div>
                                             <div className="col-md-2 text-end">
-                                                <button className="btn btn-sm text-white px-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>Enviar Mensagem</button>
+                                                <button className="btn btn-gold btn-sm px-2" style={{ borderRadius: '8px' }}>Enviar Mensagem</button>
                                             </div>
                                         </div>
 
                                         {/* Mobile Button */}
                                         <div className="col-12 text-end d-md-none">
-                                            <button className="btn btn-sm text-white px-4 py-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>Enviar Mensagem</button>
+                                            <button className="btn btn-gold btn-sm px-4 py-2" style={{ borderRadius: '8px' }}>Enviar Mensagem</button>
                                         </div>
                                     </div>
                                 </div>
@@ -156,13 +156,13 @@ export default function Mensagens() {
                                                 <span className="text-secondary">{appointment.data}</span>
                                             </div>
                                             <div className="col-md-2 text-end">
-                                                <button className="btn btn-sm text-white px-2" style={{ backgroundColor: 'var(--primary-button)' }}>Enviar Mensagem</button>
+                                                <button className="btn btn-gold btn-sm px-2" style={{ borderRadius: '8px' }}>Enviar Mensagem</button>
                                             </div>
                                         </div>
 
                                         {/* Mobile Button */}
                                         <div className="col-12 text-end d-md-none">
-                                            <button className="btn btn-sm text-white px-4 py-2" style={{ backgroundColor: 'var(--primary-button)' }}>Enviar Mensagem</button>
+                                            <button className="btn btn-gold btn-sm px-4 py-2" style={{ borderRadius: '8px' }}>Enviar Mensagem</button>
                                         </div>
                                     </div>
                                 </div>
