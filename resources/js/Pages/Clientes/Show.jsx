@@ -45,6 +45,30 @@ export default function Show() {
         }
     ];
 
+    const procedureHistory = [
+        {
+            title: 'Limpeza de Pele Profunda',
+            date: '15/12/2025',
+            professional: 'Danielle',
+            notes: 'Procedimento realizado com sucesso. Pele apresentou boa resposta ao tratamento.',
+            price: '80 €'
+        },
+        {
+            title: 'Massagem Terapêutica',
+            date: '28/11/2025',
+            professional: 'Danielle',
+            notes: 'Aplicação na região frontal e glabela. Paciente orientada sobre cuidados pós-procedimento.',
+            price: '850 €'
+        },
+        {
+            title: 'Peeling Químico',
+            date: '10/11/2025',
+            professional: 'Danielle',
+            notes: 'Peeling com ácido glicólico 30%. Boa tolerância ao procedimento.',
+            price: '320 €'
+        }
+    ];
+
     return (
         <AuthenticatedLayout>
             <Head title={`${customer.name} - Detalhes`} />
@@ -198,7 +222,7 @@ export default function Show() {
                             <div className="anamnese-form">
                                 <div className="d-flex justify-content-between align-items-center mb-4">
                                     <h5 className="mb-0">Ficha de Anamnese</h5>
-                                    <button className="btn btn-gold btn-sm px-3" style={{ borderRadius: '8px' }}>
+                                    <button className="btn btn-gold px-4 py-2" style={{ borderRadius: '8px' }}>
                                         <i className="bi bi-pencil-square me-2"></i>
                                         Editar Anamnese
                                     </button>
@@ -499,8 +523,33 @@ export default function Show() {
                         )}
 
                         {activeTab === 'historico' && (
-                            <div className="text-center py-5">
-                                <p className="text-secondary">Histórico de Procedimentos em breve...</p>
+                            <div className="procedure-history">
+                                <div className="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 className="mb-0">Histórico de Procedimentos</h5>
+                                    <button className="btn btn-gold px-4 py-2" style={{ borderRadius: '8px' }}>
+                                        <span className="me-2">+</span> Novo Procedimento
+                                    </button>
+                                </div>
+
+                                <div className="d-flex flex-column gap-3 mb-4">
+                                    {procedureHistory.map((item, idx) => (
+                                        <div key={idx} className="card border border-light shadow-sm p-3 rounded-4 bg-white">
+                                            <div className="d-flex justify-content-between align-items-start mb-1">
+                                                <h6 className="fw-bold mb-0">{item.title}</h6>
+                                                <span className="small text-dark fw-medium">{item.date}</span>
+                                            </div>
+                                            <p className="text-secondary small mb-3">{item.professional}</p>
+                                            <p className="small mb-3 text-dark">{item.notes}</p>
+                                            <div className="fw-medium text-dark small">Valor: {item.price}</div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="text-center mt-4">
+                                    <button className="btn btn-gold px-5 py-2" style={{ borderRadius: '8px' }}>
+                                        Ver Mais Procedimentos
+                                    </button>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -509,3 +558,4 @@ export default function Show() {
         </AuthenticatedLayout>
     );
 }
+

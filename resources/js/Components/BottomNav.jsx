@@ -17,7 +17,14 @@ const BottomNav = () => {
         try {
             const currentPath = url.split('?')[0];
             const itemPath = new URL(href).pathname;
-            return currentPath === itemPath;
+
+            // For the dashboard, check for exact match
+            if (itemPath === '/dashboard' || itemPath === '/') {
+                return currentPath === itemPath;
+            }
+
+            // For other routes (like /clientes), check if it starts with the item path
+            return currentPath.startsWith(itemPath);
         } catch (e) {
             return false;
         }

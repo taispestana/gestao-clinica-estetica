@@ -58,13 +58,13 @@ export default function Sidebar() {
                         <li className="nav-item" key={item.name}>
                             <Link
                                 href={item.route !== '#' ? route(item.route) : '#'}
-                                className={`nav-link d-flex align-items-center gap-2 mb-1 ${item.route !== '#' && route().current(item.route)
+                                className={`nav-link d-flex align-items-center gap-2 mb-1 ${item.route !== '#' && route().current(item.route + '*')
                                     ? 'active text-white'
                                     : 'link-dark text-secondary'
                                     }`}
-                                aria-current={item.route !== '#' && route().current(item.route) ? 'page' : undefined}
+                                aria-current={item.route !== '#' && route().current(item.route + '*') ? 'page' : undefined}
                                 style={
-                                    item.route !== '#' && route().current(item.route)
+                                    item.route !== '#' && route().current(item.route + '*')
                                         ? { backgroundColor: '#C5A365', border: 'none' }
                                         : {}
                                 }
