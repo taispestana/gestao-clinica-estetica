@@ -53,12 +53,12 @@ export default function HorizontalNav() {
                     <li className="nav-item" key={item.name}>
                         <Link
                             href={item.route !== '#' ? route(item.route) : '#'}
-                            className={`nav-link d-flex align-items-center gap-2 py-2 px-2 ${item.route !== '#' && route().current(item.route)
+                            className={`nav-link d-flex align-items-center gap-2 py-2 px-2 ${item.route !== '#' && route().current(item.route + '*')
                                 ? 'active text-white'
                                 : 'link-dark text-secondary'
                                 }`}
                             style={
-                                item.route !== '#' && route().current(item.route)
+                                item.route !== '#' && route().current(item.route + '*')
                                     ? { backgroundColor: 'var(--primary-button)', border: 'none' }
                                     : {}
                             }
