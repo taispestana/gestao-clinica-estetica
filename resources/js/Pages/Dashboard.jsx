@@ -37,7 +37,7 @@ export default function Dashboard() {
                 {stats.map((stat, index) => (
                     <div key={index} className="col-4 col-md-4 px-1 px-md-3">
                         <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
-                            <div className="card-body p-2 p-md-4 text-md-start">
+                            <div className="card-body p-2 p-md-4 text-start">
                                 {/* Desktop/Tablet Icon */}
                                 <div className="d-none d-md-flex align-items-start justify-content-between mb-3">
                                     <div className="p-3 rounded" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
@@ -65,15 +65,15 @@ export default function Dashboard() {
                                         <i className={`bi bi-${stat.icon === 'users' ? 'people' : (stat.icon === 'calendar' ? 'calendar-event' : 'calendar3')} fs-6`}></i>
                                     </div>
                                 </div>
-                                <div className="h4 fw-bold mb-1" style={{ color: 'var(--main-text)' }}>{stat.value}</div>
-                                <div className="text-muted d-block" style={{ fontSize: '10px', lineHeight: '1.2' }}>{stat.title}</div>
+                                <div className="stat-card-value">{stat.value}</div>
+                                <div className="stat-card-title d-block">{stat.title}</div>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
 
-            <div className="row g-4">
+            <div className="row g-4 mb-5">
                 {/* Lista de Agendamentos */}
                 <div className="col-lg-8">
                     <div className="card border-0 shadow-sm p-4">

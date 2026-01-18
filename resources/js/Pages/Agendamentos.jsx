@@ -281,7 +281,7 @@ export default function Agendamentos() {
                 {stats.map((stat, index) => (
                     <div key={index} className="col-4 col-md-4 px-1 px-md-3">
                         <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
-                            <div className="card-body p-2 p-md-4 text-center text-md-start">
+                            <div className="card-body p-2 p-md-4 text-start">
                                 {/* Desktop/Tablet Icon */}
                                 <div className="d-none d-md-flex align-items-start justify-content-between mb-3">
                                     <div className="p-3 rounded" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
@@ -316,8 +316,8 @@ export default function Agendamentos() {
                                         {stat.icon === 'calendar-month' && (<i className="bi bi-calendar3 fs-6"></i>)}
                                     </div>
                                 </div>
-                                <div className="h4 fw-bold mb-1" style={{ color: 'var(--main-text)' }}>{stat.value}</div>
-                                <div className="text-muted d-block" style={{ fontSize: '10px', lineHeight: '1.2' }}>{stat.title}</div>
+                                <div className="stat-card-value">{stat.value}</div>
+                                <div className="stat-card-title d-block">{stat.title}</div>
                             </div>
                         </div>
                     </div>
@@ -326,24 +326,25 @@ export default function Agendamentos() {
 
 
             {/* Main Content Layout */}
-            <div className="row g-4">
+            <div className="row g-4 mb-5">
                 {/* Calendário - Ocupa col-12 no mobile e col-xl-8 no desktop */}
                 <div className="col-12 col-xl-8">
                     <div className="card border-0 shadow-sm p-4">
                         {/* Calendar Header with View Switcher */}
-                        <div className="d-flex align-items-center justify-content-between mb-4">
-                            <div className="d-flex align-items-center gap-3">
-                                <h5 className="mb-0 fw-bold text-dark">Calendário</h5>
+                        <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3">
+                            <h5 className="mb-0 fw-bold text-dark">Calendário</h5>
+
+                            <div className="d-flex align-items-center justify-content-between w-100 w-md-auto gap-3">
                                 <div className="d-flex align-items-center gap-2">
                                     <button onClick={handlePrev} className="btn btn-link text-dark p-0" style={{ textDecoration: 'none' }}>❮</button>
-                                    <span className="fw-medium text-capitalize">{getHeaderText()}</span>
+                                    <span className="fw-medium text-capitalize text-nowrap small">{getHeaderText()}</span>
                                     <button onClick={handleNext} className="btn btn-link text-dark p-0" style={{ textDecoration: 'none' }}>❯</button>
                                 </div>
-                            </div>
-                            <div className="btn-group" role="group">
-                                <button type="button" className={`btn btn-sm ${view === 'day' ? 'btn-dark' : 'btn-outline-secondary'}`} onClick={() => setView('day')}>Dia</button>
-                                <button type="button" className={`btn btn-sm ${view === 'week' ? 'btn-dark' : 'btn-outline-secondary'}`} onClick={() => setView('week')}>Semana</button>
-                                <button type="button" className={`btn btn-sm ${view === 'month' ? 'btn-dark' : 'btn-outline-secondary'}`} onClick={() => setView('month')}>Mês</button>
+                                <div className="btn-group" role="group">
+                                    <button type="button" className={`btn btn-sm ${view === 'day' ? 'btn-dark' : 'btn-outline-secondary'}`} onClick={() => setView('day')}>Dia</button>
+                                    <button type="button" className={`btn btn-sm ${view === 'week' ? 'btn-dark' : 'btn-outline-secondary'}`} onClick={() => setView('week')}>Semana</button>
+                                    <button type="button" className={`btn btn-sm ${view === 'month' ? 'btn-dark' : 'btn-outline-secondary'}`} onClick={() => setView('month')}>Mês</button>
+                                </div>
                             </div>
                         </div>
 

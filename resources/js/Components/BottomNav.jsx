@@ -38,7 +38,7 @@ const BottomNav = () => {
                             style={{
                                 width: '45px',
                                 height: '35px',
-                                backgroundColor: isActive(item.href) ? '#C5A365' : 'transparent',
+                                backgroundColor: isActive(item.href) ? 'var(--primary-button)' : 'transparent',
                                 transition: 'all 0.2s'
                             }}
                         >
@@ -47,7 +47,7 @@ const BottomNav = () => {
                         <span style={{
                             fontSize: '10px',
                             fontWeight: isActive(item.href) ? '600' : '400',
-                            color: isActive(item.href) ? '#C5A365' : '#6c757d'
+                            color: isActive(item.href) ? 'var(--primary-button)' : '#6c757d'
                         }}>
                             {item.name}
                         </span>

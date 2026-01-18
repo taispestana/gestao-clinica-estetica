@@ -31,81 +31,131 @@ export default function Estoque() {
                 <p className="text-secondary">Gerencie todos os produtos e prazos</p>
             </div>
 
-            {/* Top Row: Cards and Alerts */}
-            <div className="row g-2 mb-4 align-items-stretch">
-                {/* Stats Cards - each col-6 takes 50% on mobile */}
+            {/* Tablet/Mobile Top Row: Stats + Alerts Side-by-Side on Tablet (MD/LG) */}
+            <div className="row g-3 mb-4 align-items-stretch d-xl-none">
+                {/* Stats Cards */}
+                <div className="col-12 col-md-6">
+                    <div className="row g-2 h-100">
+                        {stats.map((stat, index) => (
+                            <div key={index} className="col-6">
+                                <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
+                                    <div className="card-body p-2 p-md-4 text-start">
+                                        {/* Mobile Icon */}
+                                        <div className="mb-2">
+                                            <div className="p-2 rounded d-inline-block" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
+                                                {stat.icon === 'box' ? (
+                                                    <i className="bi bi-box fs-6"></i>
+                                                ) : (
+                                                    <i className="bi bi-exclamation-triangle fs-6"></i>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="stat-card-value">{stat.value}</div>
+                                        <div className="stat-card-title d-block">{stat.title}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Alerts Block (Visible on Tablet/Mobile top row) */}
+                <div className="col-12 col-md-6">
+                    <div className="card border-0 shadow-sm p-3 p-md-4 h-100">
+                        <h3 className="h6 fw-bold text-dark mb-3">Alertas de Estoque</h3>
+                        <div className="d-flex flex-column gap-2">
+                            {alerts.slice(0, 2).map((item, idx) => {
+                                const isLowStock = item.alert.toLowerCase().includes('restante') || item.alert.toLowerCase().includes('restantes');
+                                const bgColor = isLowStock ? 'var(--status-red)' : 'var(--status-yellow)';
+                                const iconClass = isLowStock ? 'bi-exclamation-triangle-fill' : 'bi-info-circle-fill';
+                                return (
+                                    <div key={idx} className="p-2 p-md-3 rounded-3 d-flex align-items-center gap-2 shadow-sm" style={{ backgroundColor: bgColor, color: isLowStock ? 'var(--white)' : 'var(--main-text)' }}>
+                                        <i className={`bi ${iconClass} fs-5`}></i>
+                                        <div className="text-truncate">
+                                            <div className="fw-bold small">{item.name}</div>
+                                            <div className="small opacity-85" style={{ fontSize: '0.75rem' }}>{item.alert}</div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Desktop (XL) Top Row (Just Stats - Alerts are in the sidebar for XL) */}
+            <div className="row g-2 g-md-4 mb-4 d-none d-xl-flex">
                 {stats.map((stat, index) => (
-                    <div key={index} className="col-6 col-md-3 px-1 px-md-3">
+                    <div key={index} className="col-4 col-md-4 px-1 px-md-3">
                         <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
-                            <div className="card-body p-2 p-md-4 d-flex flex-column justify-content-center text-center text-md-start">
-                                <div className="mb-2 mb-md-3">
-                                    <div className="p-2 p-md-3 rounded-3 d-inline-flex" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-green)' }}>
+                            <div className="card-body p-4 text-start">
+                                {/* Desktop Icon Container */}
+                                <div className="d-flex align-items-start justify-content-between mb-3">
+                                    <div className="p-3 rounded" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
                                         {stat.icon === 'box' ? (
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><path d="m3.3 7 8.7 5 8.7-5" /><path d="M12 22V12" /></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m8.25 3.75h3.75M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                                            </svg>
                                         ) : (
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                                            </svg>
                                         )}
                                     </div>
                                 </div>
-                                <div className="h3 fw-bold mb-0 mb-md-1" style={{ color: 'var(--main-text)' }}>{stat.value}</div>
-                                <div className="text-secondary" style={{ fontSize: '10px' }}>{stat.title}</div>
+                                <div className="stat-card-value">{stat.value}</div>
+                                <div className="stat-card-title d-block">{stat.title}</div>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
 
-            {/* Alerts Section - Full width on mobile */}
-            <div className="col-12 mb-4 d-md-none">
-                <div className="card border-0 shadow-sm p-4 h-100">
-                    <h3 className="h6 fw-bold text-dark mb-3">Alertas de Estoque</h3>
-                    <div className="d-flex flex-column gap-3">
-                        {alerts.slice(0, 2).map((item, idx) => {
-                            const isQuantidade = item.alert.toLowerCase().includes('unidade');
-                            const bgColor = isQuantidade ? '#F8D7DA' : '#FFF3CD';
-                            const iconColor = isQuantidade ? '#DC3545' : '#856404';
-                            const textColor = isQuantidade ? '#721C24' : '#856404';
-
-                            return (
-                                <div key={idx} className="p-3 rounded-3 d-flex align-items-center gap-3" style={{ backgroundColor: bgColor }}>
-                                    <div style={{ color: iconColor }}>
-                                        {isQuantidade ? (
-                                            <i className="bi bi-exclamation-triangle-fill fs-5"></i>
-                                        ) : (
-                                            <i className="bi bi-exclamation-circle-fill fs-5"></i>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <div className="fw-bold small" style={{ color: textColor }}>{item.name}</div>
-                                        <div className="small opacity-75" style={{ color: textColor }}>{item.alert}</div>
-                                    </div>
-                                </div>
-                            );
-                        })}
+            {/* Filtros e Ações (Fora do container) */}
+            <div className="row g-3 mb-4 align-items-center">
+                <div className="col-12 col-md-auto">
+                    <button className="btn btn-gold px-4 py-2 d-flex align-items-center justify-content-center gap-2" style={{ borderRadius: '10px' }}>
+                        <span className="fs-5">+</span> Adicionar Produto
+                    </button>
+                </div>
+                <div className="col-12 col-md-4">
+                    <div className="input-group">
+                        <input type="text" className="form-control border-1 bg-white text-secondary py-2" placeholder="Buscar produto..." style={{ borderRadius: '10px 0 0 10px', fontSize: '0.9rem' }} />
+                        <button className="btn btn-filter-gold pb-2 border-start-0">
+                            <i className="bi bi-funnel-fill"></i>
+                        </button>
                     </div>
                 </div>
             </div>
 
-
-            <div className="row g-4">
-                <div className="col-12">
+            {/* Main Content Layout: Two columns on desktop (xl), stacked on mobile/tablet */}
+            <div className="row g-4 flex-column-reverse flex-xl-row mb-5">
+                {/* Left Column: Products List */}
+                <div className="col-12 col-xl-8">
                     <div className="card border-0 shadow-sm p-3 p-md-4">
-                        <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                        <div className="mb-4">
                             <h3 className="h5 fw-bold text-dark mb-0">Produtos em Estoque</h3>
-                            <div className="d-flex gap-2">
-                                <div className="input-group" style={{ maxWidth: '100%' }}>
-                                    <input type="text" className="form-control bg-light border-1 py-2" placeholder="Buscar produto..." style={{ borderRadius: '10px 0 0 10px' }} />
-                                    <button className="btn btn-light border-1 border-start-0 px-3" style={{ borderRadius: '0 10px 10px 0' }}>
-                                        <i className="bi bi-filter"></i>
-                                    </button>
-                                </div>
-                            </div>
                         </div>
 
-                        {/* List of Products as Cards for Mobile */}
+                        {/* DESKTOP TABLE HEADERS */}
+                        <div className="row align-items-center mb-3 px-4 d-none d-md-flex">
+                            <div className="col-4 col-xl-4">
+                                <h3 className="h6 fw-bold text-muted mb-0">Produto</h3>
+                            </div>
+                            <div className="col-2 d-xl-none"></div> {/* Spacer for Category on Tablet */}
+                            <div className="col-2 col-xl-4 text-center">
+                                <h3 className="h6 fw-bold text-muted mb-0">Quantidade</h3>
+                            </div>
+                            <div className="col-2 col-xl-2 text-center">
+                                <h3 className="h6 fw-bold text-muted mb-0">Validade</h3>
+                            </div>
+                            <div className="col-2 col-xl-2"></div> {/* Spacer for Action column */}
+                        </div>
+
+                        {/* List of Products as Cards */}
                         <div className="d-flex flex-column gap-3">
                             {stocks.map((stock, idx) => (
-                                <div key={idx} className="card border-0 shadow-sm p-4 bg-white rounded-4">
+                                <div key={idx} className="card border-0 shadow-sm p-3 p-md-4 bg-white rounded-4 border-bottom">
                                     {/* Mobile Card Layout */}
                                     <div className="d-md-none">
                                         <div className="row mb-2">
@@ -126,7 +176,7 @@ export default function Estoque() {
                                         </div>
                                         <div className="row">
                                             <div className="col-12 text-end">
-                                                <button className="btn btn-sm text-white px-4 py-2" style={{ backgroundColor: '#C5A365', borderRadius: '8px' }}>
+                                                <button className="btn btn-sm text-white px-4 py-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>
                                                     <i className="bi bi-pencil-square me-1"></i> Editar
                                                 </button>
                                             </div>
@@ -135,23 +185,53 @@ export default function Estoque() {
 
                                     {/* Desktop/Tablet Row View */}
                                     <div className="d-none d-md-flex row align-items-center w-100 mx-0">
-                                        <div className="col-4">
+                                        <div className="col-4 col-xl-4">
                                             <div className="fw-bold text-dark">{stock.produto}</div>
                                             <div className="small text-muted">{stock.code}</div>
                                         </div>
-                                        <div className="col-2 text-center small text-secondary">
+                                        <div className="col-2 d-xl-none text-center small text-secondary">
                                             {idx === 0 ? 'Séruns' : idx === 1 ? 'Peelings' : idx === 2 ? 'Hidratantes' : idx === 3 ? 'Proteção' : 'Máscaras'}
                                         </div>
-                                        <div className="col-2 text-center">{stock.quantidade}</div>
-                                        <div className="col-2 text-center">{stock.validade}</div>
-                                        <div className="col-2 text-end">
-                                            <button className="btn btn-sm text-white px-3 d-flex align-items-center gap-1 ms-auto" style={{ backgroundColor: '#C5A365' }}>
+                                        <div className="col-2 col-xl-4 text-center text-secondary small">
+                                            {stock.quantidade}
+                                        </div>
+                                        <div className="col-2 col-xl-2 text-center text-secondary small">
+                                            {stock.validade}
+                                        </div>
+                                        <div className="col-2 col-xl-2 text-end">
+                                            <button className="btn btn-gold btn-sm px-3 px-xl-4 py-2 d-inline-flex align-items-center gap-2 ms-auto" style={{ borderRadius: '8px' }}>
                                                 <i className="bi bi-pencil-square"></i> Editar
                                             </button>
                                         </div>
                                     </div>
                                 </div>
                             ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Column: Alerts (Sidebar only on desktop xl+) */}
+                <div className="col-12 col-xl-4 d-none d-xl-block">
+                    <div className="card border-0 shadow-sm p-4">
+                        <h3 className="h5 fw-bold text-dark mb-4">Alertas de Estoque</h3>
+                        <div className="d-flex flex-column gap-3">
+                            {alerts.map((item, idx) => {
+                                const isLowStock = item.alert.toLowerCase().includes('restante');
+                                const bgColor = isLowStock ? 'var(--status-red)' : 'var(--status-yellow)';
+                                const iconClass = isLowStock ? 'bi-exclamation-triangle-fill' : 'bi-info-circle-fill';
+
+                                return (
+                                    <div key={idx} className="p-3 rounded-4 d-flex align-items-center gap-3 shadow-sm" style={{ backgroundColor: bgColor, color: isLowStock ? 'var(--white)' : 'var(--main-text)' }}>
+                                        <div className="fs-4">
+                                            <i className={`bi ${iconClass}`}></i>
+                                        </div>
+                                        <div>
+                                            <div className="fw-bold small">{item.name}</div>
+                                            <div className="small opacity-85">{item.alert}</div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
