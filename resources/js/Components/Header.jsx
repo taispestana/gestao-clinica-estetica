@@ -5,7 +5,7 @@ export default function Header() {
     const user = usePage().props.auth.user;
 
     return (
-        <header className="header d-flex align-items-center justify-content-between px-4 shadow-sm">
+        <header className="header d-flex align-items-center justify-content-between pe-4 ps-0 shadow-sm">
             <div className="d-flex align-items-center">
                 <div className="d-flex align-items-center gap-3">
                     <div className="header-logo-container">

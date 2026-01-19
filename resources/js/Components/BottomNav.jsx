@@ -17,7 +17,14 @@ const BottomNav = () => {
         try {
             const currentPath = url.split('?')[0];
             const itemPath = new URL(href).pathname;
-            return currentPath === itemPath;
+
+            // For the dashboard, check for exact match
+            if (itemPath === '/dashboard' || itemPath === '/') {
+                return currentPath === itemPath;
+            }
+
+            // For other routes (like /clientes), check if it starts with the item path
+            return currentPath.startsWith(itemPath);
         } catch (e) {
             return false;
         }
@@ -31,14 +38,14 @@ const BottomNav = () => {
                         key={item.name}
                         href={item.href}
                         className="text-decoration-none d-flex flex-column align-items-center flex-grow-1"
-                        style={{ color: isActive(item.href) ? '#FFF' : '#6c757d' }}
+                        style={{ color: isActive(item.href) ? 'var(--white)' : '#6c757d' }}
                     >
                         <div
                             className="rounded-3 d-flex align-items-center justify-content-center mb-1"
                             style={{
                                 width: '45px',
                                 height: '35px',
-                                backgroundColor: isActive(item.href) ? '#C5A365' : 'transparent',
+                                backgroundColor: isActive(item.href) ? 'var(--primary-button)' : 'transparent',
                                 transition: 'all 0.2s'
                             }}
                         >
@@ -47,7 +54,7 @@ const BottomNav = () => {
                         <span style={{
                             fontSize: '10px',
                             fontWeight: isActive(item.href) ? '600' : '400',
-                            color: isActive(item.href) ? '#C5A365' : '#6c757d'
+                            color: isActive(item.href) ? 'var(--primary-button)' : '#6c757d'
                         }}>
                             {item.name}
                         </span>

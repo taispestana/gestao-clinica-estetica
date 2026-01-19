@@ -20,6 +20,10 @@ Route::get('/clientes', function () {
     return Inertia::render('Clientes');
 })->middleware(['auth', 'verified'])->name('clientes');
 
+Route::get('/clientes/detalhes', function () {
+    return Inertia::render('Clientes/Show');
+})->middleware(['auth', 'verified'])->name('clientes.show');
+
 Route::get('/agendamentos', function () {
     return Inertia::render('Agendamentos');
 })->middleware(['auth', 'verified'])->name('agendamentos');
@@ -42,6 +46,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 

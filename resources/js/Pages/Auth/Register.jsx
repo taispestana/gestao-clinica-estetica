@@ -26,11 +26,11 @@ export default function Register() {
         <GuestLayout>
             <Head title="Register" />
 
-            <div className="login-card shadow-sm text-center p-5 text-center">
-                <div className="mb-4">
+            <div className="login-card shadow-sm text-center p-4 text-center">
+                <div className="mb-4 pt-0">
                     <ApplicationLogo />
                     <p className="text-muted small mt-0 mb-4">A gestão da sua Clínica de forma eficiente</p>
-                    <h2 className="mb-5 fw-normal">Criar Conta</h2>
+                    <h4 className="mb-3 fw-normal">Criar Conta</h4>
                 </div>
 
                 <form onSubmit={submit} className="text-start">
