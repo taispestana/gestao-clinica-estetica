@@ -125,7 +125,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                                     or have prior experience
                                                     with Laravel, we recommend
                                                     reading our documentation
-                                                    from beginning to end.
+                                                    from beginning to end..
                                                 </p>
                                             </div>
                                         </div>
