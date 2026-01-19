@@ -37,7 +37,7 @@ export default function Modal({
                 left: 0,
                 width: '100vw',
                 height: '100vh',
-                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                backgroundColor: 'var(--bg-transparent)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -48,11 +48,11 @@ export default function Modal({
         >
             <div
                 style={{
-                    backgroundColor: '#fff',
+                    backgroundColor: 'var(--white)',
                     width: '100%',
                     maxWidth: maxWidthClass,
                     borderRadius: '16px',
-                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                    boxShadow: '0 25px 50px -12px var(--bg-transparent)',
                     overflow: 'hidden',
                     position: 'relative',
                     zIndex: 100000

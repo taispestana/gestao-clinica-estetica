@@ -32,13 +32,12 @@ export default function Login({ status }) {
                 </div>
             )}
 
-            <div className="login-card shadow-sm text-center p-5 text-center">
+            <div className="login-card shadow-sm text-center p-4 text-center">
 
-                <div className="mb-4">
+                <div className="mb-2 pt-0">
                     <ApplicationLogo />
-                    <ApplicationLogo className="logo-white" />
                     <p className="text-muted small mt-0 mb-4">A gestão da sua Clínica de forma eficiente</p>
-                    <h2 className="mb-5 fw-normal">Bem-vinda</h2>
+                    <h4 className="mb-3 fw-normal">Bem-vinda</h4>
                 </div>
 
 
