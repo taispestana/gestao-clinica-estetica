@@ -21,12 +21,12 @@ export default function ForgotPassword({ status }) {
         <GuestLayout>
             <Head title="Forgot Password" />
 
-            <div className="login-card shadow-sm text-center p-5 text-center">
+            <div className="login-card shadow-sm text-center p-4 text-center">
 
-                <div className="mb-4">
+                <div className="mb-4 pt-0">
                     <ApplicationLogo />
                     <p className="text-muted small mt-0 mb-4">A gestão da sua Clínica de forma eficiente</p>
-                    <h2 className="mb-3 fw-normal">Esqueceu a senha?</h2>
+                    <h4 className="mb-3 fw-normal">Esqueceu a senha?</h4>
                     <p className="text-muted small mt-0 mb-2">Sem problemas. Basta nos informar seu endereço de e-mail
                         e enviaremos um link para redefinir sua senha, que
                         permitirá que você escolha uma nova.</p>

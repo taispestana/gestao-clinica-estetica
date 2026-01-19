@@ -38,7 +38,7 @@ const BottomNav = () => {
                         key={item.name}
                         href={item.href}
                         className="text-decoration-none d-flex flex-column align-items-center flex-grow-1"
-                        style={{ color: isActive(item.href) ? '#FFF' : '#6c757d' }}
+                        style={{ color: isActive(item.href) ? 'var(--white)' : '#6c757d' }}
                     >
                         <div
                             className="rounded-3 d-flex align-items-center justify-content-center mb-1"

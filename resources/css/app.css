@@ -8,6 +8,7 @@
     --white: #FAFAFA;
     --main-text: #171717;
     --placeholder: #A3A3A3;
+    --bg-transparent: rgba(0, 0, 0, 0.5);
 
     /* botões e elementos principais */
     --primary-button: #C5A157;
@@ -75,10 +76,12 @@ body {
 .form-control {
     background-color: var(--white);
     border: 1px solid #D1D5DB;
-    padding: 0.75rem 1rem 0.75rem 2.8rem !important;
+    padding: 0.75rem 1rem 0.75rem 0.75rem !important;
     font-size: 0.85rem;
-    font-size: 0.85rem;
+}
 
+.input-group-custom .form-control {
+    padding-left: 2.8rem !important;
 }
 
 .form-control::placeholder {
@@ -94,10 +97,8 @@ body {
 .form-date {
     background-color: var(--white);
     border: 1px solid #D1D5DB;
-    padding: 0.75rem 0.8rem 0.75rem 1rem !important;
+    padding: 0.75rem 0.8rem 0.75rem 0.75rem !important;
     font-size: 0.85rem;
-    font-size: 0.85rem;
-
 }
 
 /* Ajuste global para mensagens de erro */

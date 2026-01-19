@@ -6,6 +6,7 @@ export default function Agendamentos() {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [view, setView] = useState('month'); // 'mês', 'semana', 'dia'
+    const [isVoucher, setIsVoucher] = useState(false);
 
     const stats = [
         { title: 'Agendamentos Hoje', value: '0', icon: 'calendar', color: 'var(--status-green)' },
@@ -392,23 +393,52 @@ export default function Agendamentos() {
                                             <option>Carla Santos</option>
                                         </select>
                                     </div>
-                                    <div className="mb-3 form-check">
-                                        <input type="checkbox" className="form-check-input" id="voucherCheck" />
-                                        <label className="form-check-label small" htmlFor="voucherCheck">Voucher</label>
+                                    <div className="mb-3">
+                                        <div className="form-check">
+                                            <input
+                                                type="checkbox"
+                                                className="form-check-input"
+                                                id="voucherCheck"
+                                                checked={isVoucher}
+                                                onChange={(e) => setIsVoucher(e.target.checked)}
+                                            />
+                                            <label className="form-check-label small" htmlFor="voucherCheck">Voucher</label>
+                                        </div>
+                                        {isVoucher && (
+                                            <div className="mt-2 animate-fade-in">
+                                                <input
+                                                    type="text"
+                                                    className="form-control bg-light border-0 py-2 small"
+                                                    placeholder="Código ou detalhes do voucher"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label small text-muted">Data</label>
+                                        <input
+                                            type="date"
+                                            className="form-date bg-light border-0 text-muted small w-100"
+                                            key={`date-${selectedDate.getTime()}`}
+                                            defaultValue={formatDateForInput(selectedDate)}
+                                        />
                                     </div>
                                     <div className="row mb-4">
                                         <div className="col-6">
                                             <label className="form-label small text-muted">Início</label>
                                             <input
-                                                type="date"
-                                                className="form-date bg-light border-0 text-muted small w-100"
-                                                key={`start-${selectedDate.getTime()}`}
-                                                defaultValue={formatDateForInput(selectedDate)}
+                                                type="time"
+                                                className="form-control bg-light border-0 text-muted small w-100"
+                                                defaultValue="09:00"
                                             />
                                         </div>
                                         <div className="col-6">
                                             <label className="form-label small text-muted">Fim</label>
-                                            <input type="date" className="form-date bg-light border-0 text-muted small w-100" />
+                                            <input
+                                                type="time"
+                                                className="form-control bg-light border-0 text-muted small w-100"
+                                                defaultValue="10:00"
+                                            />
                                         </div>
                                     </div>
                                     <button type="button" className="btn w-100 text-white fw-medium" style={{ backgroundColor: 'var(--primary-button)' }}>+ Agendar</button>
@@ -425,19 +455,31 @@ export default function Agendamentos() {
                                         <label className="form-label small text-muted">Motivo</label>
                                         <input type="text" className="form-control bg-light border-0" />
                                     </div>
+                                    <div className="mb-3">
+                                        <label className="form-label small text-muted">Data</label>
+                                        <input
+                                            type="date"
+                                            className="form-date bg-light border-0 text-muted small w-100"
+                                            key={`abs-date-${selectedDate.getTime()}`}
+                                            defaultValue={formatDateForInput(selectedDate)}
+                                        />
+                                    </div>
                                     <div className="row mb-4">
                                         <div className="col-6">
                                             <label className="form-label small text-muted">Início</label>
                                             <input
-                                                type="date"
-                                                className="form-date bg-light border-0 text-muted small w-100"
-                                                key={`abs-start-${selectedDate.getTime()}`}
-                                                defaultValue={formatDateForInput(selectedDate)}
+                                                type="time"
+                                                className="form-control bg-light border-0 text-muted small w-100"
+                                                defaultValue="09:00"
                                             />
                                         </div>
                                         <div className="col-6">
                                             <label className="form-label small text-muted">Fim</label>
-                                            <input type="date" className="form-date bg-light border-0 text-muted small w-100" />
+                                            <input
+                                                type="time"
+                                                className="form-control bg-light border-0 text-muted small w-100"
+                                                defaultValue="10:00"
+                                            />
                                         </div>
                                     </div>
                                     <button type="button" className="btn w-100 text-white fw-medium" style={{ backgroundColor: 'var(--primary-button)' }}>+ Agendar</button>
