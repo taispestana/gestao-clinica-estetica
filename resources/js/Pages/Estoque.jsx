@@ -270,9 +270,9 @@ export default function Estoque() {
                                     <option value="5">5 unid.</option>
                                     <option value="10">10 unid.</option>
                                 </select>
-                                <div className="position-absolute end-0 top-50 translate-middle-y me-3 pointer-events-none" style={{ right: 'auto', left: '130px' }}>
+                                {/* <div className="position-absolute end-0 top-50 translate-middle-y me-3 pointer-events-none" style={{ right: 'auto', left: '130px' }}>
                                     <i className="bi bi-chevron-down text-secondary small"></i>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
 
