@@ -21,8 +21,8 @@ Route::get('/clientes', function () {
 })->middleware(['auth', 'verified'])->name('clientes');
 
 Route::get('/clientes/detalhes', function () {
-    return Inertia::render('Clientes/Show');
-})->middleware(['auth', 'verified'])->name('clientes.show');
+    return Inertia::render('Clientes/Cliente');
+})->middleware(['auth', 'verified'])->name('clientes.cliente');
 
 Route::get('/agendamentos', function () {
     return Inertia::render('Agendamentos');
