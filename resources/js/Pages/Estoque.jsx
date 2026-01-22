@@ -1,32 +1,111 @@
 import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, useForm, Link } from '@inertiajs/react';
 import Modal from '@/Components/Modal';
 
-export default function Estoque() {
+
+export default function Estoque({ produtos = [] }) {
     const [showNewProductModal, setShowNewProductModal] = useState(false);
+    const [showEditProductModal, setShowEditProductModal] = useState(false);
+    const [editingProductId, setEditingProductId] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const { data, setData, post, processing, errors, reset } = useForm({
+        nome: '',
+        stock: '',
+        data_validade: '',
+    });
+
+    const { data: editData, setData: setEditData, put: editPut, delete: editDelete, processing: editProcessing, errors: editErrors, reset: editReset } = useForm({
+        nome: '',
+        stock: '',
+        data_validade: '',
+    });
 
     const openModal = () => setShowNewProductModal(true);
-    const closeModal = () => setShowNewProductModal(false);
+    const closeModal = () => {
+        setShowNewProductModal(false);
+        reset();
+    };
+
+    const openEditModal = (produto) => {
+        setEditingProductId(produto.id);
+        setEditData({
+            nome: produto.nome,
+            stock: produto.stock,
+            data_validade: produto.data_validade || '',
+        });
+        setShowEditProductModal(true);
+    };
+
+    const closeEditModal = () => {
+        setShowEditProductModal(false);
+        setEditingProductId(null);
+        editReset();
+    };
+
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+    const handleDelete = () => {
+        setShowDeleteConfirm(true);
+    };
+
+    const confirmDelete = () => {
+        editDelete(route('estoque.destroy', editingProductId), {
+            onSuccess: () => {
+                setShowDeleteConfirm(false);
+                closeEditModal();
+            },
+        });
+    };
 
     const stats = [
-        { title: 'Total de Produtos', value: '150', icon: 'box' },
-        { title: 'Estoque Baixo', value: '5', icon: 'alert' },
+        { title: 'Total de Produtos', value: produtos.length, icon: 'box' },
+        { title: 'Estoque Baixo', value: produtos.filter(p => p.stock <= (p.stock_minimo || 2)).length, icon: 'alert' },
     ];
 
-    const stocks = [
-        { produto: 'Sérum Vitamina C', code: 'SKU: SER001', quantidade: '5 unid.', validade: '10/05/2026' },
-        { produto: 'Gel Peeling Facial', code: 'SKU: GEL002', quantidade: '0 unid.', validade: '-' },
-        { produto: 'Hidratante Facial', code: 'SKU: HID003', quantidade: '4 unid.', validade: '25/12/2025' },
-        { produto: 'Protetor Solar FPS 60', code: 'SKU: PRO004', quantidade: '3 unid.', validade: '31/12/2025' },
-        { produto: 'Máscara Argila Verde', code: 'SKU: MAS005', quantidade: '1 unid.', validade: '31/12/2025' },
-    ];
+    const today = new Date();
+    const thirtyDaysFromNow = new Date();
+    thirtyDaysFromNow.setDate(today.getDate() + 30);
 
-    const alerts = [
-        { name: 'Mascara Argila Verde', alert: 'Apenas 1 unidade(s) restante(s)' },
-        { name: 'Hidratante Facial', alert: 'Validade expira em 25/12/2026' },
-        { name: 'Gel Peeling Facial', alert: 'Validade expira em 25/12/2026' },
-    ];
+    const stockAlerts = produtos
+        .filter(p => p.stock <= (p.stock_minimo || 2))
+        .map(p => ({
+            name: p.nome,
+            alert: `Apenas ${p.stock} unidade(s) restante(s)`,
+            type: 'low_stock'
+        }));
+
+    const expiryAlerts = produtos
+        .filter(p => p.data_validade && new Date(p.data_validade) <= thirtyDaysFromNow)
+        .map(p => ({
+            name: p.nome,
+            alert: `Validade expira em ${new Date(p.data_validade).toLocaleDateString('pt-BR')}`,
+            type: 'expiry'
+        }));
+
+    const alerts = [...stockAlerts, ...expiryAlerts];
+
+    const normalizeString = (str) =>
+        str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+    const filteredProdutos = produtos.filter(p =>
+        normalizeString(p.nome).includes(normalizeString(searchTerm))
+    );
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        post(route('estoque.storeProduto'), {
+            onSuccess: () => closeModal(),
+        });
+    };
+
+    const handleEditSubmit = (e) => {
+        e.preventDefault();
+        editPut(route('estoque.update', editingProductId), {
+            onSuccess: () => closeEditModal(),
+        });
+    };
 
     return (
         <>
@@ -72,7 +151,7 @@ export default function Estoque() {
                         <div className="card border-0 shadow-sm p-3 p-md-4 h-100">
                             <h3 className="h6 fw-bold text-dark mb-3">Alertas de Estoque</h3>
                             <div className="d-flex flex-column gap-2">
-                                {alerts.slice(0, 2).map((item, idx) => {
+                                {alerts.length > 0 ? alerts.slice(0, 2).map((item, idx) => {
                                     const isLowStock = item.alert.toLowerCase().includes('restante') || item.alert.toLowerCase().includes('restantes');
                                     const bgColor = isLowStock ? 'var(--status-red)' : 'var(--status-yellow)';
                                     const iconClass = isLowStock ? 'bi-exclamation-triangle-fill' : 'bi-info-circle-fill';
@@ -85,7 +164,9 @@ export default function Estoque() {
                                             </div>
                                         </div>
                                     );
-                                })}
+                                }) : (
+                                    <div className="text-center text-muted small py-3">Nenhum alerta</div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -132,10 +213,14 @@ export default function Estoque() {
                     </div>
                     <div className="col-12 col-md-4">
                         <div className="input-group">
-                            <input type="text" className="form-control border-1 bg-white text-secondary py-2" placeholder="Buscar produto..." style={{ borderRadius: '10px 0 0 10px', fontSize: '0.9rem' }} />
-                            <button className="btn btn-filter-gold pb-2 border-start-0">
-                                <i className="bi bi-funnel-fill"></i>
-                            </button>
+                            <input
+                                type="text"
+                                className="form-control border-1 bg-white text-secondary py-2"
+                                placeholder="Buscar produto..."
+                                style={{ borderRadius: '10px', fontSize: '0.9rem' }}
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
                         </div>
                     </div>
                 </div>
@@ -154,41 +239,45 @@ export default function Estoque() {
                                 <div className="col-4 col-xl-4">
                                     <h3 className="h6 fw-bold text-muted mb-0">Produto</h3>
                                 </div>
-                                <div className="col-2 d-xl-none"></div> {/* Spacer for Category on Tablet */}
-                                <div className="col-2 col-xl-4 text-center">
+                                <div className="col-2 d-xl-none"></div>
+                                <div className="col-2 col-xl-3 text-center">
                                     <h3 className="h6 fw-bold text-muted mb-0">Quantidade</h3>
                                 </div>
                                 <div className="col-2 col-xl-2 text-center">
                                     <h3 className="h6 fw-bold text-muted mb-0">Validade</h3>
                                 </div>
-                                <div className="col-2 col-xl-2"></div> {/* Spacer for Action column */}
+                                <div className="col-2 col-xl-3"></div>
                             </div>
 
                             {/* List of Products as Cards */}
                             <div className="d-flex flex-column gap-3">
-                                {stocks.map((stock, idx) => (
-                                    <div key={idx} className="card border-0 shadow-sm p-3 p-md-4 bg-white rounded-4 border-bottom">
+                                {filteredProdutos.length > 0 ? filteredProdutos.map((produto) => (
+                                    <div key={produto.id} className="card border-0 shadow-sm p-3 p-md-4 bg-white rounded-4 border-bottom">
                                         {/* Mobile Card Layout */}
                                         <div className="d-md-none">
                                             <div className="row mb-2">
-                                                <div className="col-4 text-muted small fw-bold">ID:</div>
-                                                <div className="col-8 text-secondary small">{stock.code}</div>
+                                                <div className="col-4 text-muted small fw-bold">SKU:</div>
+                                                <div className="col-8 text-secondary small">{produto.sku || '-'}</div>
                                             </div>
                                             <div className="row mb-2">
                                                 <div className="col-4 text-muted small fw-bold">Produto:</div>
-                                                <div className="col-8 text-dark fw-bold">{stock.produto}</div>
+                                                <div className="col-8 text-dark fw-bold">{produto.nome}</div>
                                             </div>
                                             <div className="row mb-2">
                                                 <div className="col-4 text-muted small fw-bold">Quantidade:</div>
-                                                <div className="col-8 text-secondary small">{stock.quantidade}</div>
+                                                <div className="col-8 text-secondary small">{produto.stock} unid.</div>
                                             </div>
                                             <div className="row mb-3">
                                                 <div className="col-4 text-muted small fw-bold">Validade:</div>
-                                                <div className="col-8 text-secondary small">{stock.validade}</div>
+                                                <div className="col-8 text-secondary small">{produto.data_validade ? new Date(produto.data_validade).toLocaleDateString('pt-BR') : '-'}</div>
                                             </div>
                                             <div className="row">
                                                 <div className="col-12 text-end">
-                                                    <button className="btn btn-sm text-white px-4 py-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>
+                                                    <button
+                                                        className="btn btn-sm text-white px-4 py-2"
+                                                        style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}
+                                                        onClick={() => openEditModal(produto)}
+                                                    >
                                                         <i className="bi bi-pencil-square me-1"></i> Editar
                                                     </button>
                                                 </div>
@@ -198,26 +287,32 @@ export default function Estoque() {
                                         {/* Desktop/Tablet Row View */}
                                         <div className="d-none d-md-flex row align-items-center w-100 mx-0">
                                             <div className="col-4 col-xl-4">
-                                                <div className="fw-bold text-dark">{stock.produto}</div>
-                                                <div className="small text-muted">{stock.code}</div>
+                                                <div className="fw-bold text-dark">{produto.nome}</div>
+                                                <div className="small text-muted">{produto.sku || 'Sem SKU'}</div>
                                             </div>
                                             <div className="col-2 d-xl-none text-center small text-secondary">
-                                                {idx === 0 ? 'Séruns' : idx === 1 ? 'Peelings' : idx === 2 ? 'Hidratantes' : idx === 3 ? 'Proteção' : 'Máscaras'}
+                                                -
                                             </div>
-                                            <div className="col-2 col-xl-4 text-center text-secondary small">
-                                                {stock.quantidade}
+                                            <div className="col-2 col-xl-3 text-center text-secondary small">
+                                                {produto.stock} unid.
                                             </div>
                                             <div className="col-2 col-xl-2 text-center text-secondary small">
-                                                {stock.validade}
+                                                {produto.data_validade ? new Date(produto.data_validade).toLocaleDateString('pt-BR') : '-'}
                                             </div>
-                                            <div className="col-2 col-xl-2 text-end">
-                                                <button className="btn btn-gold btn-sm px-3 px-xl-4 py-2 d-inline-flex align-items-center gap-2 ms-auto" style={{ borderRadius: '8px' }}>
+                                            <div className="col-2 col-xl-3 text-end">
+                                                <button
+                                                    className="btn btn-gold btn-sm px-3 px-xl-4 py-2 d-inline-flex align-items-center gap-2 ms-auto"
+                                                    style={{ borderRadius: '8px' }}
+                                                    onClick={() => openEditModal(produto)}
+                                                >
                                                     <i className="bi bi-pencil-square"></i> Editar
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
-                                ))}
+                                )) : (
+                                    <div className="text-center py-5 text-muted">Nenhum produto em estoque</div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -227,7 +322,7 @@ export default function Estoque() {
                         <div className="card border-0 shadow-sm p-4">
                             <h3 className="h5 fw-bold text-dark mb-4">Alertas de Estoque</h3>
                             <div className="d-flex flex-column gap-3">
-                                {alerts.map((item, idx) => {
+                                {alerts.length > 0 ? alerts.map((item, idx) => {
                                     const isLowStock = item.alert.toLowerCase().includes('restante');
                                     const bgColor = isLowStock ? 'var(--status-red)' : 'var(--status-yellow)';
                                     const iconClass = isLowStock ? 'bi-exclamation-triangle-fill' : 'bi-info-circle-fill';
@@ -243,7 +338,9 @@ export default function Estoque() {
                                             </div>
                                         </div>
                                     );
-                                })}
+                                }) : (
+                                    <div className="text-center text-muted small py-3">Sem alertas</div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -253,45 +350,154 @@ export default function Estoque() {
             {/* Modal Novo Produto */}
             <Modal show={showNewProductModal} onClose={closeModal} maxWidth="md">
                 <div className="p-4 p-md-5 bg-white">
-                    <h4 className="fw-bold mb-4" style={{ color: 'var(--main-text)' }}>Produto</h4>
+                    <h4 className="fw-bold mb-4" style={{ color: 'var(--main-text)' }}>Novo Produto</h4>
 
-                    <form onSubmit={(e) => { e.preventDefault(); closeModal(); }}>
+                    <form onSubmit={handleSubmit}>
+
                         <div className="mb-4">
                             <label className="form-label small text-secondary fw-medium mb-1">Nome</label>
-                            <input type="text" className="form-control bg-light border-0 py-2 rounded-3" />
+                            <input
+                                type="text"
+                                className={`form-control bg-light border-0 py-2 rounded-3 ${errors.nome ? 'is-invalid' : ''}`}
+                                value={data.nome}
+                                onChange={e => setData('nome', e.target.value)}
+                            />
+                            {errors.nome && <div className="invalid-feedback">{errors.nome}</div>}
                         </div>
 
-                        <div className="mb-4">
-                            <label className="form-label small text-secondary fw-medium mb-1">Quantidade</label>
-                            <div className="position-relative">
-                                <select className="form-select bg-light border-0 py-2 rounded-3 pe-5" style={{ maxWidth: '160px', appearance: 'none' }}>
-                                    <option value=""></option>
-                                    <option value="1">1 unid.</option>
-                                    <option value="5">5 unid.</option>
-                                    <option value="10">10 unid.</option>
-                                </select>
-                                {/* <div className="position-absolute end-0 top-50 translate-middle-y me-3 pointer-events-none" style={{ right: 'auto', left: '130px' }}>
-                                    <i className="bi bi-chevron-down text-secondary small"></i>
-                                </div> */}
+                        <div className="row mb-4">
+                            <div className="col-6">
+                                <label className="form-label small text-secondary fw-medium mb-1">Quantidade</label>
+                                <input
+                                    type="number"
+                                    className={`form-control bg-light border-0 py-2 rounded-3 ${errors.stock ? 'is-invalid' : ''}`}
+                                    value={data.stock}
+                                    onChange={e => setData('stock', e.target.value)}
+                                />
+                                {errors.stock && <div className="invalid-feedback">{errors.stock}</div>}
                             </div>
-                        </div>
-
-                        <div className="mb-5">
-                            <label className="form-label small text-secondary fw-medium mb-1">Validade</label>
-                            <div className="input-group" style={{ maxWidth: '180px' }}>
-                                <input type="text" className="form-control bg-light border-0 py-2 rounded-start-3" placeholder="dd/mm/aa" />
-                                <span className="input-group-text bg-light border-0 rounded-end-3 text-secondary">
-                                    <i className="bi bi-calendar-event"></i>
-                                </span>
+                            <div className="col-6">
+                                <label className="form-label small text-secondary fw-medium mb-1">Validade</label>
+                                <input
+                                    type="date"
+                                    className={`form-control bg-light border-0 py-2 rounded-3 ${errors.data_validade ? 'is-invalid' : ''}`}
+                                    value={data.data_validade}
+                                    onChange={e => setData('data_validade', e.target.value)}
+                                />
+                                {errors.data_validade && <div className="invalid-feedback d-block">{errors.data_validade}</div>}
                             </div>
                         </div>
 
                         <div className="text-center">
-                            <button type="submit" className="btn btn-gold px-5 py-2 fw-medium" style={{ borderRadius: '10px', minWidth: '200px' }}>
-                                Salvar
+                            <button
+                                type="submit"
+                                className="btn btn-gold px-5 py-2 fw-medium"
+                                style={{ borderRadius: '10px', minWidth: '200px' }}
+                                disabled={processing}
+                            >
+                                {processing ? 'Salvando...' : 'Salvar'}
                             </button>
                         </div>
                     </form>
+                </div>
+            </Modal>
+
+            {/* Modal Editar Produto */}
+            <Modal show={showEditProductModal} onClose={closeEditModal} maxWidth="md">
+                <div className="p-4 p-md-5 bg-white">
+                    <h4 className="fw-bold mb-4" style={{ color: 'var(--main-text)' }}>Editar Produto</h4>
+
+                    <form onSubmit={handleEditSubmit}>
+
+                        <div className="mb-4">
+                            <label className="form-label small text-secondary fw-medium mb-1">Nome</label>
+                            <input
+                                type="text"
+                                className={`form-control bg-light border-0 py-2 rounded-3 ${editErrors.nome ? 'is-invalid' : ''}`}
+                                value={editData.nome}
+                                onChange={e => setEditData('nome', e.target.value)}
+                            />
+                            {editErrors.nome && <div className="invalid-feedback">{editErrors.nome}</div>}
+                        </div>
+
+                        <div className="row mb-4">
+                            <div className="col-6">
+                                <label className="form-label small text-secondary fw-medium mb-1">Quantidade</label>
+                                <input
+                                    type="number"
+                                    className={`form-control bg-light border-0 py-2 rounded-3 ${editErrors.stock ? 'is-invalid' : ''}`}
+                                    value={editData.stock}
+                                    onChange={e => setEditData('stock', e.target.value)}
+                                />
+                                {editErrors.stock && <div className="invalid-feedback">{editErrors.stock}</div>}
+                            </div>
+                            <div className="col-6">
+                                <label className="form-label small text-secondary fw-medium mb-1">Validade</label>
+                                <input
+                                    type="date"
+                                    className={`form-control bg-light border-0 py-2 rounded-3 ${editErrors.data_validade ? 'is-invalid' : ''}`}
+                                    value={editData.data_validade}
+                                    onChange={e => setEditData('data_validade', e.target.value)}
+                                />
+                                {editErrors.data_validade && <div className="invalid-feedback d-block">{editErrors.data_validade}</div>}
+                            </div>
+                        </div>
+
+                        <div className="text-center d-flex align-items-center justify-content-center gap-3">
+                            <button
+                                type="button"
+                                className="btn btn-outline-danger px-4 py-2 fw-medium"
+                                style={{ borderRadius: '10px', minWidth: '150px' }}
+                                onClick={handleDelete}
+                                disabled={editProcessing}
+                            >
+                                <i className="bi bi-trash me-2"></i> Apagar
+                            </button>
+                            <button
+                                type="submit"
+                                className="btn btn-gold px-5 py-2 fw-medium"
+                                style={{ borderRadius: '10px', minWidth: '200px' }}
+                                disabled={editProcessing}
+                            >
+                                {editProcessing ? 'Salvando...' : 'Salvar Alterações'}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </Modal>
+            {/* Modal de Confirmação de Exclusão */}
+            <Modal show={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} maxWidth="sm">
+                <div className="p-4 p-md-5 text-center bg-white rounded-4">
+                    <div className="mb-4">
+                        <div className="d-inline-flex align-items-center justify-content-center rounded-circle border border-warning" style={{ width: '80px', height: '80px', borderSize: '2px !important' }}>
+                            <i className="bi bi-exclamation-lg text-warning" style={{ fontSize: '3rem' }}></i>
+                        </div>
+                    </div>
+
+                    <h4 className="fw-bold mb-4 px-md-4" style={{ color: 'var(--main-text)', lineHeight: '1.4' }}>
+                        Tem certeza que deseja apagar o produto?
+                    </h4>
+
+                    <div className="d-flex align-items-center justify-content-center gap-3 mt-4">
+                        <button
+                            type="button"
+                            className="btn btn-gold px-4 py-2 fw-medium"
+                            style={{ borderRadius: '10px', minWidth: '120px' }}
+                            onClick={confirmDelete}
+                            disabled={editProcessing}
+                        >
+                            Sim
+                        </button>
+                        <button
+                            type="button"
+                            className="btn btn-danger px-4 py-2 fw-medium"
+                            style={{ borderRadius: '10px', minWidth: '120px' }}
+                            onClick={() => setShowDeleteConfirm(false)}
+                            disabled={editProcessing}
+                        >
+                            Não
+                        </button>
+                    </div>
                 </div>
             </Modal>
         </>

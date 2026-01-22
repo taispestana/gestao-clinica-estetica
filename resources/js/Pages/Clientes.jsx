@@ -1,25 +1,49 @@
 import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import Modal from '@/Components/Modal';
 
-export default function Clientes() {
+export default function Clientes({ clientes }) {
     const [showNewClientModal, setShowNewClientModal] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState('Todos');
+
+    const { data, setData, post, processing, errors, reset } = useForm({
+        name: '',
+        telemovel: '',
+        email: '',
+        data_nascimento: '',
+        profissao: '',
+    });
 
     const openModal = () => setShowNewClientModal(true);
-    const closeModal = () => setShowNewClientModal(false);
+    const closeModal = () => {
+        setShowNewClientModal(false);
+        reset();
+    };
 
     const stats = [
-        { title: 'Clientes Ativos', value: '0', icon: 'users', color: 'var(--status-green)' },
+        { title: 'Clientes Ativos', value: clientes.length.toString(), icon: 'users', color: 'var(--status-green)' },
         { title: 'Agendamentos Hoje', value: '0', icon: 'calendar', color: 'var(--status-green)' },
         { title: 'Agendamento Mensal', value: '0', icon: 'calendar-month', color: 'var(--status-green)' },
     ];
 
-    const appointments = [
-        { name: 'Nome do Cliente', contacto: '912 345 678', status: 'Ativo', color: 'var(--status-green)' },
-        { name: 'Nome do Cliente', contacto: '912 345 678', status: 'Pendente', color: 'var(--status-yellow)' },
-        { name: 'Nome do Cliente', contacto: '912 345 678', status: 'Inativo', color: 'var(--status-red)' },
-    ];
+    const appointments = clientes
+        .filter(cliente => {
+            const matchesName = cliente.name.toLowerCase().includes(searchTerm.toLowerCase());
+            // Para o status, como não temos na DB ainda, vamos considerar todos como 'Ativo'
+            // Mas permitimos filtrar se o filtro for 'Todos' ou 'Ativo'
+            const clientStatus = 'Ativo';
+            const matchesStatus = statusFilter === 'Todos' || clientStatus === statusFilter;
+            return matchesName && matchesStatus;
+        })
+        .map(cliente => ({
+            id: cliente.id,
+            name: cliente.name,
+            contacto: cliente.telemovel || 'N/A',
+            status: 'Ativo',
+            color: 'var(--status-green)'
+        }));
 
     return (
         <>
@@ -86,15 +110,26 @@ export default function Clientes() {
                             </button>
                         </div>
                         <div className="col-8 col-md-4 order-2">
-                            <select className="form-select border-1 bg-white text-secondary py-2" style={{ borderRadius: '10px' }}>
-                                <option>Pesquisar por nome</option>
-                            </select>
+                            <input
+                                type="text"
+                                className="form-control border-1 bg-white text-secondary py-2"
+                                style={{ borderRadius: '10px' }}
+                                placeholder="Pesquisar por nome..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
                         </div>
                         <div className="col-4 col-md-2 ms-md-auto order-3">
-                            <select className="form-select border-1 bg-white text-secondary py-2" style={{ borderRadius: '10px' }}>
-                                <option>Ativo</option>
-                                <option>Inativo</option>
-                                <option>Pendente</option>
+                            <select
+                                className="form-select border-1 bg-white text-secondary py-2"
+                                style={{ borderRadius: '10px' }}
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                            >
+                                <option value="Todos">Todos</option>
+                                <option value="Ativo">Ativo</option>
+                                <option value="Inativo">Inativo</option>
+                                <option value="Pendente">Pendente</option>
                             </select>
                         </div>
                     </div>
@@ -138,12 +173,12 @@ export default function Clientes() {
                                                         </span>
                                                     </div>
                                                     <div className="col-md-2 text-end">
-                                                        <Link href={route('clientes.cliente')} className="btn btn-sm text-white px-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>Ver Mais</Link>
+                                                        <Link href={route('clientes.show', appointment.id)} className="btn btn-sm text-white px-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>Ver Mais</Link>
                                                     </div>
                                                 </div>
                                                 {/* Mobile Button */}
                                                 <div className="col-12 text-end d-md-none">
-                                                    <Link href={route('clientes.cliente')} className="btn btn-sm text-white px-4 py-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>Ver Mais</Link>
+                                                    <Link href={route('clientes.show', appointment.id)} className="btn btn-sm text-white px-4 py-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>Ver Mais</Link>
                                                 </div>
                                             </div>
                                         </div>
@@ -156,39 +191,76 @@ export default function Clientes() {
             </AuthenticatedLayout>
 
             {/* Modal Novo Cliente */}
-            <Modal show={showNewClientModal} onClose={closeModal} maxWidth="md">
+            <Modal show={showNewClientModal} onClose={closeModal} maxWidth="md" >
                 <div className="p-4 p-md-5 bg-white">
+
                     <h4 className="fw-bold mb-4" style={{ color: 'var(--main-text)' }}>Dados Pessoais</h4>
 
-                    <form onSubmit={(e) => { e.preventDefault(); closeModal(); }}>
+                    <form onSubmit={(e) => {
+                        e.preventDefault();
+                        post(route('users.storeUser'), {
+                            onSuccess: () => closeModal(),
+                        });
+                    }}>
                         <div className="mb-4">
                             <label className="form-label small text-secondary fw-medium mb-1">Nome Completo</label>
-                            <input type="text" className="form-control bg-light border-0 py-2 rounded-3" />
+                            <input
+                                type="text"
+                                className="form-control bg-light border-0 py-2 rounded-3"
+                                value={data.name}
+                                onChange={(e) => setData('name', e.target.value)}
+                            />
+                            {errors.name && <div className="text-danger small">{errors.name}</div>}
                         </div>
 
                         <div className="row mb-4">
                             <div className="col-6">
                                 <label className="form-label small text-secondary fw-medium mb-1">Telemóvel</label>
-                                <input type="text" className="form-control bg-light border-0 py-2 rounded-3" placeholder="(__) ______________" />
+                                <input
+                                    type="text"
+                                    className="form-control bg-light border-0 py-2 rounded-3"
+                                    placeholder="(__) ______________"
+                                    value={data.telemovel}
+                                    onChange={(e) => setData('telemovel', e.target.value)}
+                                />
+                                {errors.telemovel && <div className="text-danger small">{errors.telemovel}</div>}
                             </div>
                             <div className="col-6">
                                 <label className="form-label small text-secondary fw-medium mb-1">Data de Nascimento</label>
-                                <input type="date" className="form-date bg-light border-0 text-muted small w-100" />
+                                <input
+                                    type="date"
+                                    className="form-date bg-light border-0 text-muted small w-100"
+                                    value={data.data_nascimento}
+                                    onChange={(e) => setData('data_nascimento', e.target.value)}
+                                />
+                                {errors.data_nascimento && <div className="text-danger small">{errors.data_nascimento}</div>}
                             </div>
                         </div>
 
                         <div className="mb-4">
                             <label className="form-label small text-secondary fw-medium mb-1">Email</label>
-                            <input type="email" className="form-control bg-light border-0 py-2 rounded-3" />
+                            <input
+                                type="email"
+                                className="form-control bg-light border-0 py-2 rounded-3"
+                                value={data.email}
+                                onChange={(e) => setData('email', e.target.value)}
+                            />
+                            {errors.email && <div className="text-danger small">{errors.email}</div>}
                         </div>
 
                         <div className="mb-5">
                             <label className="form-label small text-secondary fw-medium mb-1">Profissão</label>
-                            <input type="text" className="form-control bg-light border-0 py-2 rounded-3" />
+                            <input
+                                type="text"
+                                className="form-control bg-light border-0 py-2 rounded-3"
+                                value={data.profissao}
+                                onChange={(e) => setData('profissao', e.target.value)}
+                            />
+                            {errors.profissao && <div className="text-danger small">{errors.profissao}</div>}
                         </div>
 
                         <div className="text-center">
-                            <button type="submit" className="btn text-white px-5 py-2 fw-medium" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '10px', minWidth: '200px' }}>
+                            <button type="submit" disabled={processing} className="btn text-white px-5 py-2 fw-medium" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '10px', minWidth: '200px' }}>
                                 Salvar
                             </button>
                         </div>

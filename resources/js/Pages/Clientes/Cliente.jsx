@@ -1,20 +1,57 @@
 import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
+import Modal from '@/Components/Modal';
 
-export default function Cliente() {
+export default function Cliente({ cliente }) {
     const [activeTab, setActiveTab] = useState('agendamentos');
+    const [showEditModal, setShowEditModal] = useState(false);
+
+    const { data, setData, put, processing, errors, reset } = useForm({
+        name: cliente.name || '',
+        telemovel: cliente.telemovel || '',
+        email: cliente.email || '',
+        data_nascimento: cliente.data_nascimento || '',
+        nif: cliente.nif || '',
+        endereco: cliente.endereco || '',
+        profissao: cliente.profissao || '',
+    });
+
+    const openEditModal = () => setShowEditModal(true);
+    const closeEditModal = () => {
+        setShowEditModal(false);
+        reset();
+    };
+
+    const handleUpdate = (e) => {
+        e.preventDefault();
+        put(route('clientes.update', cliente.id), {
+            onSuccess: () => setShowEditModal(false),
+        });
+    };
+
+    const calculateAge = (birthday) => {
+        if (!birthday) return 'N/A';
+        const birthDate = new Date(birthday);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    };
 
     const customer = {
-        name: 'Ana Maria Costa Silva',
-        since: 'Janeiro 2025',
-        age: 35,
+        name: cliente.name,
+        since: new Date(cliente.created_at).toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' }),
+        age: calculateAge(cliente.data_nascimento),
         status: 'Ativo',
-        phone: '(351) 99999-9999',
-        email: 'ana.costa@email.com',
-        nif: '123.456.789-00',
-        address: 'Rua das Flores, 123\nOvar, PT',
-        occupation: 'Advogada',
+        phone: cliente.telemovel,
+        email: cliente.email,
+        nif: cliente.nif,
+        address: cliente.endereco,
+        occupation: cliente.profissao,
     };
 
     const stats = {
@@ -123,7 +160,11 @@ export default function Cliente() {
                                 </div>
                             </div>
 
-                            <button className="btn btn-gold w-100 py-2" style={{ borderRadius: '8px' }}>
+                            <button
+                                className="btn btn-gold w-100 py-2"
+                                style={{ borderRadius: '8px' }}
+                                onClick={openEditModal}
+                            >
                                 <i className="bi bi-pencil-square me-2"></i>
                                 Editar Perfil
                             </button>
@@ -570,6 +611,116 @@ export default function Cliente() {
                         </div>
                     </div>
                 </div>
+
+                {/* Edit Profile Modal */}
+                <Modal show={showEditModal} onClose={closeEditModal}>
+                    <div className="p-4">
+                        <div className="d-flex justify-content-between align-items-center mb-4">
+                            <h4 className="mb-0">Editar Perfil</h4>
+                            <button type="button" className="btn-close" onClick={closeEditModal}></button>
+                        </div>
+
+                        <form onSubmit={handleUpdate}>
+                            <div className="row g-3">
+                                <div className="col-12">
+                                    <label className="form-label small text-secondary">Nome Completo</label>
+                                    <input
+                                        type="text"
+                                        className="form-control bg-light border-0 py-2 rounded-3"
+                                        value={data.name}
+                                        onChange={(e) => setData('name', e.target.value)}
+                                        required
+                                    />
+                                    {errors.name && <div className="text-danger small">{errors.name}</div>}
+                                </div>
+
+                                <div className="col-12 col-md-6">
+                                    <label className="form-label small text-secondary">Telemóvel</label>
+                                    <input
+                                        type="text"
+                                        className="form-control bg-light border-0 py-2 rounded-3"
+                                        value={data.telemovel}
+                                        onChange={(e) => setData('telemovel', e.target.value)}
+                                        required
+                                    />
+                                    {errors.telemovel && <div className="text-danger small">{errors.telemovel}</div>}
+                                </div>
+
+                                <div className="col-12 col-md-6">
+                                    <label className="form-label small text-secondary">Email</label>
+                                    <input
+                                        type="email"
+                                        className="form-control bg-light border-0 py-2 rounded-3"
+                                        value={data.email}
+                                        onChange={(e) => setData('email', e.target.value)}
+                                    />
+                                    {errors.email && <div className="text-danger small">{errors.email}</div>}
+                                </div>
+
+                                <div className="col-12 col-md-6">
+                                    <label className="form-label small text-secondary">Data de Nascimento</label>
+                                    <input
+                                        type="date"
+                                        className="form-control bg-light border-0 py-2 rounded-3"
+                                        value={data.data_nascimento}
+                                        onChange={(e) => setData('data_nascimento', e.target.value)}
+                                    />
+                                    {errors.data_nascimento && <div className="text-danger small">{errors.data_nascimento}</div>}
+                                </div>
+
+                                <div className="col-12 col-md-6">
+                                    <label className="form-label small text-secondary">NIF</label>
+                                    <input
+                                        type="text"
+                                        className="form-control bg-light border-0 py-2 rounded-3"
+                                        value={data.nif}
+                                        onChange={(e) => setData('nif', e.target.value)}
+                                    />
+                                    {errors.nif && <div className="text-danger small">{errors.nif}</div>}
+                                </div>
+
+                                <div className="col-12">
+                                    <label className="form-label small text-secondary">Endereço</label>
+                                    <textarea
+                                        className="form-control bg-light border-0 py-2 rounded-3"
+                                        rows="2"
+                                        value={data.endereco}
+                                        onChange={(e) => setData('endereco', e.target.value)}
+                                    ></textarea>
+                                    {errors.endereco && <div className="text-danger small">{errors.endereco}</div>}
+                                </div>
+
+                                <div className="col-12">
+                                    <label className="form-label small text-secondary">Profissão</label>
+                                    <input
+                                        type="text"
+                                        className="form-control bg-light border-0 py-2 rounded-3"
+                                        value={data.profissao}
+                                        onChange={(e) => setData('profissao', e.target.value)}
+                                    />
+                                    {errors.profissao && <div className="text-danger small">{errors.profissao}</div>}
+                                </div>
+                            </div>
+
+                            <div className="mt-4 d-flex gap-2 justify-content-end">
+                                <button
+                                    type="button"
+                                    className="btn btn-light px-4 py-2 rounded-3"
+                                    onClick={closeEditModal}
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="btn btn-gold px-4 py-2 rounded-3"
+                                    disabled={processing}
+                                >
+                                    {processing ? 'Salvando...' : 'Salvar Alterações'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </Modal>
             </div>
         </AuthenticatedLayout>
     );

@@ -133,14 +133,14 @@ body {
     border: 1px solid #dee2e6 !important;
     color: #6c757d !important;
     border-radius: 0 10px 10px 0 !important;
-    transition: all 0.3s ease !important;
+    /* transition: all 0.3s ease !important; */
 }
-
+/* 
 .btn-filter-gold:hover {
     background-color: var(--primary-button) !important;
     border-color: var(--primary-button) !important;
     color: #fff !important;
-}
+} */
 
 .gold-link {
     color: var(--primary-button);
