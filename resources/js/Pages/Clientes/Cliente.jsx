@@ -2,7 +2,7 @@ import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 
-export default function Show() {
+export default function Cliente() {
     const [activeTab, setActiveTab] = useState('agendamentos');
 
     const customer = {

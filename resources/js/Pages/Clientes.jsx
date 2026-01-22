@@ -138,12 +138,12 @@ export default function Clientes() {
                                                         </span>
                                                     </div>
                                                     <div className="col-md-2 text-end">
-                                                        <Link href={route('clientes.show')} className="btn btn-sm text-white px-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>Ver Mais</Link>
+                                                        <Link href={route('clientes.cliente')} className="btn btn-sm text-white px-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>Ver Mais</Link>
                                                     </div>
                                                 </div>
                                                 {/* Mobile Button */}
                                                 <div className="col-12 text-end d-md-none">
-                                                    <Link href={route('clientes.show')} className="btn btn-sm text-white px-4 py-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>Ver Mais</Link>
+                                                    <Link href={route('clientes.cliente')} className="btn btn-sm text-white px-4 py-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>Ver Mais</Link>
                                                 </div>
                                             </div>
                                         </div>
