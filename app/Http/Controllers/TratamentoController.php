@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Models\Tratamento;
+use Inertia\Inertia;
+
 class TratamentoController extends Controller
 {
     /**
@@ -11,23 +14,30 @@ class TratamentoController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $tratamentos = Tratamento::latest()->get();
+        return Inertia::render('Tratamentos', [
+            'tratamentos' => $tratamentos
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function storeTratamento(Request $request)
     {
-        //
+        $request->validate([
+            'nome' => 'required|string|max:100',
+            'duracao' => 'required|integer|min:1',
+            'preco' => 'required|numeric|min:0',
+        ]);
+
+        Tratamento::create([
+            'nome' => $request->nome,
+            'duracao' => $request->duracao,
+            'preco' => $request->preco,
+        ]);
+
+        return redirect()->route('tratamentos')->with('message', 'Tratamento adicionado com sucesso');
     }
 
     /**
@@ -49,16 +59,32 @@ class TratamentoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'nome' => 'required|string|max:100',
+            'duracao' => 'required|integer|min:1',
+            'preco' => 'required|numeric|min:0',
+        ]);
+
+        $tratamento = Tratamento::findOrFail($id);
+        $tratamento->update([
+            'nome' => $request->nome,
+            'duracao' => $request->duracao,
+            'preco' => $request->preco,
+        ]);
+
+        return redirect()->route('tratamentos')->with('message', 'Tratamento atualizado com sucesso');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $tratamento = Tratamento::findOrFail($id);
+        $tratamento->delete();
+
+        return redirect()->route('tratamentos')->with('message', 'Tratamento excluído com sucesso');
     }
 }

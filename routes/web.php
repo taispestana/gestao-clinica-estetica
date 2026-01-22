@@ -4,6 +4,9 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProdutoController;
+use App\Http\Controllers\TratamentoController;
 
 Route::get('/', function () {
     return Inertia::render('Auth/Login', [
@@ -16,29 +19,30 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/clientes', function () {
-    return Inertia::render('Clientes');
-})->middleware(['auth', 'verified'])->name('clientes');
+Route::get('/clientes', [UserController::class, 'index'])->middleware(['auth', 'verified'])->name('clientes');
 
-Route::get('/clientes/detalhes', function () {
-    return Inertia::render('Clientes/Cliente');
-})->middleware(['auth', 'verified'])->name('clientes.cliente');
+Route::get('/clientes/{id}', [UserController::class, 'show'])->middleware(['auth', 'verified'])->name('clientes.show');
+Route::put('/clientes/{id}', [UserController::class, 'update'])->middleware(['auth', 'verified'])->name('clientes.update');
+
+
 
 Route::get('/agendamentos', function () {
     return Inertia::render('Agendamentos');
 })->middleware(['auth', 'verified'])->name('agendamentos');
 
-Route::get('/tratamentos', function () {
-    return Inertia::render('Tratamentos');
-})->middleware(['auth', 'verified'])->name('tratamentos');
+Route::get('/tratamentos', [TratamentoController::class, 'index'])->middleware(['auth', 'verified'])->name('tratamentos');
+Route::post('/storeTratamento', [TratamentoController::class, 'storeTratamento'])->name('tratamentos.store');
+Route::put('/tratamentos/{id}', [TratamentoController::class, 'update'])->middleware(['auth', 'verified'])->name('tratamentos.update');
+Route::delete('/tratamentos/{id}', [TratamentoController::class, 'destroy'])->middleware(['auth', 'verified'])->name('tratamentos.destroy');
 
 Route::get('/mensagens', function () {
     return Inertia::render('Mensagens');
 })->middleware(['auth', 'verified'])->name('mensagens');
 
-Route::get('/estoque', function () {
-    return Inertia::render('Estoque');
-})->middleware(['auth', 'verified'])->name('estoque');
+Route::get('/estoque', [ProdutoController::class, 'index'])->middleware(['auth', 'verified'])->name('estoque');
+Route::post('/storeProduto', [ProdutoController::class, 'storeProduto'])->name('estoque.storeProduto');
+Route::put('/estoque/{id}', [ProdutoController::class, 'update'])->middleware(['auth', 'verified'])->name('estoque.update');
+Route::delete('/estoque/{id}', [ProdutoController::class, 'destroy'])->middleware(['auth', 'verified'])->name('estoque.destroy');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -49,3 +53,4 @@ Route::middleware('auth')->group(function () {
 require __DIR__ . '/auth.php';
 
 
+Route::post('/storeUser', [UserController::class, 'storeUser'])->name('users.storeUser');
