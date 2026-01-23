@@ -466,8 +466,13 @@ export default function Estoque({ produtos = [] }) {
                 </div>
             </Modal>
             {/* Modal de Confirmação de Exclusão */}
-            <Modal show={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} maxWidth="sm">
-                <div className="p-4 p-md-5 text-center bg-white rounded-4">
+            <Modal
+                show={showDeleteConfirm}
+                onClose={() => setShowDeleteConfirm(false)}
+                maxWidth="md"
+                style={{ boxShadow: 'none', height: '380px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+            >
+                <div className="p-4 p-md-5 text-center">
                     <div className="mb-4">
                         <div className="d-inline-flex align-items-center justify-content-center rounded-circle border border-warning" style={{ width: '80px', height: '80px', borderSize: '2px !important' }}>
                             <i className="bi bi-exclamation-lg text-warning" style={{ fontSize: '3rem' }}></i>
