@@ -6,6 +6,8 @@ export default function Modal({
     show = false,
     maxWidth = '2xl',
     onClose = () => { },
+    style = {},
+    overlayStyle = {},
 }) {
     // Lock body scroll when modal is open
     useEffect(() => {
@@ -42,20 +44,23 @@ export default function Modal({
                 alignItems: 'center',
                 justifyContent: 'center',
                 zIndex: 99999,
-                padding: '1rem'
+                padding: '1rem',
+                ...overlayStyle
             }}
             onClick={onClose}
         >
             <div
                 style={{
-                    backgroundColor: 'var(--white)',
+                    backgroundColor: '#FFFFFF',
                     width: '100%',
                     maxWidth: maxWidthClass,
                     borderRadius: '16px',
                     boxShadow: '0 25px 50px -12px var(--bg-transparent)',
                     overflow: 'hidden',
                     position: 'relative',
-                    zIndex: 100000
+                    zIndex: 100000,
+                    border: 'none',
+                    ...style
                 }}
                 onClick={(e) => e.stopPropagation()}
             >

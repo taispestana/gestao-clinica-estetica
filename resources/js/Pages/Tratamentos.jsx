@@ -59,7 +59,9 @@ export default function Tratamentos({ tratamentos = [] }) {
         });
     };
 
-    const handleDelete = () => setShowDeleteConfirm(true);
+    const handleDelete = () => {
+        setShowDeleteConfirm(true);
+    };
 
     const confirmDelete = () => {
         editDelete(route('tratamentos.destroy', editingTreatmentId), {
@@ -226,7 +228,7 @@ export default function Tratamentos({ tratamentos = [] }) {
             </AuthenticatedLayout>
 
             <Modal show={showNewTreatmentModal} onClose={closeModal} maxWidth="md">
-                <div className="p-4 p-md-5 bg-white">
+                <div className="p-4 p-md-5">
                     <h4 className="fw-bold mb-4" style={{ color: 'var(--main-text)' }}>Novo Tratamento</h4>
 
                     <form onSubmit={handleSubmit}>
@@ -281,7 +283,7 @@ export default function Tratamentos({ tratamentos = [] }) {
 
             {/* Modal Editar Tratamento */}
             <Modal show={showEditTreatmentModal} onClose={closeEditModal} maxWidth="md">
-                <div className="p-4 p-md-5 bg-white">
+                <div className="p-4 p-md-5">
                     <h4 className="fw-bold mb-4" style={{ color: 'var(--main-text)' }}>Editar Tratamento</h4>
 
                     <form onSubmit={handleEditSubmit}>
@@ -342,8 +344,13 @@ export default function Tratamentos({ tratamentos = [] }) {
             </Modal>
 
             {/* Modal de Confirmação de Exclusão */}
-            <Modal show={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} maxWidth="sm">
-                <div className="p-4 p-md-5 text-center bg-white rounded-4">
+            <Modal
+                show={showDeleteConfirm}
+                onClose={() => setShowDeleteConfirm(false)}
+                maxWidth="md"
+                style={{ boxShadow: 'none', height: '380px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+            >
+                <div className="p-4 p-md-5 text-center">
                     <div className="mb-4">
                         <div className="d-inline-flex align-items-center justify-content-center rounded-circle border border-warning" style={{ width: '80px', height: '80px', borderSize: '2px !important' }}>
                             <i className="bi bi-exclamation-lg text-warning" style={{ fontSize: '3rem' }}></i>

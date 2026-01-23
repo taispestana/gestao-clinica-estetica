@@ -135,7 +135,7 @@ body {
     border-radius: 0 10px 10px 0 !important;
     /* transition: all 0.3s ease !important; */
 }
-/* 
+/*
 .btn-filter-gold:hover {
     background-color: var(--primary-button) !important;
     border-color: var(--primary-button) !important;
@@ -197,14 +197,12 @@ body {
 /* Altura dinâmica para os dias do calendário */
 .calendar-grid-day {
     height: 90px;
-    /* Desktop/Tablet */
     transition: all 0.2s ease;
 }
 
 @media (max-width: 768px) {
     .calendar-grid-day {
         height: 60px !important;
-        /* Mobile mais curto igual imagem 2 */
         font-size: 0.8rem;
     }
 
@@ -219,7 +217,7 @@ body {
     }
 }
 
-/* Estilo da barra de progresso igual imagem 2 */
+/* Estilo da barra de progresso */
 .progress-custom {
     height: 8px;
     background-color: var(--main-green-light);
@@ -241,7 +239,7 @@ body {
 }
 
 .stat-card-title {
-    font-size: 10px;
+    font-size: 13px;
     line-height: 1.2;
     color: var(--main-text);
     transition: font-size 0.2s ease;
