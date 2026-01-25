@@ -46,6 +46,7 @@ export default function Cliente({ cliente }) {
         name: cliente.name,
         since: new Date(cliente.created_at).toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' }),
         age: calculateAge(cliente.data_nascimento),
+        data_nascimento: cliente.data_nascimento,
         status: 'Ativo',
         phone: cliente.telemovel,
         email: cliente.email,
@@ -55,32 +56,33 @@ export default function Cliente({ cliente }) {
     };
 
     const stats = {
-        totalSessions: 28,
-        lastVisit: '15/12/2025',
-        nextProcedure: '10/01/2026',
-        totalSpent: '3.240 €'
+        totalSessions: cliente.agendamentos?.filter(a => a.estado_agendamento === 3).length || 0,
+        lastVisit: cliente.agendamentos?.filter(a => a.estado_agendamento === 3).length > 0
+            ? new Date(Math.max(...cliente.agendamentos.filter(a => a.estado_agendamento === 3).map(a => new Date(a.data_hora_inicio))))
+                .toLocaleDateString('pt-PT')
+            : 'N/A',
+        nextProcedure: cliente.agendamentos?.filter(a => new Date(a.data_hora_inicio) > new Date() && a.estado_agendamento <= 2).length > 0
+            ? new Date(Math.min(...cliente.agendamentos.filter(a => new Date(a.data_hora_inicio) > new Date() && a.estado_agendamento <= 2).map(a => new Date(a.data_hora_inicio))))
+                .toLocaleDateString('pt-PT')
+            : 'NENHUM',
+        totalSpent: new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' })
+            .format(cliente.agendamentos?.filter(a => a.estado_agendamento === 3).reduce((acc, a) => acc + (a.tratamento?.preco || 0), 0) || 0)
     };
 
-    const appointments = [
-        {
-            title: 'Massagem Terapêutica',
-            therapist: 'Danielle',
-            date: '10/01/2026',
-            price: '80 €'
-        },
-        {
-            title: 'Limpeza de Pele Profunda',
-            therapist: 'Danielle',
-            date: '15/01/2026',
-            price: '80 €'
-        },
-        {
-            title: 'Peeling Químico',
-            therapist: 'Danielle',
-            date: '15/02/2026',
-            price: '80 €'
-        }
-    ];
+    const appointments = cliente.agendamentos
+        ?.filter(apt => new Date(apt.data_hora_inicio) >= new Date() && apt.estado_agendamento <= 2)
+        .map(apt => ({
+            title: apt.tratamento?.nome || 'Tratamento',
+            therapist: apt.profissional?.name || 'Profissional',
+            date: new Date(apt.data_hora_inicio).toLocaleDateString('pt-PT', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }),
+            price: new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(apt.tratamento?.preco || 0)
+        })) || [];
 
     const procedureHistory = [
         {
@@ -230,9 +232,9 @@ export default function Cliente({ cliente }) {
                                 <>
                                     <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
                                         <h5 className="mb-0">Agendamentos</h5>
-                                        <button className="btn btn-gold px-4 py-2" style={{ borderRadius: '8px' }}>
-                                            <span className="me-2">+</span> Novo Procedimento
-                                        </button>
+                                        <Link href={route('agendamentos')} className="btn btn-gold px-4 py-2" style={{ borderRadius: '8px' }}>
+                                            <span className="me-2" >+</span> Novo Procedimento
+                                        </Link>
                                     </div>
 
                                     <div className="d-flex flex-column gap-3 mb-4">
@@ -252,11 +254,13 @@ export default function Cliente({ cliente }) {
                                         ))}
                                     </div>
 
-                                    <div className="text-center mt-auto pt-3">
-                                        <button className="btn btn-gold px-5 py-2" style={{ borderRadius: '8px' }}>
-                                            Ver Mais Agendamentos
-                                        </button>
-                                    </div>
+                                    {appointments.length > 5 && (
+                                        <div className="text-center mt-auto pt-3">
+                                            <button className="btn btn-gold px-5 px-md-5 py-2" style={{ borderRadius: '8px', paddingLeft: '3rem !important', paddingRight: '3rem !important' }}>
+                                                Ver Mais Agendamentos
+                                            </button>
+                                        </div>
+                                    )}
                                 </>
                             )}
 
@@ -284,7 +288,7 @@ export default function Cliente({ cliente }) {
                                             </div>
                                             <div className="col-8 col-md-5">
                                                 <label className="form-label small text-secondary mb-1">Data de Nascimento</label>
-                                                <input type="text" className="form-control bg-light border-0 py-2" placeholder="27/09/1989" />
+                                                <input type="text" className="form-control bg-light border-0 py-2" defaultValue={customer.data_nascimento} />
                                             </div>
                                             <div className="col-md-4">
                                                 <label className="form-label small text-secondary mb-1">Telemóvel</label>
@@ -582,9 +586,9 @@ export default function Cliente({ cliente }) {
                                 <div className="procedure-history">
                                     <div className="d-flex justify-content-between align-items-center mb-4">
                                         <h5 className="mb-0">Histórico de Procedimentos</h5>
-                                        <button className="btn btn-gold px-4 py-2" style={{ borderRadius: '8px' }}>
+                                        {/* <button className="btn btn-gold px-4 py-2" style={{ borderRadius: '8px' }}>
                                             <span className="me-2">+</span> Novo Procedimento
-                                        </button>
+                                        </button> */}
                                     </div>
 
                                     <div className="d-flex flex-column gap-3 mb-4">
@@ -602,7 +606,7 @@ export default function Cliente({ cliente }) {
                                     </div>
 
                                     <div className="text-center mt-4">
-                                        <button className="btn btn-gold px-5 py-2" style={{ borderRadius: '8px' }}>
+                                        <button className="btn btn-gold px-5 px-md-5 py-2" style={{ borderRadius: '8px', paddingLeft: '3rem !important', paddingRight: '3rem !important' }}>
                                             Ver Mais Procedimentos
                                         </button>
                                     </div>
