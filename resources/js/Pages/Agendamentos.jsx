@@ -1,18 +1,113 @@
 import { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
+const SearchableSelect = ({ label, options, value, onChange, placeholder, error, displayKey = 'name' }) => {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [isOpen, setIsOpen] = useState(false);
 
-export default function Agendamentos() {
+    // Encontrar o item selecionado para mostrar o nome quando fechar ou carregar
+    useEffect(() => {
+        if (value) {
+            const selected = options.find(opt => opt.id == value);
+            if (selected) {
+                setSearchTerm(selected[displayKey]);
+            }
+        } else {
+            setSearchTerm('');
+        }
+    }, [value, options, displayKey]);
+
+    const filteredOptions = options.filter(opt =>
+        opt[displayKey].toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const handleSelect = (option) => {
+        onChange(option.id);
+        setSearchTerm(option[displayKey]);
+        setIsOpen(false);
+    };
+
+    return (
+        <div className="mb-3 position-relative">
+            <label className="form-label small text-muted">{label}</label>
+            <input
+                type="text"
+                className={`form-control bg-light border-0 ${error ? 'is-invalid' : ''}`}
+                placeholder={placeholder}
+                value={searchTerm}
+                onChange={(e) => {
+                    const val = e.target.value;
+                    setSearchTerm(val);
+                    if (val.length > 0) {
+                        setIsOpen(true);
+                    } else {
+                        setIsOpen(false);
+                        onChange('');
+                    }
+                }}
+                onBlur={() => setTimeout(() => setIsOpen(false), 200)} // Delay para permitir o click na lista
+            />
+            {error && <div className="invalid-feedback">{error}</div>}
+
+            {isOpen && searchTerm.length > 0 && filteredOptions.length > 0 && (
+                <div className="position-absolute w-100 bg-white border shadow-sm rounded-bottom" style={{ zIndex: 1000, maxHeight: '200px', overflowY: 'auto' }}>
+                    {filteredOptions.map(opt => (
+                        <div
+                            key={opt.id}
+                            className="p-2 border-bottom small cursor-pointer hover-bg-light"
+                            style={{ cursor: 'pointer' }}
+                            onMouseDown={(e) => {
+                                e.preventDefault(); // Evita que o onBlur dispare antes do click
+                                handleSelect(opt);
+                            }}
+                        >
+                            {opt[displayKey]}
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default function Agendamentos({ clientes = [], tratamentos = [] }) {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [view, setView] = useState('month'); // 'mês', 'semana', 'dia'
     const [isVoucher, setIsVoucher] = useState(false);
+
+    const { data, setData, post, processing, errors, reset } = useForm({
+        tratamento_id: '',
+        cliente_id: '',
+        voucher: '',
+        data: new Date().toISOString().split('T')[0],
+        inicio: '09:00',
+        fim: '10:00',
+    });
+
+    // Update form date when selectedDate changes from calendar
+    useEffect(() => {
+        if (selectedDate) {
+            setData('data', formatDateForInput(selectedDate));
+        }
+    }, [selectedDate]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        post(route('agendamentos.store'), {
+            onSuccess: () => {
+                reset();
+                setIsVoucher(false);
+            },
+        });
+    };
 
     const stats = [
         { title: 'Agendamentos Hoje', value: '0', icon: 'calendar', color: 'var(--status-green)' },
         { title: 'Agendamentos Semanal', value: '0', icon: 'calendar-week', color: 'var(--status-green)' },
         { title: 'Agendamento Mensal', value: '0', icon: 'calendar-month', color: 'var(--status-green)' },
     ];
+
 
     // Helpers
     const getDaysInMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -376,23 +471,26 @@ export default function Agendamentos() {
                         <div className="col-12 col-md-6 col-xl-12">
                             <div className="card border-0 shadow-sm p-4 h-100">
                                 <h5 className="card-title fw-bold mb-3">Adicionar Marcação</h5>
-                                <form>
-                                    <div className="mb-3">
-                                        <label className="form-label small text-muted">Tratamento</label>
-                                        <select className="form-select bg-light border-0">
-                                            <option></option>
-                                            <option>Limpeza de Pele</option>
-                                            <option>Massagem</option>
-                                        </select>
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="form-label small text-muted">Cliente</label>
-                                        <select className="form-select bg-light border-0">
-                                            <option></option>
-                                            <option>Ana Costa</option>
-                                            <option>Carla Santos</option>
-                                        </select>
-                                    </div>
+                                <form onSubmit={handleSubmit}>
+                                    <SearchableSelect
+                                        label="Tratamento"
+                                        options={tratamentos}
+                                        value={data.tratamento_id}
+                                        onChange={(val) => setData('tratamento_id', val)}
+                                        placeholder="Pesquisar tratamento..."
+                                        error={errors.tratamento_id}
+                                        displayKey="nome"
+                                    />
+
+                                    <SearchableSelect
+                                        label="Cliente"
+                                        options={clientes}
+                                        value={data.cliente_id}
+                                        onChange={(val) => setData('cliente_id', val)}
+                                        placeholder="Pesquisar cliente..."
+                                        error={errors.cliente_id}
+                                        displayKey="name"
+                                    />
                                     <div className="mb-3">
                                         <div className="form-check">
                                             <input
@@ -410,6 +508,8 @@ export default function Agendamentos() {
                                                     type="text"
                                                     className="form-control bg-light border-0 py-2 small"
                                                     placeholder="Código ou detalhes do voucher"
+                                                    value={data.voucher}
+                                                    onChange={e => setData('voucher', e.target.value)}
                                                 />
                                             </div>
                                         )}
@@ -419,9 +519,10 @@ export default function Agendamentos() {
                                         <input
                                             type="date"
                                             className="form-date bg-light border-0 text-muted small w-100"
-                                            key={`date-${selectedDate.getTime()}`}
-                                            defaultValue={formatDateForInput(selectedDate)}
+                                            value={data.data}
+                                            onChange={e => setData('data', e.target.value)}
                                         />
+                                        {errors.data && <div className="text-danger small">{errors.data}</div>}
                                     </div>
                                     <div className="row mb-4">
                                         <div className="col-6">
@@ -429,19 +530,25 @@ export default function Agendamentos() {
                                             <input
                                                 type="time"
                                                 className="form-control bg-light border-0 text-muted small w-100"
-                                                defaultValue="09:00"
+                                                value={data.inicio}
+                                                onChange={e => setData('inicio', e.target.value)}
                                             />
+                                            {errors.inicio && <div className="text-danger small">{errors.inicio}</div>}
                                         </div>
                                         <div className="col-6">
                                             <label className="form-label small text-muted">Fim</label>
                                             <input
                                                 type="time"
                                                 className="form-control bg-light border-0 text-muted small w-100"
-                                                defaultValue="10:00"
+                                                value={data.fim}
+                                                onChange={e => setData('fim', e.target.value)}
                                             />
+                                            {errors.fim && <div className="text-danger small">{errors.fim}</div>}
                                         </div>
                                     </div>
-                                    <button type="button" className="btn w-100 text-white fw-medium" style={{ backgroundColor: 'var(--primary-button)' }}>+ Agendar</button>
+                                    <button type="submit" disabled={processing} className="btn w-100 text-white fw-medium" style={{ backgroundColor: 'var(--primary-button)' }}>
+                                        {processing ? 'Agendando...' : '+ Agendar'}
+                                    </button>
                                 </form>
                             </div>
                         </div>

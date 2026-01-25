@@ -68,7 +68,7 @@ export default function Mensagens() {
             </div>
 
             {/* Tabela de Marcações */}
-            <h2 className="h5 fw-bold text-dark mb-3">Lembrar Marcação</h2>
+            <h2 className="h5 fw-bold text-dark mb-3 mt-5">Lembrar Marcação</h2>
             <div className="row mb-5">
                 <div className="col-12">
                     <div className="card border-0 shadow-sm p-4">
@@ -84,11 +84,21 @@ export default function Mensagens() {
                             {appointments.map((appointment, idx) => (
                                 <div key={idx} className="card border-0 shadow-sm p-4 bg-white rounded-4">
                                     <div className="row align-items-center mb-3">
-                                        <div className="col-12 mb-3 d-md-none">
-                                            <div className="fw-bold fs-5 text-dark mb-1">{appointment.name}</div>
-                                            <div className="d-flex justify-content-between align-items-center">
-                                                <div className="text-secondary small">{appointment.contacto}</div>
-                                                <div className="text-secondary small">{appointment.data}</div>
+                                        <div className="col-12 d-md-none">
+                                            <div className="mb-1">
+                                                <span className="text-secondary small">Nome: </span>
+                                                <span className="fw-bold text-dark">{appointment.name}</span>
+                                            </div>
+                                            <div className="mb-1">
+                                                <span className="text-secondary small">Contacto: </span>
+                                                <span className="text-dark small">{appointment.contacto}</span>
+                                            </div>
+                                            <div className="d-flex justify-content-between align-items-center mt-2">
+                                                <div>
+                                                    <span className="text-secondary small">Data: </span>
+                                                    <span className="fw-bold text-dark small">{appointment.data}</span>
+                                                </div>
+                                                <button className="btn btn-gold btn-sm px-xl-4" style={{ borderRadius: '8px' }}>Enviar Mensagem</button>
                                             </div>
                                         </div>
 
@@ -104,13 +114,8 @@ export default function Mensagens() {
                                                 <span className="text-secondary">{appointment.data}</span>
                                             </div>
                                             <div className="col-md-2 text-end">
-                                                <button className="btn btn-gold btn-sm px-2" style={{ borderRadius: '8px' }}>Enviar Mensagem</button>
+                                                <button className="btn btn-gold btn-sm px-xl-4 py-2" style={{ borderRadius: '8px' }}>Enviar Mensagem</button>
                                             </div>
-                                        </div>
-
-                                        {/* Mobile Button */}
-                                        <div className="col-12 text-end d-md-none">
-                                            <button className="btn btn-gold btn-sm px-4 py-2" style={{ borderRadius: '8px' }}>Enviar Mensagem</button>
                                         </div>
                                     </div>
                                 </div>
@@ -136,11 +141,21 @@ export default function Mensagens() {
                             {appointments.map((appointment, idx) => (
                                 <div key={idx} className="card border-0 shadow-sm p-4 bg-white rounded-4">
                                     <div className="row align-items-center mb-3">
-                                        <div className="col-12 mb-3 d-md-none">
-                                            <div className="fw-bold fs-5 text-dark mb-1">{appointment.name}</div>
-                                            <div className="d-flex justify-content-between align-items-center">
-                                                <div className="text-secondary small">{appointment.contacto}</div>
-                                                <div className="text-secondary small">{appointment.data}</div>
+                                        <div className="col-12 d-md-none">
+                                            <div className="mb-1">
+                                                <span className="text-secondary small">Nome: </span>
+                                                <span className="fw-bold text-dark">{appointment.name}</span>
+                                            </div>
+                                            <div className="mb-1">
+                                                <span className="text-secondary small">Contacto: </span>
+                                                <span className="text-dark small">{appointment.contacto}</span>
+                                            </div>
+                                            <div className="d-flex justify-content-between align-items-center mt-2">
+                                                <div>
+                                                    <span className="text-secondary small">Data: </span>
+                                                    <span className="fw-bold text-dark small">{appointment.data}</span>
+                                                </div>
+                                                <button className="btn btn-gold btn-sm px-xl-4 py-2" style={{ borderRadius: '8px' }}>Enviar Mensagem</button>
                                             </div>
                                         </div>
 
@@ -156,13 +171,8 @@ export default function Mensagens() {
                                                 <span className="text-secondary">{appointment.data}</span>
                                             </div>
                                             <div className="col-md-2 text-end">
-                                                <button className="btn btn-gold btn-sm px-2" style={{ borderRadius: '8px' }}>Enviar Mensagem</button>
+                                                <button className="btn btn-gold btn-sm px-xl-4 py-2" style={{ borderRadius: '8px' }}>Enviar Mensagem</button>
                                             </div>
-                                        </div>
-
-                                        {/* Mobile Button */}
-                                        <div className="col-12 text-end d-md-none">
-                                            <button className="btn btn-gold btn-sm px-4 py-2" style={{ borderRadius: '8px' }}>Enviar Mensagem</button>
                                         </div>
                                     </div>
                                 </div>

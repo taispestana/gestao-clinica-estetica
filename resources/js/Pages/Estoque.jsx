@@ -267,12 +267,12 @@ export default function Estoque({ produtos = [] }) {
                                                 <div className="col-4 text-muted small fw-bold">Quantidade:</div>
                                                 <div className="col-8 text-secondary small">{produto.stock} unid.</div>
                                             </div>
-                                            <div className="row mb-3">
-                                                <div className="col-4 text-muted small fw-bold">Validade:</div>
-                                                <div className="col-8 text-secondary small">{produto.data_validade ? new Date(produto.data_validade).toLocaleDateString('pt-BR') : '-'}</div>
-                                            </div>
                                             <div className="row">
-                                                <div className="col-12 text-end">
+                                                <div className="col-12 d-flex justify-content-between align-items-center">
+                                                    <div className="d-flex align-items-center flex-grow-1">
+                                                        <span className="text-muted small fw-bold me-2" style={{ width: '33.33%' }}>Validade:</span>
+                                                        <span className="text-secondary small">{produto.data_validade ? new Date(produto.data_validade).toLocaleDateString('pt-BR') : '-'}</span>
+                                                    </div>
                                                     <button
                                                         className="btn btn-sm text-white px-4 py-2"
                                                         style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}

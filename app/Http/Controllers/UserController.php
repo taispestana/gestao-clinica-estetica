@@ -60,7 +60,13 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $cliente = User::findOrFail($id);
+        $cliente = User::with([
+            'agendamentos.tratamento',
+            'agendamentos.profissional',
+            'anamnese',
+            'historicoTratamentos.anamnese'
+        ])->findOrFail($id);
+
         return Inertia::render('Clientes/Cliente', [
             'cliente' => $cliente
         ]);

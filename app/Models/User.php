@@ -61,4 +61,19 @@ class User extends Authenticatable
             ->withPivot('tipo_mensagem', 'estado_mensagem', 'data_envio')
             ->withTimestamps();
     }
+
+    public function agendamentos()
+    {
+        return $this->hasMany(Agendamento::class, 'cliente_id');
+    }
+
+    public function anamnese()
+    {
+        return $this->hasOne(Anamnese::class);
+    }
+
+    public function historicoTratamentos()
+    {
+        return $this->hasMany(HistoricoTratamento::class);
+    }
 }
