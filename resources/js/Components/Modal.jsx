@@ -1,65 +1,73 @@
-import {
-    Dialog,
-    DialogPanel,
-    Transition,
-    TransitionChild,
-} from '@headlessui/react';
+import { createPortal } from 'react-dom';
+import { useEffect } from 'react';
 
 export default function Modal({
     children,
     show = false,
     maxWidth = '2xl',
-    closeable = true,
-    onClose = () => {},
+    onClose = () => { },
+    style = {},
+    overlayStyle = {},
 }) {
-    const close = () => {
-        if (closeable) {
-            onClose();
+    // Lock body scroll when modal is open
+    useEffect(() => {
+        if (show) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
         }
-    };
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [show]);
+
+    if (!show) return null;
 
     const maxWidthClass = {
-        sm: 'sm:max-w-sm',
-        md: 'sm:max-w-md',
-        lg: 'sm:max-w-lg',
-        xl: 'sm:max-w-xl',
-        '2xl': 'sm:max-w-2xl',
-    }[maxWidth];
+        sm: '400px',
+        md: '500px',
+        lg: '600px',
+        xl: '800px',
+        '2xl': '1000px',
+    }[maxWidth] || '500px';
 
-    return (
-        <Transition show={show} leave="duration-200">
-            <Dialog
-                as="div"
-                id="modal"
-                className="fixed inset-0 z-50 flex transform items-center overflow-y-auto px-4 py-6 transition-all sm:px-0"
-                onClose={close}
+    const modalContent = (
+        <div
+            style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100vw',
+                height: '100vh',
+                backgroundColor: 'var(--bg-transparent)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 99999,
+                padding: '1rem',
+                ...overlayStyle
+            }}
+            onClick={onClose}
+        >
+            <div
+                style={{
+                    backgroundColor: '#FFFFFF',
+                    width: '100%',
+                    maxWidth: maxWidthClass,
+                    borderRadius: '16px',
+                    boxShadow: '0 25px 50px -12px var(--bg-transparent)',
+                    overflow: 'hidden',
+                    position: 'relative',
+                    zIndex: 100000,
+                    border: 'none',
+                    ...style
+                }}
+                onClick={(e) => e.stopPropagation()}
             >
-                <TransitionChild
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                >
-                    <div className="absolute inset-0 bg-gray-500/75" />
-                </TransitionChild>
-
-                <TransitionChild
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    enterTo="opacity-100 translate-y-0 sm:scale-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                >
-                    <DialogPanel
-                        className={`mb-6 transform overflow-hidden rounded-lg bg-white shadow-xl transition-all sm:mx-auto sm:w-full ${maxWidthClass}`}
-                    >
-                        {children}
-                    </DialogPanel>
-                </TransitionChild>
-            </Dialog>
-        </Transition>
+                {children}
+            </div>
+        </div>
     );
+
+    return createPortal(modalContent, document.body);
 }

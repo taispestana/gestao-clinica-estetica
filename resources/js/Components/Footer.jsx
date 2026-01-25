@@ -1,0 +1,16 @@
+
+import React from 'react';
+
+const Footer = () => {
+    return (
+        <footer className="fixed-bottom w-100 py-2" style={{ backgroundColor: 'var(--dark-green)' }}>
+        <div className="container text-center">
+            <p className="text-white small fw-light mb-0">
+            Desenvolvido com <span className="text-danger">❤️</span> por Equipa Vértice
+            </p>
+        </div>
+        </footer>
+    );
+    };
+
+export default Footer;

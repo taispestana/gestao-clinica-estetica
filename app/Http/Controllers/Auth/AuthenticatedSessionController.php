@@ -20,6 +20,7 @@ class AuthenticatedSessionController extends Controller
     {
         return Inertia::render('Auth/Login', [
             'canResetPassword' => Route::has('password.request'),
+            'canRegister' => Route::has('register'),
             'status' => session('status'),
         ]);
     }
@@ -49,4 +50,17 @@ class AuthenticatedSessionController extends Controller
 
         return redirect('/');
     }
+    /**
+ * Mensagens de login em português.
+ */
+public function messages(): array
+{
+    return [
+        'email.required' => 'Por favor, insira o seu e-mail.',
+        'email.exists'   => 'Este e-mail não foi encontrado no nosso sistema.',
+        'password.required' => 'A senha é obrigatória para aceder ao sistema.',
+        'password.min'      => 'A senha deve ter pelo menos 8 caracteres.',
+        'throttle'          => 'Demasiadas tentativas de login. Por favor, tente novamente em :seconds segundos.',
+    ];
+}
 }

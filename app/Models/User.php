@@ -21,6 +21,14 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'data_nascimento',
+        'telemovel',
+        'nif',
+        'endereco',
+        'profissao',
+        'estado_fidelidade',
+        'especialidade',
+        'tipo_users',
     ];
 
     /**
@@ -44,5 +52,13 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // Relacionamentos para facilitar as queries no React
+    public function agendamentosNotificados()
+    {
+        return $this->belongsToMany(Agendamento::class, 'users_agendamento')
+            ->withPivot('tipo_mensagem', 'estado_mensagem', 'data_envio')
+            ->withTimestamps();
     }
 }

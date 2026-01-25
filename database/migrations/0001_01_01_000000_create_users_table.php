@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,10 +13,20 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+
+            // Campos adicionais do seu diagrama
+            $table->date('data_nascimento')->nullable();
+            $table->string('telemovel', 20)->nullable();
+            $table->string('nif', 40)->nullable();
+            $table->string('endereco', 100)->nullable();
+            $table->string('profissao', 40)->nullable();
+            $table->boolean('estado_fidelidade')->default(false);
+            $table->string('especialidade', 25)->nullable(); // Usado para profissionais
+            $table->integer('tipo_users')->default(1)->comment('1: Cliente, 2: Profissional');
             $table->timestamps();
         });
 

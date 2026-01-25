@@ -34,7 +34,7 @@ class RegisteredUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        ],$this->messages()); // <--- Chama a função de traduções aqui), ;
 
         $user = User::create([
             'name' => $request->name,
@@ -48,4 +48,27 @@ class RegisteredUserController extends Controller
 
         return redirect(route('dashboard', absolute: false));
     }
+
+    /**
+     * Mensagens de erro personalizadas para o registo em português.
+     */
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Por favor, indique o seu nome completo.',
+            'name.string'   => 'O nome deve conter apenas letras.',
+            'name.max'      => 'O nome não pode ter mais de 255 caracteres.',
+            
+            'email.required'  => 'O endereço de e-mail da clínica é obrigatório.',
+            'email.email'     => 'Insira um formato de e-mail válido (ex: utilizador@exemplo.com).',
+            'email.unique'    => 'Este e-mail já está registado no nosso sistema.',
+            'email.lowercase' => 'O e-mail deve ser escrito em letras minúsculas.',
+            
+            'password.required'  => 'A senha é obrigatória para aceder ao sistema.',
+            'password.confirmed' => 'A confirmação da senha não coincide com a senha digitada.',
+            'password.min'       => 'A senha deve ter pelo menos 8 caracteres.',
+        ];
+    }
+
+    
 }
