@@ -2,10 +2,13 @@ import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import Modal from '@/Components/Modal';
+import FichaAnamnese from '@/Components/FichaAnamnese';
 
 export default function Cliente({ cliente }) {
     const [activeTab, setActiveTab] = useState('agendamentos');
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showAnamneseModal, setShowAnamneseModal] = useState(false);
+    const [isEditingAnamnese, setIsEditingAnamnese] = useState(false);
 
     const { data, setData, put, processing, errors, reset } = useForm({
         name: cliente.name || '',
@@ -22,6 +25,9 @@ export default function Cliente({ cliente }) {
         setShowEditModal(false);
         reset();
     };
+
+    const openAnamneseModal = () => setShowAnamneseModal(true);
+    const closeAnamneseModal = () => setShowAnamneseModal(false);
 
     const handleUpdate = (e) => {
         e.preventDefault();
@@ -43,6 +49,7 @@ export default function Cliente({ cliente }) {
     };
 
     const customer = {
+        id: cliente.id,
         name: cliente.name,
         since: new Date(cliente.created_at).toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' }),
         age: calculateAge(cliente.data_nascimento),
@@ -265,320 +272,39 @@ export default function Cliente({ cliente }) {
                             )}
 
                             {activeTab === 'anamnese' && (
-                                <div className="anamnese-form">
-                                    <div className="d-flex justify-content-between align-items-center mb-4">
-                                        <h5 className="mb-0">Ficha de Anamnese</h5>
-                                        <button className="btn btn-gold px-4 py-2" style={{ borderRadius: '8px' }}>
-                                            <i className="bi bi-pencil-square me-2"></i>
-                                            Editar Anamnese
-                                        </button>
-                                    </div>
-
-                                    {/* Dados Pessoais */}
-                                    <div className="mb-5">
-                                        <h6 className="fw-bold mb-3">Dados Pessoais</h6>
-                                        <div className="row g-3">
-                                            <div className="col-md-12">
-                                                <label className="form-label small text-secondary mb-1">Nome Completo</label>
-                                                <input type="text" className="form-control bg-light border-0 py-2" defaultValue={customer.name} />
-                                            </div>
-                                            <div className="col-4 col-md-3">
-                                                <label className="form-label small text-secondary mb-1">Idade</label>
-                                                <input type="text" className="form-control bg-light border-0 py-2" defaultValue={customer.age} />
-                                            </div>
-                                            <div className="col-8 col-md-5">
-                                                <label className="form-label small text-secondary mb-1">Data de Nascimento</label>
-                                                <input type="text" className="form-control bg-light border-0 py-2" defaultValue={customer.data_nascimento} />
-                                            </div>
-                                            <div className="col-md-4">
-                                                <label className="form-label small text-secondary mb-1">Telemóvel</label>
-                                                <input type="text" className="form-control bg-light border-0 py-2" defaultValue={customer.phone} />
-                                            </div>
-                                            <div className="col-md-7">
-                                                <label className="form-label small text-secondary mb-1">Email</label>
-                                                <input type="email" className="form-control bg-light border-0 py-2" defaultValue={customer.email} />
-                                            </div>
-                                            <div className="col-md-5">
-                                                <label className="form-label small text-secondary mb-1">Profissão</label>
-                                                <input type="text" className="form-control bg-light border-0 py-2" defaultValue={customer.occupation} />
-                                            </div>
-                                            <div className="col-12">
-                                                <label className="form-label small text-secondary mb-1">Como nos conheceu?</label>
-                                                <div className="d-flex flex-wrap gap-x-4 gap-y-2 mt-1">
-                                                    <div className="d-flex flex-wrap gap-3">
-                                                        {['Facebook', 'Instagram', 'Indicação de amigos', 'Google/Motor de pesquisa'].map((opt, i) => (
-                                                            <div key={i} className="form-check">
-                                                                <input className="form-check-input" type="radio" name="origin" id={`opt${i}`} />
-                                                                <label className="form-check-label small" htmlFor={`opt${i}`}>
-                                                                    {opt}
-                                                                </label>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                    <div className="d-flex align-items-center gap-3">
-                                                        <div className="form-check mb-0">
-                                                            <input className="form-check-input" type="radio" name="origin" id="opt4" />
-                                                            <label className="form-check-label small" htmlFor="opt4">Passagem pela clínica</label>
-                                                        </div>
-                                                        <div className="d-flex align-items-center gap-2">
-                                                            <div className="form-check mb-0">
-                                                                <input className="form-check-input" type="radio" name="origin" id="opt-outro" />
-                                                                <label className="form-check-label small text-nowrap" htmlFor="opt-outro">Outro:</label>
-                                                            </div>
-                                                            <input type="text" className="form-control form-control-sm border-0 border-bottom bg-transparent p-0" style={{ width: '150px' }} />
-                                                        </div>
-                                                    </div>
+                                <div className="mt-2">
+                                    {cliente.anamnese ? (
+                                        <div className="d-flex flex-column gap-4">
+                                            {!isEditingAnamnese && (
+                                                <div className="d-flex justify-content-end">
+                                                    <button
+                                                        className="btn btn-gold px-4 py-2"
+                                                        style={{ borderRadius: '8px' }}
+                                                        onClick={() => setIsEditingAnamnese(true)}
+                                                    >
+                                                        <i className="bi bi-pencil-square me-2"></i>
+                                                        Editar Anamnese
+                                                    </button>
                                                 </div>
-                                            </div>
+                                            )}
+                                            <FichaAnamnese
+                                                customer={customer}
+                                                anamnese={cliente.anamnese}
+                                                readOnly={!isEditingAnamnese}
+                                                onSuccess={() => setIsEditingAnamnese(false)}
+                                            />
                                         </div>
-                                    </div>
-
-                                    {/* Hábitos Diários */}
-                                    <div className="mb-5">
-                                        <h6 className="fw-bold mb-3">Hábitos Diários</h6>
-                                        <div className="d-flex flex-column gap-3">
-                                            <div>
-                                                <label className="small text-secondary d-block mb-1">Exposição ao sol?</label>
-                                                <div className="d-flex flex-wrap gap-4">
-                                                    {['Nunca', 'Raramente', 'Frequentemente', 'Diariamente'].map((opt, i) => (
-                                                        <div key={i} className="form-check">
-                                                            <input className="form-check-input" type="radio" name="sol" id={`sol${i}`} defaultChecked={opt === 'Frequentemente'} />
-                                                            <label className="form-check-label small" htmlFor={`sol${i}`}>{opt}</label>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <label className="small text-secondary d-block mb-1">É fumador(a)?</label>
-                                                <div className="d-flex flex-wrap gap-4">
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="radio" name="fuma" id="fuma-sim" defaultChecked />
-                                                        <label className="form-check-label small" htmlFor="fuma-sim">Sim (15 cigarros/dia)</label>
-                                                    </div>
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="radio" name="fuma" id="fuma-nao" />
-                                                        <label className="form-check-label small" htmlFor="fuma-nao">Não</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <label className="small text-secondary d-block mb-1">Ingestão de líquidos (Água):</label>
-                                                <div className="d-flex flex-wrap gap-4">
-                                                    {['Menos de 1 litro/dia', '1 a 2 litros/dia', 'Mais de 2 litros/dia'].map((opt, i) => (
-                                                        <div key={i} className="form-check">
-                                                            <input className="form-check-input" type="radio" name="agua" id={`agua${i}`} defaultChecked={i === 0} />
-                                                            <label className="form-check-label small" htmlFor={`agua${i}`}>{opt}</label>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <label className="small text-secondary d-block mb-1">Alimentação predominante:</label>
-                                                <div className="d-flex flex-wrap gap-4">
-                                                    {['Equilibrada', 'Rica em açúcares/doces', 'Rica em gorduras/fritos', 'Rica em processados/fast food'].map((opt, i) => (
-                                                        <div key={i} className="form-check">
-                                                            <input className="form-check-input" type="radio" name="alimento" id={`alim${i}`} defaultChecked={i === 1} />
-                                                            <label className="form-check-label small" htmlFor={`alim${i}`}>{opt}</label>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <label className="small text-secondary d-block mb-1">Pratica atividade física?</label>
-                                                <div className="d-flex flex-wrap gap-4">
-                                                    {['Não (sedentário)', 'Sim (1-2 x /semana)', 'Sim (3 x ou mais/semana)'].map((opt, i) => (
-                                                        <div key={i} className="form-check">
-                                                            <input className="form-check-input" type="radio" name="treino" id={`treino${i}`} defaultChecked={i === 0} />
-                                                            <label className="form-check-label small" htmlFor={`treino${i}`}>{opt}</label>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
+                                    ) : (
+                                        <div className="text-center mt-auto pt-3">
+                                            <button
+                                                className="btn btn-gold px-5 px-md-5 py-2"
+                                                style={{ borderRadius: '8px', paddingLeft: '3rem !important', paddingRight: '3rem !important' }}
+                                                onClick={openAnamneseModal}
+                                            >
+                                                + Criar Anamnese
+                                            </button>
                                         </div>
-                                    </div>
-
-                                    {/* Histórico Estético e Clínico */}
-                                    <div className="mb-5">
-                                        <h6 className="fw-bold mb-3">Histórico Estético e Clínico</h6>
-                                        <div className="d-flex flex-column gap-3">
-                                            <div className="row align-items-center g-2">
-                                                <div className="col-auto">
-                                                    <label className="small text-secondary">Já realizou cirurgia plástica?</label>
-                                                </div>
-                                                <div className="col-auto d-flex align-items-center gap-4 ms-2">
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="cirurgia" id="ciru-nao" defaultChecked />
-                                                        <label className="form-check-label small" htmlFor="ciru-nao">Não</label>
-                                                    </div>
-                                                    <div className="d-flex align-items-center gap-2">
-                                                        <div className="form-check mb-0">
-                                                            <input className="form-check-input" type="radio" name="cirurgia" id="ciru-sim" />
-                                                            <label className="form-check-label small text-nowrap" htmlFor="ciru-sim">Sim (Qual(is):</label>
-                                                        </div>
-                                                        <input type="text" className="form-control form-control-sm border-0 border-bottom bg-transparent p-0" style={{ width: '300px' }} />
-                                                        <span className="small">)</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="row align-items-center g-2">
-                                                <div className="col-auto">
-                                                    <label className="small text-secondary">Já fez tratamentos estéticos anteriores?</label>
-                                                </div>
-                                                <div className="col-auto d-flex align-items-center gap-4 ms-2">
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="trat-ant" id="trat-nao" />
-                                                        <label className="form-check-label small" htmlFor="trat-nao">Não</label>
-                                                    </div>
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="trat-ant" id="trat-sim" defaultChecked />
-                                                        <label className="form-check-label small text-nowrap" htmlFor="trat-sim">Sim (Qual(is): Limpeza de pele)</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="row align-items-center g-2">
-                                                <div className="col-auto">
-                                                    <label className="small text-secondary">Faz algum tratamento médico atual?</label>
-                                                </div>
-                                                <div className="col-auto d-flex align-items-center gap-4 ms-2">
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="medico" id="med-nao" defaultChecked />
-                                                        <label className="form-check-label small" htmlFor="med-nao">Não</label>
-                                                    </div>
-                                                    <div className="d-flex align-items-center gap-2">
-                                                        <div className="form-check mb-0">
-                                                            <input className="form-check-input" type="radio" name="medico" id="med-sim" />
-                                                            <label className="form-check-label small text-nowrap" htmlFor="med-sim">Sim (Qual(is):</label>
-                                                        </div>
-                                                        <input type="text" className="form-control form-control-sm border-0 border-bottom bg-transparent p-0" style={{ width: '300px' }} />
-                                                        <span className="small">)</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="row align-items-center g-2">
-                                                <div className="col-auto">
-                                                    <label className="small text-secondary">Possui alergias?</label>
-                                                </div>
-                                                <div className="col-auto d-flex align-items-center gap-4 ms-2">
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="alergia" id="ale-nao" defaultChecked />
-                                                        <label className="form-check-label small" htmlFor="ale-nao">Não</label>
-                                                    </div>
-                                                    <div className="d-flex align-items-center gap-2">
-                                                        <div className="form-check mb-0">
-                                                            <input className="form-check-input" type="radio" name="alergia" id="ale-sim" />
-                                                            <label className="form-check-label small text-nowrap" htmlFor="ale-sim">Sim (Especifique:</label>
-                                                        </div>
-                                                        <input type="text" className="form-control form-control-sm border-0 border-bottom bg-transparent p-0" style={{ width: '300px' }} />
-                                                        <span className="small">)</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="row align-items-center g-2">
-                                                <div className="col-auto">
-                                                    <label className="small text-secondary">É diabética(o)?</label>
-                                                </div>
-                                                <div className="col-auto d-flex align-items-center gap-4 ms-2">
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="diabetes" id="dia-nao" defaultChecked />
-                                                        <label className="form-check-label small" htmlFor="dia-nao">Não</label>
-                                                    </div>
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="diabetes" id="dia-sim-1" />
-                                                        <label className="form-check-label small" htmlFor="dia-sim-1">Sim (Tipo I)</label>
-                                                    </div>
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="diabetes" id="dia-sim-2" />
-                                                        <label className="form-check-label small" htmlFor="dia-sim-2">Sim (Tipo II)</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="row align-items-center g-2">
-                                                <div className="col-auto">
-                                                    <label className="small text-secondary">Antecedentes Oncológicos?</label>
-                                                </div>
-                                                <div className="col-auto d-flex align-items-center gap-4 ms-2">
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="onco" id="onco-nao" defaultChecked />
-                                                        <label className="form-check-label small" htmlFor="onco-nao">Não</label>
-                                                    </div>
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="onco" id="onco-sim" />
-                                                        <label className="form-check-label small" htmlFor="onco-sim">Sim</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="row align-items-center g-2">
-                                                <div className="col-auto">
-                                                    <label className="small text-secondary">Anemia recente?</label>
-                                                </div>
-                                                <div className="col-auto d-flex align-items-center gap-4 ms-2">
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="anemia" id="ane-nao" defaultChecked />
-                                                        <label className="form-check-label small" htmlFor="ane-nao">Não</label>
-                                                    </div>
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="anemia" id="ane-sim" />
-                                                        <label className="form-check-label small" htmlFor="ane-sim">Sim</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="row align-items-center g-2">
-                                                <div className="col-auto">
-                                                    <label className="small text-secondary">Peso atual:</label>
-                                                </div>
-                                                <div className="col-auto d-flex align-items-center gap-2">
-                                                    <input type="text" className="form-control form-control-sm bg-light border-0 text-center" style={{ width: '60px' }} defaultValue="75" />
-                                                    <span className="small">Kg</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Observações */}
-                                    <div className="mb-5">
-                                        <label className="fw-bold mb-2">Observações</label>
-                                        <textarea className="form-control bg-light border-0 p-3" rows="4" defaultValue="Pele muito seca com alguns cravos"></textarea>
-                                    </div>
-
-                                    {/* Política de Cancelamento */}
-                                    <div className="mb-5">
-                                        <div className="d-flex align-items-center gap-2 mb-2">
-                                            <i className="bi bi-exclamation-triangle-fill text-dark"></i>
-                                            <span className="fw-bold fs-6">POLÍTICA DE CANCELAMENTO</span>
-                                        </div>
-                                        <p className="small text-dark mb-0">
-                                            <strong>Nota:</strong> Desmarcações terão de ser feitas com 48h de antecedência. Caso não ocorra, o tratamento em questão será dado como realizado ou será cobrada uma taxa de remarcação no valor de 10€.
-                                        </p>
-                                    </div>
-
-                                    {/* Assinatura */}
-                                    <div className="mb-5">
-                                        <label className="small text-secondary mb-2">Assinatura:</label>
-                                        <div className="border rounded-3 p-3 bg-white d-flex align-items-center justify-content-center" style={{ minHeight: '100px' }}>
-                                            <div className="text-center">
-                                                {/* Placeholder for signature image or canvas */}
-                                                <p className="mb-0 fs-3" style={{ fontFamily: '"Great Vibes", cursive', color: '#333' }}>Ana Maria Costa Silva</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Data e Enviar */}
-                                    <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
-                                        <div className="d-flex align-items-center gap-2">
-                                            <label className="small text-secondary mb-0">Data</label>
-                                            <input type="text" className="form-control form-control-sm bg-light border-0" value="27/08/2025" readOnly style={{ width: '150px' }} />
-                                        </div>
-                                        <button className="btn btn-gold px-5 py-2" style={{ borderRadius: '8px' }}>
-                                            Enviar
-                                        </button>
-                                    </div>
+                                    )}
                                 </div>
                             )}
 
@@ -723,6 +449,16 @@ export default function Cliente({ cliente }) {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </Modal>
+
+                {/* Anamnese Modal */}
+                <Modal show={showAnamneseModal} onClose={closeAnamneseModal} style={{ maxWidth: '43.75rem' }}>
+                    <div className="p-4">
+                        <div className="d-flex justify-content-end mb-2">
+                            <button type="button" className="btn-close" onClick={closeAnamneseModal}></button>
+                        </div>
+                        <FichaAnamnese customer={customer} onSuccess={closeAnamneseModal} />
                     </div>
                 </Modal>
             </div>

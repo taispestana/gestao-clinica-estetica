@@ -29,6 +29,8 @@ export default function Modal({
         lg: '600px',
         xl: '800px',
         '2xl': '1000px',
+        '3xl': '1200px',
+        '4xl': '1400px',
     }[maxWidth] || '500px';
 
     const modalContent = (
@@ -39,7 +41,7 @@ export default function Modal({
                 left: 0,
                 width: '100vw',
                 height: '100vh',
-                backgroundColor: 'var(--bg-transparent)',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -54,9 +56,10 @@ export default function Modal({
                     backgroundColor: '#FFFFFF',
                     width: '100%',
                     maxWidth: maxWidthClass,
+                    maxHeight: 'calc(100vh - 2rem)',
                     borderRadius: '16px',
-                    boxShadow: '0 25px 50px -12px var(--bg-transparent)',
-                    overflow: 'hidden',
+                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                    overflowY: 'auto',
                     position: 'relative',
                     zIndex: 100000,
                     border: 'none',

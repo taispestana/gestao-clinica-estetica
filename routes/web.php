@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\TratamentoController;
 use App\Http\Controllers\AgendamentoController;
+use App\Http\Controllers\AnamneseController;
 
 Route::get('/', function () {
     return Inertia::render('Auth/Login', [
@@ -29,6 +30,8 @@ Route::put('/clientes/{id}', [UserController::class, 'update'])->middleware(['au
 
 Route::get('/agendamentos', [AgendamentoController::class, 'index'])->middleware(['auth', 'verified'])->name('agendamentos');
 Route::post('/agendamentos', [AgendamentoController::class, 'store'])->middleware(['auth', 'verified'])->name('agendamentos.store');
+
+Route::post('/anamneses', [AnamneseController::class, 'store'])->middleware(['auth', 'verified'])->name('anamneses.store');
 
 Route::get('/tratamentos', [TratamentoController::class, 'index'])->middleware(['auth', 'verified'])->name('tratamentos');
 Route::post('/storeTratamento', [TratamentoController::class, 'storeTratamento'])->name('tratamentos.store');

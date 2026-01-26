@@ -28,6 +28,7 @@ class Anamnese extends Model
         'antecedentes_onco',
         'anemia_recente',
         'peso_atual',
+        'cigarros_por_dia',
         'observacoes',
         'assinatura_path',
         'data_assinatura'
