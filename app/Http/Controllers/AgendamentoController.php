@@ -18,7 +18,7 @@ class AgendamentoController extends Controller
     public function index()
     {
         $tratamentos = Tratamento::all();
-        $clientes = User::where('tipo_users', 1)->get(); // 1 = Cliente
+        $clientes = User::where('tipo_users', '=', 1)->get(); // 1 = Cliente
         $agendamentos = Agendamento::with(['cliente', 'tratamento', 'profissional'])->get();
 
         return Inertia::render('Agendamentos', [
@@ -41,29 +41,42 @@ class AgendamentoController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'cliente_id' => 'required|exists:users,id',
-            'tratamento_id' => 'required|exists:tratamentos,id',
+        $isAbsence = $request->input('is_absence', false);
+
+        $rules = [
             'data' => 'required|date',
             'inicio' => 'required',
             'fim' => 'required',
-            'voucher' => 'nullable|string',
-        ], [
+            'observacoes' => 'nullable|string',
+        ];
+
+        if ($isAbsence) {
+            $rules['motivo'] = 'required|string|max:255';
+        } else {
+            $rules['cliente_id'] = 'required|exists:users,id';
+            $rules['tratamento_id'] = 'required|exists:tratamentos,id';
+            $rules['voucher'] = 'nullable|string';
+        }
+
+        $request->validate($rules, [
             'cliente_id.required' => 'Selecione um cliente.',
             'tratamento_id.required' => 'Selecione um tratamento.',
+            'motivo.required' => 'Informe o motivo da ausência.',
         ]);
 
         Agendamento::create([
-            'cliente_id' => $request->cliente_id,
+            'cliente_id' => $isAbsence ? null : $request->cliente_id,
             'profissional_id' => Auth::id(),
-            'tratamento_id' => $request->tratamento_id,
+            'tratamento_id' => $isAbsence ? null : $request->tratamento_id,
             'data_hora_inicio' => $request->data . ' ' . $request->inicio,
             'data_hora_fim' => $request->data . ' ' . $request->fim,
-            'voucher' => $request->voucher,
-            'estado_agendamento' => 1,
+            'voucher' => $isAbsence ? null : $request->voucher,
+            'observacoes' => $request->observacoes,
+            'motivo' => $isAbsence ? $request->motivo : null,
+            'estado_agendamento' => $isAbsence ? 5 : 1,
         ]);
 
-        return redirect()->back()->with('message', 'Agendamento realizado com sucesso!');
+        return redirect()->back()->with('message', $isAbsence ? 'Ausência registrada com sucesso!' : 'Agendamento realizado com sucesso!');
     }
 
     /**
@@ -95,6 +108,13 @@ class AgendamentoController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $agendamento = Agendamento::findOrFail($id);
+
+        // Opcional: Verificar se o usuário tem permissão (ex: se é o profissional ou admin)
+        // if ($agendamento->profissional_id !== Auth::id()) { abort(403); }
+
+        $agendamento->delete();
+
+        return redirect()->back()->with('message', 'Agendamento removido com sucesso!');
     }
 }

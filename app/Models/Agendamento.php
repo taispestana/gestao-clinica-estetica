@@ -15,7 +15,8 @@ class Agendamento extends Model
         'data_hora_inicio',
         'data_hora_fim',
         'estado_agendamento',
-        'motivo'
+        'motivo',
+        'observacoes'
     ];
 
     // Relacionamentos para facilitar as queries no React

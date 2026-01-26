@@ -62,18 +62,22 @@ export default function Cliente({ cliente }) {
         occupation: cliente.profissao,
     };
 
+    const now = new Date();
+    const pastAppointments = (cliente.agendamentos || []).filter(a => new Date(a.data_hora_fim) < now && a.estado_agendamento !== 5 && a.estado_agendamento !== 4);
+    const futureAppointments = (cliente.agendamentos || []).filter(a => new Date(a.data_hora_inicio) > now && a.estado_agendamento !== 5 && a.estado_agendamento <= 2);
+
     const stats = {
-        totalSessions: cliente.agendamentos?.filter(a => a.estado_agendamento === 3).length || 0,
-        lastVisit: cliente.agendamentos?.filter(a => a.estado_agendamento === 3).length > 0
-            ? new Date(Math.max(...cliente.agendamentos.filter(a => a.estado_agendamento === 3).map(a => new Date(a.data_hora_inicio))))
+        totalSessions: pastAppointments.length,
+        lastVisit: pastAppointments.length > 0
+            ? new Date(Math.max(...pastAppointments.map(a => new Date(a.data_hora_inicio))))
                 .toLocaleDateString('pt-PT')
             : 'N/A',
-        nextProcedure: cliente.agendamentos?.filter(a => new Date(a.data_hora_inicio) > new Date() && a.estado_agendamento <= 2).length > 0
-            ? new Date(Math.min(...cliente.agendamentos.filter(a => new Date(a.data_hora_inicio) > new Date() && a.estado_agendamento <= 2).map(a => new Date(a.data_hora_inicio))))
+        nextProcedure: futureAppointments.length > 0
+            ? new Date(Math.min(...futureAppointments.map(a => new Date(a.data_hora_inicio))))
                 .toLocaleDateString('pt-PT')
             : 'NENHUM',
         totalSpent: new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' })
-            .format(cliente.agendamentos?.filter(a => a.estado_agendamento === 3).reduce((acc, a) => acc + (a.tratamento?.preco || 0), 0) || 0)
+            .format(pastAppointments.reduce((acc, a) => acc + parseFloat(a.tratamento?.preco || 0), 0))
     };
 
     const appointments = cliente.agendamentos
@@ -91,29 +95,15 @@ export default function Cliente({ cliente }) {
             price: new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(apt.tratamento?.preco || 0)
         })) || [];
 
-    const procedureHistory = [
-        {
-            title: 'Limpeza de Pele Profunda',
-            date: '15/12/2025',
-            professional: 'Danielle',
-            notes: 'Procedimento realizado com sucesso. Pele apresentou boa resposta ao tratamento.',
-            price: '80 €'
-        },
-        {
-            title: 'Massagem Terapêutica',
-            date: '28/11/2025',
-            professional: 'Danielle',
-            notes: 'Aplicação na região frontal e glabela. Paciente orientada sobre cuidados pós-procedimento.',
-            price: '850 €'
-        },
-        {
-            title: 'Peeling Químico',
-            date: '10/11/2025',
-            professional: 'Danielle',
-            notes: 'Peeling com ácido glicólico 30%. Boa tolerância ao procedimento.',
-            price: '320 €'
-        }
-    ];
+    const procedureHistory = pastAppointments
+        .sort((a, b) => new Date(b.data_hora_inicio) - new Date(a.data_hora_inicio))
+        .map(apt => ({
+            title: apt.tratamento?.nome || 'Tratamento',
+            date: new Date(apt.data_hora_inicio).toLocaleDateString('pt-PT'),
+            professional: apt.profissional?.name || 'Profissional',
+            notes: apt.observacoes || 'Sem observações registadas.',
+            price: new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(apt.tratamento?.preco || 0)
+        }));
 
     return (
         <AuthenticatedLayout>
@@ -192,7 +182,7 @@ export default function Cliente({ cliente }) {
                                     <span className="fw-medium">{stats.lastVisit}</span>
                                 </div>
                                 <div className="d-flex justify-content-between align-items-center">
-                                    <span className="text-secondary">Próxima Procedimento</span>
+                                    <span className="text-secondary">Próximo Procedimento</span>
                                     <span className="fw-medium">{stats.nextProcedure}</span>
                                 </div>
                                 <div className="d-flex justify-content-between align-items-center mt-2">
@@ -239,26 +229,33 @@ export default function Cliente({ cliente }) {
                                 <>
                                     <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
                                         <h5 className="mb-0">Agendamentos</h5>
-                                        <Link href={route('agendamentos')} className="btn btn-gold px-4 py-2" style={{ borderRadius: '8px' }}>
+                                        <Link href={route('agendamentos', { cliente_id: cliente.id })} className="btn btn-gold px-4 py-2" style={{ borderRadius: '8px' }}>
                                             <span className="me-2" >+</span> Novo Procedimento
                                         </Link>
                                     </div>
 
                                     <div className="d-flex flex-column gap-3 mb-4">
-                                        {appointments.map((apt, idx) => (
-                                            <div key={idx} className="card border border-light shadow-sm p-3 rounded-3">
-                                                <div className="d-flex justify-content-between align-items-start">
-                                                    <div>
-                                                        <h6 className="mb-1 fw-bold">{apt.title}</h6>
-                                                        <p className="text-secondary small mb-2">{apt.therapist}</p>
-                                                        <p className="text-secondary small mb-0">Valor: {apt.price}</p>
-                                                    </div>
-                                                    <div className="text-end">
-                                                        <div className="text-muted small mb-1">{apt.date}</div>
+                                        {appointments.length > 0 ? (
+                                            appointments.map((apt, idx) => (
+                                                <div key={idx} className="card border border-light shadow-sm p-3 rounded-3">
+                                                    <div className="d-flex justify-content-between align-items-start">
+                                                        <div>
+                                                            <h6 className="mb-1 fw-bold">{apt.title}</h6>
+                                                            <p className="text-secondary small mb-2">{apt.therapist}</p>
+                                                            <p className="text-secondary small mb-0">Valor: {apt.price}</p>
+                                                        </div>
+                                                        <div className="text-end">
+                                                            <div className="text-muted small mb-1">{apt.date}</div>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                            ))
+                                        ) : (
+                                            <div className="text-center py-5">
+                                                <i className="bi bi-calendar-event fs-1 text-light mb-3 d-block"></i>
+                                                <p className="text-secondary">Não existem agendamentos futuros para este cliente.</p>
                                             </div>
-                                        ))}
+                                        )}
                                     </div>
 
                                     {appointments.length > 5 && (
@@ -318,24 +315,33 @@ export default function Cliente({ cliente }) {
                                     </div>
 
                                     <div className="d-flex flex-column gap-3 mb-4">
-                                        {procedureHistory.map((item, idx) => (
-                                            <div key={idx} className="card border border-light shadow-sm p-3 rounded-4 bg-white">
-                                                <div className="d-flex justify-content-between align-items-start mb-1">
-                                                    <h6 className="fw-bold mb-0">{item.title}</h6>
-                                                    <span className="small text-dark fw-medium">{item.date}</span>
+                                        {procedureHistory.length > 0 ? (
+                                            procedureHistory.map((item, idx) => (
+                                                <div key={idx} className="card border border-light shadow-sm p-3 rounded-4 bg-white">
+                                                    <div className="d-flex justify-content-between align-items-start mb-1">
+                                                        <h6 className="fw-bold mb-0">{item.title}</h6>
+                                                        <span className="small text-dark fw-medium">{item.date}</span>
+                                                    </div>
+                                                    <p className="text-secondary small mb-3">{item.professional}</p>
+                                                    <p className="small mb-3 text-dark">{item.notes}</p>
+                                                    <div className="fw-medium text-dark small">Valor: {item.price}</div>
                                                 </div>
-                                                <p className="text-secondary small mb-3">{item.professional}</p>
-                                                <p className="small mb-3 text-dark">{item.notes}</p>
-                                                <div className="fw-medium text-dark small">Valor: {item.price}</div>
+                                            ))
+                                        ) : (
+                                            <div className="text-center py-5">
+                                                <i className="bi bi-clock-history fs-1 text-light mb-3 d-block"></i>
+                                                <p className="text-secondary">Ainda não existem procedimentos registados para este cliente.</p>
                                             </div>
-                                        ))}
+                                        )}
                                     </div>
 
-                                    <div className="text-center mt-4">
-                                        <button className="btn btn-gold px-5 px-md-5 py-2" style={{ borderRadius: '8px', paddingLeft: '3rem !important', paddingRight: '3rem !important' }}>
-                                            Ver Mais Procedimentos
-                                        </button>
-                                    </div>
+                                    {procedureHistory.length > 5 && (
+                                        <div className="text-center mt-4">
+                                            <button className="btn btn-gold px-5 px-md-5 py-2" style={{ borderRadius: '8px', paddingLeft: '3rem !important', paddingRight: '3rem !important' }}>
+                                                Ver Mais Procedimentos
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
