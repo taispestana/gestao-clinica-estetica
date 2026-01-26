@@ -70,7 +70,7 @@ const SearchableSelect = ({ label, options, value, onChange, placeholder, error,
     );
 };
 
-export default function Agendamentos({ clientes = [], tratamentos = [] }) {
+export default function Agendamentos({ clientes = [], tratamentos = [], agendamentos = [] }) {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [view, setView] = useState('month'); // 'mês', 'semana', 'dia'
@@ -250,6 +250,13 @@ export default function Agendamentos({ clientes = [], tratamentos = [] }) {
         return d1.getDate() === d2.getDate() && d1.getMonth() === d2.getMonth() && d1.getFullYear() === d2.getFullYear();
     };
 
+    const getAgendamentosForDate = (date) => {
+        return agendamentos.filter(apt => {
+            const aptDate = new Date(apt.data_hora_inicio);
+            return isSameDay(aptDate, date);
+        });
+    };
+
 
     // Geradores de renderização
     const renderMonthGrid = () => {
@@ -290,6 +297,13 @@ export default function Agendamentos({ clientes = [], tratamentos = [] }) {
                                         <div className="rounded-circle bg-danger" style={{ width: '6px', height: '6px' }} title={holidayName}></div>
                                     </div>
                                 )}
+                                {getAgendamentosForDate(slotDate).length > 0 && !holidayName && (
+                                    <div className="d-flex gap-1 mt-2">
+                                        {getAgendamentosForDate(slotDate).slice(0, 3).map((_, idx) => (
+                                            <div key={idx} className="rounded-circle" style={{ width: '6px', height: '6px', backgroundColor: selected ? 'var(--white)' : 'var(--primary-button)' }}></div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     );
@@ -328,8 +342,20 @@ export default function Agendamentos({ clientes = [], tratamentos = [] }) {
                             >
                                 <span className="small mb-2 fw-bold text-uppercase opacity-75">{['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'][date.getDay()]}</span>
                                 <span className={`${selected ? 'h3 fw-bold mb-0' : 'h4 fw-medium'}`}>{date.getDate()}</span>
-                                <div className="mt-2 small opacity-75 text-truncate" style={{ maxWidth: '100%' }}>
-                                    {holidayName ? <span className="text-danger fw-bold" style={{ fontSize: '0.7rem' }}>{holidayName}</span> : 'Livre'}
+                                <div className="mt-2 small opacity-75 text-truncate w-100" style={{ maxWidth: '100%', maxHeight: '80px', overflowY: 'auto' }}>
+                                    {holidayName ? (
+                                        <span className="text-danger fw-bold" style={{ fontSize: '0.7rem' }}>{holidayName}</span>
+                                    ) : (
+                                        <div className="d-flex flex-column gap-1">
+                                            {getAgendamentosForDate(date).map((apt, idx) => (
+                                                <div key={idx} className="p-1 rounded-2 text-start" style={{ fontSize: '0.65rem', backgroundColor: selected ? 'rgba(255,255,255,0.2)' : 'rgba(197, 161, 87, 0.1)', color: selected ? 'var(--white)' : 'var(--main-text)' }}>
+                                                    <div className="fw-bold text-truncate">{apt.tratamento?.nome}</div>
+                                                    <div>{new Date(apt.data_hora_inicio).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })}</div>
+                                                </div>
+                                            ))}
+                                            {getAgendamentosForDate(date).length === 0 && 'Livre'}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -341,6 +367,7 @@ export default function Agendamentos({ clientes = [], tratamentos = [] }) {
 
     const renderDayView = () => {
         const hours = Array.from({ length: 24 }, (_, i) => i); // 00:00 to 23:00
+        const dayAgendamentos = getAgendamentosForDate(currentDate);
 
         return (
             <div className="day-view-timeline p-2" style={{ maxHeight: '400px', overflowY: 'auto' }}>
@@ -349,14 +376,42 @@ export default function Agendamentos({ clientes = [], tratamentos = [] }) {
                         Feriado: {getHolidayName(currentDate)}
                     </div>
                 )}
-                {hours.map(hour => (
-                    <div key={hour} className="d-flex mb-3 align-items-center">
-                        <div className="fw-bold text-muted small me-3" style={{ width: '50px' }}>{hour.toString().padStart(2, '0')}:00</div>
-                        <div className="flex-grow-1 p-3 rounded bg-light border-start border-4 border-warning">
-                            <small className="text-muted d-block">Disponível</small>
+                {hours.map(hour => {
+                    const apts = dayAgendamentos.filter(apt => {
+                        const start = new Date(apt.data_hora_inicio);
+                        return start.getHours() === hour;
+                    });
+
+                    return (
+                        <div key={hour} className="d-flex mb-3 align-items-center">
+                            <div className="fw-bold text-muted small me-3" style={{ width: '50px' }}>{hour.toString().padStart(2, '0')}:00</div>
+                            <div className="flex-grow-1">
+                                {apts.length > 0 ? (
+                                    apts.map((apt, idx) => (
+                                        <div key={idx} className="p-3 mb-2 rounded border-start border-4 border-warning shadow-sm animate-fade-in" style={{ backgroundColor: 'rgba(197, 161, 87, 0.1)' }}>
+                                            <div className="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <h6 className="mb-1 fw-bold text-dark">{apt.tratamento?.nome}</h6>
+                                                    <small className="text-secondary d-block">Cliente: {apt.cliente?.name}</small>
+                                                </div>
+                                                {apt.voucher && (
+                                                    <span className="badge bg-white text-warning border border-warning small fw-normal">Voucher: {apt.voucher}</span>
+                                                )}
+                                            </div>
+                                            <small className="text-secondary mt-1 d-block">
+                                                {new Date(apt.data_hora_inicio).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })} - {new Date(apt.data_hora_fim).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })}
+                                            </small>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="p-2 rounded bg-light border-start border-4 border-success opacity-50">
+                                        <small className="text-muted d-block small">Livre</small>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         );
     };
