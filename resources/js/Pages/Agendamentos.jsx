@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
+import Modal from '@/Components/Modal';
+import SecondaryButton from '@/Components/SecondaryButton';
+import DangerButton from '@/Components/DangerButton';
 const SearchableSelect = ({ label, options, value, onChange, placeholder, error, displayKey = 'name' }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [isOpen, setIsOpen] = useState(false);
@@ -75,11 +78,22 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [view, setView] = useState('month'); // 'mês', 'semana', 'dia'
     const [isVoucher, setIsVoucher] = useState(false);
+    const [confirmingDeletion, setConfirmingDeletion] = useState(false);
+    const [agendamentoToDelete, setAgendamentoToDelete] = useState(null);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         tratamento_id: '',
         cliente_id: '',
         voucher: '',
+        data: new Date().toISOString().split('T')[0],
+        inicio: '09:00',
+        fim: '10:00',
+        observacoes: '',
+    });
+
+    const { data: absenceData, setData: setAbsenceData, post: postAbsence, processing: absenceProcessing, errors: absenceErrors, reset: resetAbsence } = useForm({
+        is_absence: true,
+        motivo: '',
         data: new Date().toISOString().split('T')[0],
         inicio: '09:00',
         fim: '10:00',
@@ -92,6 +106,15 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
         }
     }, [selectedDate]);
 
+    // Pre-fill client from query parameter
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const clienteId = urlParams.get('cliente_id');
+        if (clienteId && clientes.some(c => c.id == clienteId)) {
+            setData('cliente_id', clienteId);
+        }
+    }, [clientes]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         post(route('agendamentos.store'), {
@@ -102,22 +125,70 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
         });
     };
 
+    const handleAbsenceSubmit = (e) => {
+        e.preventDefault();
+        postAbsence(route('agendamentos.store'), {
+            onSuccess: () => {
+                resetAbsence();
+            },
+        });
+    };
+
+    const confirmDeletion = (agendamento) => {
+        setAgendamentoToDelete(agendamento);
+        setConfirmingDeletion(true);
+    };
+
+    const deleteAgendamento = () => {
+        if (!agendamentoToDelete) return;
+
+        router.delete(route('agendamentos.destroy', agendamentoToDelete.id), {
+            onSuccess: () => {
+                setConfirmingDeletion(false);
+                setAgendamentoToDelete(null);
+            },
+        });
+    };
+
+    const totalHoje = agendamentos.filter(apt => {
+        const d = new Date(apt.data_hora_inicio);
+        const today = new Date();
+        return d.getDate() === today.getDate() &&
+            d.getMonth() === today.getMonth() &&
+            d.getFullYear() === today.getFullYear() &&
+            apt.estado_agendamento !== 5;
+    }).length;
+
+    const totalSemana = agendamentos.filter(apt => {
+        const d = new Date(apt.data_hora_inicio);
+        const now = new Date();
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - now.getDay());
+        startOfWeek.setHours(0, 0, 0, 0);
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+        endOfWeek.setHours(23, 59, 59, 999);
+        return d >= startOfWeek && d <= endOfWeek && apt.estado_agendamento !== 5;
+    }).length;
+
+    const totalMes = agendamentos.filter(apt => {
+        const d = new Date(apt.data_hora_inicio);
+        const now = new Date();
+        return d.getMonth() === now.getMonth() &&
+            d.getFullYear() === now.getFullYear() &&
+            apt.estado_agendamento !== 5;
+    }).length;
+
     const stats = [
-        { title: 'Agendamentos Hoje', value: '0', icon: 'calendar', color: 'var(--status-green)' },
-        { title: 'Agendamentos Semanal', value: '0', icon: 'calendar-week', color: 'var(--status-green)' },
-        { title: 'Agendamento Mensal', value: '0', icon: 'calendar-month', color: 'var(--status-green)' },
+        { title: 'Agendamentos de Hoje', value: totalHoje.toString(), icon: 'calendar', color: 'var(--status-green)' },
+        { title: 'Agendamentos da Semana', value: totalSemana.toString(), icon: 'calendar-week', color: 'var(--status-green)' },
+        { title: 'Agendamentos do Mês', value: totalMes.toString(), icon: 'calendar-month', color: 'var(--status-green)' },
     ];
 
 
     // Helpers
     const getDaysInMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
     const getFirstDayOfMonth = (date) => new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-
-    const getStartOfWeek = (date) => {
-        const day = date.getDay();
-        const diff = date.getDate() - day; // ajustar quando o dia for domingo
-        return new Date(date.getFullYear(), date.getMonth(), diff);
-    };
 
     const addDays = (date, days) => {
         const result = new Date(date);
@@ -195,8 +266,6 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
     const handlePrev = () => {
         if (view === 'month') {
             setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
-        } else if (view === 'week') {
-            setCurrentDate(addDays(currentDate, -7));
         } else if (view === 'day') {
             const newDate = addDays(currentDate, -1);
             setCurrentDate(newDate);
@@ -207,8 +276,6 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
     const handleNext = () => {
         if (view === 'month') {
             setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
-        } else if (view === 'week') {
-            setCurrentDate(addDays(currentDate, 7));
         } else if (view === 'day') {
             const newDate = addDays(currentDate, 1);
             setCurrentDate(newDate);
@@ -229,14 +296,6 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
     const getHeaderText = () => {
         if (view === 'day') {
             return `${currentDate.getDate()} de ${months[currentDate.getMonth()]} de ${currentDate.getFullYear()}`;
-        }
-        if (view === 'week') {
-            const start = getStartOfWeek(currentDate);
-            const end = addDays(start, 6);
-            if (start.getMonth() !== end.getMonth()) {
-                return `${start.getDate()} ${months[start.getMonth()].substring(0, 3)} - ${end.getDate()} ${months[end.getMonth()].substring(0, 3)} ${end.getFullYear()}`;
-            }
-            return `${start.getDate()} - ${end.getDate()} de ${months[start.getMonth()]} ${start.getFullYear()}`;
         }
         return `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
     };
@@ -279,7 +338,11 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
                     return (
                         <div key={i} style={{ width: '14.28%', padding: '4px' }}>
                             <div
-                                onClick={() => setSelectedDate(slotDate)}
+                                onClick={() => {
+                                    setSelectedDate(slotDate);
+                                    setCurrentDate(slotDate);
+                                    setView('day');
+                                }}
                                 className={`p-1 border rounded-3 d-flex flex-column align-items-center justify-content-center position-relative`}
                                 title={holidayName}
                                 style={{
@@ -299,8 +362,12 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
                                 )}
                                 {getAgendamentosForDate(slotDate).length > 0 && !holidayName && (
                                     <div className="d-flex gap-1 mt-2">
-                                        {getAgendamentosForDate(slotDate).slice(0, 3).map((_, idx) => (
-                                            <div key={idx} className="rounded-circle" style={{ width: '6px', height: '6px', backgroundColor: selected ? 'var(--white)' : 'var(--primary-button)' }}></div>
+                                        {getAgendamentosForDate(slotDate).slice(0, 3).map((apt, idx) => (
+                                            <div key={idx} className="rounded-circle" style={{
+                                                width: '6px',
+                                                height: '6px',
+                                                backgroundColor: selected ? 'var(--white)' : (apt.estado_agendamento === 5 ? 'var(--status-red)' : 'var(--primary-button)')
+                                            }}></div>
                                         ))}
                                     </div>
                                 )}
@@ -312,65 +379,13 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
         );
     };
 
-    const renderWeekGrid = () => {
-        const startOfWeek = getStartOfWeek(currentDate);
-        const weekDays = [];
-        for (let i = 0; i < 7; i++) {
-            weekDays.push(addDays(startOfWeek, i));
-        }
-
-        return (
-            <div className="d-flex flex-wrap text-center">
-                {weekDays.map((date, i) => {
-                    const selected = isSameDay(date, selectedDate);
-                    const today = isToday(date);
-                    const holidayName = getHolidayName(date);
-
-                    return (
-                        <div key={i} style={{ width: '14.28%', padding: '4px' }}>
-                            <div
-                                onClick={() => setSelectedDate(date)}
-                                className={`p-1 border rounded-3 d-flex flex-column align-items-center justify-content-center position-relative`}
-                                style={{
-                                    height: '150px',
-                                    cursor: 'pointer',
-                                    backgroundColor: selected ? 'var(--primary-button)' : 'var(--white)',
-                                    borderColor: selected ? 'var(--primary-button)' : (today ? 'var(--primary-button)' : 'var(--white)'),
-                                    borderWidth: today && !selected ? '2px' : '1px',
-                                    color: selected ? 'var(--white)' : 'var(--main-green)'
-                                }}
-                            >
-                                <span className="small mb-2 fw-bold text-uppercase opacity-75">{['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'][date.getDay()]}</span>
-                                <span className={`${selected ? 'h3 fw-bold mb-0' : 'h4 fw-medium'}`}>{date.getDate()}</span>
-                                <div className="mt-2 small opacity-75 text-truncate w-100" style={{ maxWidth: '100%', maxHeight: '80px', overflowY: 'auto' }}>
-                                    {holidayName ? (
-                                        <span className="text-danger fw-bold" style={{ fontSize: '0.7rem' }}>{holidayName}</span>
-                                    ) : (
-                                        <div className="d-flex flex-column gap-1">
-                                            {getAgendamentosForDate(date).map((apt, idx) => (
-                                                <div key={idx} className="p-1 rounded-2 text-start" style={{ fontSize: '0.65rem', backgroundColor: selected ? 'rgba(255,255,255,0.2)' : 'rgba(197, 161, 87, 0.1)', color: selected ? 'var(--white)' : 'var(--main-text)' }}>
-                                                    <div className="fw-bold text-truncate">{apt.tratamento?.nome}</div>
-                                                    <div>{new Date(apt.data_hora_inicio).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })}</div>
-                                                </div>
-                                            ))}
-                                            {getAgendamentosForDate(date).length === 0 && 'Livre'}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
-        );
-    };
 
     const renderDayView = () => {
-        const hours = Array.from({ length: 24 }, (_, i) => i); // 00:00 to 23:00
+        const hours = Array.from({ length: 11 }, (_, i) => i + 9); // 09:00 to 19:00
         const dayAgendamentos = getAgendamentosForDate(currentDate);
 
         return (
-            <div className="day-view-timeline p-2" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+            <div className="day-view-timeline p-2" style={{ maxHeight: '1000px', overflowY: 'auto' }}>
                 {getHolidayName(currentDate) && (
                     <div className="alert alert-danger py-2 mb-3 text-center small fw-bold">
                         Feriado: {getHolidayName(currentDate)}
@@ -388,16 +403,37 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
                             <div className="flex-grow-1">
                                 {apts.length > 0 ? (
                                     apts.map((apt, idx) => (
-                                        <div key={idx} className="p-3 mb-2 rounded border-start border-4 border-warning shadow-sm animate-fade-in" style={{ backgroundColor: 'rgba(197, 161, 87, 0.1)' }}>
+                                        <div key={idx} className="p-3 mb-2 rounded border-start border-4 shadow-sm animate-fade-in" style={{
+                                            backgroundColor: apt.estado_agendamento === 5 ? 'rgba(240, 131, 131, 0.1)' : 'rgba(197, 161, 87, 0.1)',
+                                            borderColor: apt.estado_agendamento === 5 ? 'var(--status-red)' : 'var(--warning)'
+                                        }}>
                                             <div className="d-flex justify-content-between align-items-start">
                                                 <div>
-                                                    <h6 className="mb-1 fw-bold text-dark">{apt.tratamento?.nome}</h6>
-                                                    <small className="text-secondary d-block">Cliente: {apt.cliente?.name}</small>
+                                                    <h6 className="mb-1 fw-bold text-dark">
+                                                        {apt.estado_agendamento === 5 ? `AUSÊNCIA: ${apt.motivo}` : apt.tratamento?.nome}
+                                                    </h6>
+                                                    {!apt.motivo && <small className="text-secondary d-block">Cliente: {apt.cliente?.name}</small>}
                                                 </div>
-                                                {apt.voucher && (
-                                                    <span className="badge bg-white text-warning border border-warning small fw-normal">Voucher: {apt.voucher}</span>
-                                                )}
+                                                <div className="d-flex align-items-start gap-2">
+                                                    {apt.voucher && (
+                                                        <span className="badge bg-white text-warning border border-warning small fw-normal">Voucher: {apt.voucher}</span>
+                                                    )}
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); confirmDeletion(apt); }}
+                                                        className="btn btn-link link-danger p-0 border-0 shadow-none hover-scale transition-all"
+                                                        title="Remover"
+                                                        style={{ marginTop: '-4px' }}
+                                                    >
+                                                        <i className="bi bi-trash3 fs-6"></i>
+                                                    </button>
+                                                </div>
                                             </div>
+                                            {apt.observacoes && (
+                                                <div className="mt-2 p-2 bg-white rounded border border-light small text-secondary fst-italic">
+                                                    <i className="bi bi-info-circle me-1"></i>
+                                                    {apt.observacoes}
+                                                </div>
+                                            )}
                                             <small className="text-secondary mt-1 d-block">
                                                 {new Date(apt.data_hora_inicio).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })} - {new Date(apt.data_hora_fim).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })}
                                             </small>
@@ -493,7 +529,6 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
                                 </div>
                                 <div className="btn-group" role="group">
                                     <button type="button" className={`btn btn-sm ${view === 'day' ? 'btn-dark' : 'btn-outline-secondary'}`} onClick={() => setView('day')}>Dia</button>
-                                    <button type="button" className={`btn btn-sm ${view === 'week' ? 'btn-dark' : 'btn-outline-secondary'}`} onClick={() => setView('week')}>Semana</button>
                                     <button type="button" className={`btn btn-sm ${view === 'month' ? 'btn-dark' : 'btn-outline-secondary'}`} onClick={() => setView('month')}>Mês</button>
                                 </div>
                             </div>
@@ -512,7 +547,6 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
 
                             {/* View Content */}
                             {view === 'month' && renderMonthGrid()}
-                            {view === 'week' && renderWeekGrid()}
                             {view === 'day' && renderDayView()}
 
                         </div>
@@ -579,7 +613,7 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
                                         />
                                         {errors.data && <div className="text-danger small">{errors.data}</div>}
                                     </div>
-                                    <div className="row mb-4">
+                                    <div className="row mb-3">
                                         <div className="col-6">
                                             <label className="form-label small text-muted">Início</label>
                                             <input
@@ -601,6 +635,17 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
                                             {errors.fim && <div className="text-danger small">{errors.fim}</div>}
                                         </div>
                                     </div>
+                                    <div className="mb-4">
+                                        <label className="form-label small text-muted">Observações</label>
+                                        <textarea
+                                            className="form-control bg-light border-0 small"
+                                            rows="2"
+                                            placeholder="Notas adicionais sobre o agendamento..."
+                                            value={data.observacoes}
+                                            onChange={e => setData('observacoes', e.target.value)}
+                                        ></textarea>
+                                        {errors.observacoes && <div className="text-danger small">{errors.observacoes}</div>}
+                                    </div>
                                     <button type="submit" disabled={processing} className="btn w-100 text-white fw-medium" style={{ backgroundColor: 'var(--primary-button)' }}>
                                         {processing ? 'Agendando...' : '+ Agendar'}
                                     </button>
@@ -612,46 +657,92 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
                         <div className="col-12 col-md-6 col-xl-12">
                             <div className="card border-0 shadow-sm p-4 h-100">
                                 <h5 className="card-title fw-bold mb-3">Adicionar Ausência</h5>
-                                <form>
+                                <form onSubmit={handleAbsenceSubmit}>
                                     <div className="mb-3">
                                         <label className="form-label small text-muted">Motivo</label>
-                                        <input type="text" className="form-control bg-light border-0" />
+                                        <input
+                                            type="text"
+                                            className={`form-control bg-light border-0 ${absenceErrors.motivo ? 'is-invalid' : ''}`}
+                                            value={absenceData.motivo}
+                                            onChange={e => setAbsenceData('motivo', e.target.value)}
+                                        />
+                                        {absenceErrors.motivo && <div className="invalid-feedback">{absenceErrors.motivo}</div>}
                                     </div>
                                     <div className="mb-3">
                                         <label className="form-label small text-muted">Data</label>
                                         <input
                                             type="date"
-                                            className="form-date bg-light border-0 text-muted small w-100"
-                                            key={`abs-date-${selectedDate.getTime()}`}
-                                            defaultValue={formatDateForInput(selectedDate)}
+                                            className={`form-date bg-light border-0 text-muted small w-100 ${absenceErrors.data ? 'is-invalid' : ''}`}
+                                            value={absenceData.data}
+                                            onChange={e => setAbsenceData('data', e.target.value)}
                                         />
+                                        {absenceErrors.data && <div className="text-danger small">{absenceErrors.data}</div>}
                                     </div>
                                     <div className="row mb-4">
                                         <div className="col-6">
                                             <label className="form-label small text-muted">Início</label>
                                             <input
                                                 type="time"
-                                                className="form-control bg-light border-0 text-muted small w-100"
-                                                defaultValue="09:00"
+                                                className={`form-control bg-light border-0 text-muted small w-100 ${absenceErrors.inicio ? 'is-invalid' : ''}`}
+                                                value={absenceData.inicio}
+                                                onChange={e => setAbsenceData('inicio', e.target.value)}
                                             />
+                                            {absenceErrors.inicio && <div className="text-danger small">{absenceErrors.inicio}</div>}
                                         </div>
                                         <div className="col-6">
                                             <label className="form-label small text-muted">Fim</label>
                                             <input
                                                 type="time"
-                                                className="form-control bg-light border-0 text-muted small w-100"
-                                                defaultValue="10:00"
+                                                className={`form-control bg-light border-0 text-muted small w-100 ${absenceErrors.fim ? 'is-invalid' : ''}`}
+                                                value={absenceData.fim}
+                                                onChange={e => setAbsenceData('fim', e.target.value)}
                                             />
+                                            {absenceErrors.fim && <div className="text-danger small">{absenceErrors.fim}</div>}
                                         </div>
                                     </div>
-                                    <button type="button" className="btn w-100 text-white fw-medium" style={{ backgroundColor: 'var(--primary-button)' }}>+ Agendar</button>
+                                    <button type="submit" disabled={absenceProcessing} className="btn w-100 text-white fw-medium" style={{ backgroundColor: 'var(--primary-button)' }}>
+                                        {absenceProcessing ? 'Agendando...' : '+ Agendar'}
+                                    </button>
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </AuthenticatedLayout>
+            </div >
+
+            {/* Modal de Confirmação de Exclusão */}
+            <Modal show={confirmingDeletion} onClose={() => setConfirmingDeletion(false)} style={{ maxWidth: '25rem' }}>
+                <div className="p-5 text-center">
+                    {/* Icone de Alerta Centralizado */}
+                    <div className="d-flex justify-content-center mb-4 animate-fade-in">
+                        <div className="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style={{ width: '100px', height: '100px', border: '1px solid #FFC107', color: '#FFC107', backgroundColor: '#fff' }}>
+                            <span style={{ fontSize: '3.5rem', fontWeight: 'bold' }}>!</span>
+                        </div>
+                    </div>
+
+                    <h3 className="fw-bold mb-5 px-3" style={{ color: '#171717', lineHeight: '1.2' }}>
+                        Tem certeza que deseja apagar o {agendamentoToDelete?.estado_agendamento === 5 ? 'bloqueio' : 'agendamento'}?
+                    </h3>
+
+                    <div className="d-flex justify-content-center gap-3">
+                        <button
+                            onClick={deleteAgendamento}
+                            className="btn px-5 py-2 text-white fw-bold rounded-3 shadow-sm hover-scale transition-all"
+                            style={{ backgroundColor: 'var(--primary-button)', minWidth: '140px', border: 'none' }}
+                        >
+                            Sim
+                        </button>
+                        <button
+                            onClick={() => setConfirmingDeletion(false)}
+                            className="btn px-5 py-2 text-white fw-bold rounded-3 shadow-sm hover-scale transition-all"
+                            style={{ backgroundColor: '#E1424C', minWidth: '140px', border: 'none' }}
+                        >
+                            Não
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+        </AuthenticatedLayout >
     );
 }
 

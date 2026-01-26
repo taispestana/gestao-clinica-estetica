@@ -30,6 +30,7 @@ Route::put('/clientes/{id}', [UserController::class, 'update'])->middleware(['au
 
 Route::get('/agendamentos', [AgendamentoController::class, 'index'])->middleware(['auth', 'verified'])->name('agendamentos');
 Route::post('/agendamentos', [AgendamentoController::class, 'store'])->middleware(['auth', 'verified'])->name('agendamentos.store');
+Route::delete('/agendamentos/{id}', [AgendamentoController::class, 'destroy'])->middleware(['auth', 'verified'])->name('agendamentos.destroy');
 
 Route::post('/anamneses', [AnamneseController::class, 'store'])->middleware(['auth', 'verified'])->name('anamneses.store');
 
