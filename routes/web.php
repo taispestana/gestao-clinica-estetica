@@ -39,9 +39,9 @@ Route::post('/storeTratamento', [TratamentoController::class, 'storeTratamento']
 Route::put('/tratamentos/{id}', [TratamentoController::class, 'update'])->middleware(['auth', 'verified'])->name('tratamentos.update');
 Route::delete('/tratamentos/{id}', [TratamentoController::class, 'destroy'])->middleware(['auth', 'verified'])->name('tratamentos.destroy');
 
-Route::get('/mensagens', function () {
-    return Inertia::render('Mensagens');
-})->middleware(['auth', 'verified'])->name('mensagens');
+use App\Http\Controllers\MensagensController;
+
+Route::get('/mensagens', [MensagensController::class, 'index'])->middleware(['auth', 'verified'])->name('mensagens');
 
 Route::get('/estoque', [ProdutoController::class, 'index'])->middleware(['auth', 'verified'])->name('estoque');
 Route::post('/storeProduto', [ProdutoController::class, 'storeProduto'])->name('estoque.storeProduto');

@@ -31,19 +31,53 @@ export default function Clientes({ clientes }) {
     const appointments = clientes
         .filter(cliente => {
             const matchesName = cliente.name.toLowerCase().includes(searchTerm.toLowerCase());
-            // Para o status, como não temos na DB ainda, vamos considerar todos como 'Ativo'
-            // Mas permitimos filtrar se o filtro for 'Todos' ou 'Ativo'
-            const clientStatus = 'Ativo';
+
+            // Lógica de inatividade: 15 meses sem agendamentos
+            let clientStatus = 'Ativo';
+            if (cliente.ultima_marcacao) {
+                const lastApt = new Date(cliente.ultima_marcacao);
+                const fifteenMonthsAgo = new Date();
+                fifteenMonthsAgo.setMonth(fifteenMonthsAgo.getMonth() - 15);
+
+                if (lastApt < fifteenMonthsAgo) {
+                    clientStatus = 'Inativo';
+                }
+            } else {
+                // Se nunca teve agendamento, vamos ver a data de criação (opcional, aqui mantemos ativo ou decidimos)
+                // Para este caso, se não tem agendamento e foi criado há mais de 15 meses, inativo.
+                const createdAt = new Date(cliente.created_at); // Assumindo que temos created_at
+                const fifteenMonthsAgo = new Date();
+                fifteenMonthsAgo.setMonth(fifteenMonthsAgo.getMonth() - 15);
+                if (createdAt < fifteenMonthsAgo) {
+                    clientStatus = 'Inativo';
+                }
+            }
+
             const matchesStatus = statusFilter === 'Todos' || clientStatus === statusFilter;
             return matchesName && matchesStatus;
         })
-        .map(cliente => ({
-            id: cliente.id,
-            name: cliente.name,
-            contacto: cliente.telemovel || 'N/A',
-            status: 'Ativo',
-            color: 'var(--status-green)'
-        }));
+        .map(cliente => {
+            let clientStatus = 'Ativo';
+            if (cliente.ultima_marcacao) {
+                const lastApt = new Date(cliente.ultima_marcacao);
+                const fifteenMonthsAgo = new Date();
+                fifteenMonthsAgo.setMonth(fifteenMonthsAgo.getMonth() - 15);
+                if (lastApt < fifteenMonthsAgo) clientStatus = 'Inativo';
+            } else {
+                const createdAt = new Date(cliente.created_at);
+                const fifteenMonthsAgo = new Date();
+                fifteenMonthsAgo.setMonth(fifteenMonthsAgo.getMonth() - 15);
+                if (createdAt < fifteenMonthsAgo) clientStatus = 'Inativo';
+            }
+
+            return {
+                id: cliente.id,
+                name: cliente.name,
+                contacto: cliente.telemovel || 'N/A',
+                status: clientStatus,
+                color: clientStatus === 'Ativo' ? 'var(--status-green)' : 'var(--status-red)'
+            };
+        });
 
     return (
         <>
@@ -129,7 +163,6 @@ export default function Clientes({ clientes }) {
                                 <option value="Todos">Todos</option>
                                 <option value="Ativo">Ativo</option>
                                 <option value="Inativo">Inativo</option>
-                                <option value="Pendente">Pendente</option>
                             </select>
                         </div>
                     </div>

@@ -48,13 +48,28 @@ export default function Cliente({ cliente }) {
         return age;
     };
 
+    const calculateStatus = () => {
+        const fifteenMonthsAgo = new Date();
+        fifteenMonthsAgo.setMonth(fifteenMonthsAgo.getMonth() - 15);
+
+        if (cliente.ultima_marcacao) {
+            return new Date(cliente.ultima_marcacao) < fifteenMonthsAgo ? 'Inativo' : 'Ativo';
+        }
+
+        // Se nunca teve marcação, usa data de criação
+        return new Date(cliente.created_at) < fifteenMonthsAgo ? 'Inativo' : 'Ativo';
+    };
+
+    const currentStatus = calculateStatus();
+
     const customer = {
         id: cliente.id,
         name: cliente.name,
         since: new Date(cliente.created_at).toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' }),
         age: calculateAge(cliente.data_nascimento),
         data_nascimento: cliente.data_nascimento,
-        status: 'Ativo',
+        status: currentStatus,
+        color: currentStatus === 'Ativo' ? 'var(--status-green)' : 'var(--status-red)',
         phone: cliente.telemovel,
         email: cliente.email,
         nif: cliente.nif,
@@ -130,7 +145,7 @@ export default function Cliente({ cliente }) {
                             <div className="mb-3">
                                 <span className="text-secondary">{customer.age} anos</span>
                                 <div className="mt-1">
-                                    <span className="badge rounded-pill text-dark fw-normal px-3" style={{ backgroundColor: 'var(--status-green)' }}>
+                                    <span className="badge rounded-pill text-dark fw-normal px-3" style={{ backgroundColor: customer.color }}>
                                         {customer.status}
                                     </span>
                                 </div>
