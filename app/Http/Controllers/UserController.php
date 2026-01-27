@@ -15,7 +15,11 @@ class UserController extends Controller
      */
     public function index()
     {
-        $clientes = User::where('tipo_users', 1)->latest()->get();
+        $clientes = User::where('tipo_users', 1)
+            ->withMax('agendamentos as ultima_marcacao', 'data_hora_inicio')
+            ->latest()
+            ->get();
+            
         return Inertia::render('Clientes', [
             'clientes' => $clientes
         ]);
@@ -65,7 +69,9 @@ class UserController extends Controller
             'agendamentos.profissional',
             'anamnese',
             'historicoTratamentos.anamnese'
-        ])->findOrFail($id);
+        ])
+        ->withMax('agendamentos as ultima_marcacao', 'data_hora_inicio')
+        ->findOrFail($id);
 
         return Inertia::render('Clientes/Cliente', [
             'cliente' => $cliente

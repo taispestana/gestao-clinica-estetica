@@ -34,6 +34,20 @@ class DashboardController extends Controller
             ->orderBy('data_hora_inicio')
             ->get()
             ->map(function ($apt) {
+                $now = Carbon::now();
+                $horaFim = Carbon::parse($apt->data_hora_fim);
+
+                // Regra: CONFIRMADO após o fim, PENDENTE antes disso (respeitando cancelamentos)
+                $estadoSet = $apt->estado_agendamento;
+                
+                if ($estadoSet != 4) { // Se não estiver cancelado
+                    if ($now->greaterThanOrEqualTo($horaFim)) {
+                        $estadoSet = 2; // CONFIRMADO
+                    } else {
+                        $estadoSet = 1; // PENDENTE
+                    }
+                }
+
                 $statusMap = [
                     1 => ['label' => 'PENDENTE', 'color' => 'var(--status-yellow)'],
                     2 => ['label' => 'CONFIRMADO', 'color' => 'var(--status-green)'],
@@ -41,7 +55,7 @@ class DashboardController extends Controller
                     4 => ['label' => 'CANCELADO', 'color' => 'var(--status-red)'],
                 ];
 
-                $status = $statusMap[$apt->estado_agendamento] ?? ['label' => 'DESCONHECIDO', 'color' => 'var(--secondary)'];
+                $status = $statusMap[$estadoSet] ?? ['label' => 'DESCONHECIDO', 'color' => 'var(--secondary)'];
 
                 return [
                     'name' => $apt->cliente ? $apt->cliente->name : 'N/A',

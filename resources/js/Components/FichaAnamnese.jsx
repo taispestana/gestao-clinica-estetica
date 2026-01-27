@@ -8,19 +8,21 @@ const SignaturePad = ({ onSave, readOnly, existingSignature }) => {
     useEffect(() => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
+
+        // Limpar o canvas antes de desenhar
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
         ctx.strokeStyle = '#000';
         ctx.lineWidth = 2;
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round';
 
-        if (existingSignature && existingSignature.startsWith('data:image')) {
+        if (existingSignature) {
             const img = new Image();
-            img.onload = () => ctx.drawImage(img, 0, 0);
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            };
             img.src = existingSignature;
-        } else if (existingSignature) {
-            const img = new Image();
-            img.onload = () => ctx.drawImage(img, 0, 0);
-            img.src = existingSignature; // Assume it's a path like /storage/...
         }
     }, [existingSignature]);
 
@@ -144,7 +146,12 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                     </div>
                     <div className="col-8 col-md-5">
                         <label className="form-label small text-secondary mb-1">Data de Nascimento</label>
-                        <input type="text" className="form-control bg-light border-0 py-2" defaultValue={customer?.data_nascimento} readOnly />
+                        <input
+                            type="text"
+                            className="form-control bg-light border-0 py-2"
+                            defaultValue={customer?.data_nascimento ? new Date(customer.data_nascimento).toLocaleDateString('pt-PT') : ''}
+                            readOnly
+                        />
                     </div>
                     <div className="col-md-4">
                         <label className="form-label small text-secondary mb-1">Telemóvel</label>
