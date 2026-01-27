@@ -2,25 +2,13 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 
 
-export default function Dashboard() {
+export default function Dashboard({ totalClientes, agendamentosHoje, agendamentoMensal, appointmentsHoje, popularTreatments }) {
     const stats = [
-        { title: 'Clientes Ativos', value: '0', icon: 'users', color: 'var(--status-green)' },
-        { title: 'Agendamentos Hoje', value: '0', icon: 'calendar', color: 'var(--status-green)' },
-        { title: 'Agendamento Mensal', value: '0', icon: 'calendar-month', color: 'var(--status-green)' },
+        { title: 'Clientes Ativos', value: totalClientes.toString(), icon: 'users', color: 'var(--status-green)' },
+        { title: 'Agendamentos Hoje', value: agendamentosHoje.toString(), icon: 'calendar', color: 'var(--status-green)' },
+        { title: 'Agendamento Mensal', value: agendamentoMensal.toString(), icon: 'calendar-month', color: 'var(--status-green)' },
     ];
 
-    const appointments = [
-        { name: 'Ana Maria', service: 'Limpeza de Pele', time: '00:00', status: 'CONFIRMADO', color: 'var(--status-green)' },
-        { name: 'Ana Maria', service: 'Massagem Terapêutica', time: '00:00', status: 'PENDENTE', color: 'var(--status-yellow)' },
-        { name: 'Ana Maria', service: 'Preenchimento', time: '00:00', status: 'CANCELADO', color: 'var(--status-red)' },
-    ];
-
-    const treatments = [
-        { name: 'Limpeza de Pele', percentage: 75 },
-        { name: 'Massagem Terapêutica', percentage: 40 },
-        { name: 'Preenchimento', percentage: 25 },
-
-    ];
 
     return (
         <AuthenticatedLayout>
@@ -79,11 +67,11 @@ export default function Dashboard() {
                     <div className="card border-0 shadow-sm p-4">
                         <div className="d-flex align-items-center justify-content-between mb-4">
                             <h3 className="h5 fw-bold text-dark mb-0">Agendamentos de Hoje</h3>
-                            <a href="#" className="small fw-medium text-secondary text-decoration-none">Ver todos</a>
+                            <Link href={route('agendamentos')} className="small fw-medium text-secondary text-decoration-none">Ver todos</Link>
                         </div>
 
                         <div className="d-flex flex-column gap-3">
-                            {appointments.map((appointment, idx) => (
+                            {appointmentsHoje.length > 0 ? appointmentsHoje.map((appointment, idx) => (
                                 <div key={idx} className="d-flex align-items-center justify-content-between p-3 bg-light rounded hover-shadow transition">
                                     <div>
                                         <div className="fw-semibold text-dark">{appointment.name}</div>
@@ -101,7 +89,9 @@ export default function Dashboard() {
                                         </span>
                                     </div>
                                 </div>
-                            ))}
+                            )) : (
+                                <div className="text-center py-4 text-muted small">Nenhum agendamento para hoje</div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -111,7 +101,7 @@ export default function Dashboard() {
                     <div className="card border-0 shadow-sm p-4">
                         <h3 className="h5 fw-bold text-dark mb-4">Tratamentos Populares</h3>
                         <div className="d-flex flex-column gap-3">
-                            {treatments.map((treatment, idx) => (
+                            {popularTreatments.length > 0 ? popularTreatments.map((treatment, idx) => (
                                 <div key={idx}>
                                     <div className="d-flex justify-content-between small fw-medium text-secondary mb-1">
                                         <span>{treatment.name}</span>
@@ -125,7 +115,9 @@ export default function Dashboard() {
                                         ></div>
                                     </div>
                                 </div>
-                            ))}
+                            )) : (
+                                <div className="text-center py-4 text-muted small">Dados insuficientes</div>
+                            )}
                         </div>
                     </div>
                 </div>

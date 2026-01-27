@@ -10,6 +10,8 @@ use App\Http\Controllers\TratamentoController;
 use App\Http\Controllers\AgendamentoController;
 use App\Http\Controllers\AnamneseController;
 
+use App\Http\Controllers\DashboardController;
+
 Route::get('/', function () {
     return Inertia::render('Auth/Login', [
         'canLogin' => Route::has('login'),
@@ -17,9 +19,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/clientes', [UserController::class, 'index'])->middleware(['auth', 'verified'])->name('clientes');
 

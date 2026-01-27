@@ -3,7 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
 import Modal from '@/Components/Modal';
 
-export default function Tratamentos({ tratamentos = [] }) {
+export default function Tratamentos({ tratamentos = [], totalSemana = 0, totalMes = 0, popularTreatments = [] }) {
     const [showNewTreatmentModal, setShowNewTreatmentModal] = useState(false);
     const [showEditTreatmentModal, setShowEditTreatmentModal] = useState(false);
     const [editingTreatmentId, setEditingTreatmentId] = useState(null);
@@ -90,15 +90,10 @@ export default function Tratamentos({ tratamentos = [] }) {
 
     const stats = [
         { title: 'Total de Tratamentos', value: tratamentos.length, icon: 'flower1' },
-        { title: 'Tratamentos Semanais', value: '8', icon: 'flower1' },
-        { title: 'Tratamentos Mensais', value: '32', icon: 'flower1' },
+        { title: 'Tratamentos Semanais', value: totalSemana.toString(), icon: 'flower1' },
+        { title: 'Tratamentos Mensais', value: totalMes.toString(), icon: 'flower1' },
     ];
 
-    const popularTreatments = [
-        { name: 'Limpeza de Pele', percentage: 45 },
-        { name: 'Massagem', percentage: 30 },
-        { name: 'Drenagem', percentage: 25 },
-    ];
 
     return (
         <>
@@ -222,8 +217,8 @@ export default function Tratamentos({ tratamentos = [] }) {
                     </div>
 
                     <div className="col-lg-4">
-                        <div className="card border-0 shadow-sm p-4 h-100">
-                            <h3 className="h5 fw-bold text-dark mb-4">Tratamentos Populares</h3>
+                        <div className="card border-0 shadow-sm p-3">
+                            <h3 className="h6 fw-bold text-dark mb-3">Tratamentos Populares</h3>
                             <div className="d-flex flex-column gap-3">
                                 {popularTreatments.map((treatment, idx) => (
                                     <div key={idx}>
