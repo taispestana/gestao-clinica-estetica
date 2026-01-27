@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Tratamento;
+use App\Models\Agendamento;
 use Inertia\Inertia;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class TratamentoController extends Controller
 {
@@ -15,8 +18,42 @@ class TratamentoController extends Controller
     public function index()
     {
         $tratamentos = Tratamento::latest()->get();
+
+        $now = Carbon::now();
+        $startOfWeek = $now->copy()->startOfWeek();
+        $endOfWeek = $now->copy()->endOfWeek();
+
+        $totalSemana = Agendamento::where('estado_agendamento', '!=', 5) // 5 = Ausência
+            ->whereBetween('data_hora_inicio', [$startOfWeek, $endOfWeek])
+            ->count();
+
+        $totalMes = Agendamento::where('estado_agendamento', '!=', 5)
+            ->whereMonth('data_hora_inicio', $now->month)
+            ->whereYear('data_hora_inicio', $now->year)
+            ->count();
+
+        $totalAgendamentos = Agendamento::where('estado_agendamento', '!=', 5)->count();
+
+        $popularTreatments = Agendamento::where('estado_agendamento', '!=', 5)
+            ->whereNotNull('tratamento_id')
+            ->select('tratamento_id', DB::raw('count(*) as count'))
+            ->groupBy('tratamento_id')
+            ->orderByDesc('count')
+            ->limit(3)
+            ->get()
+            ->map(function ($agendamento) use ($totalAgendamentos) {
+                $tratamento = Tratamento::find($agendamento->tratamento_id);
+                return [
+                    'name' => $tratamento ? $tratamento->nome : 'Desconhecido',
+                    'percentage' => $totalAgendamentos > 0 ? round(($agendamento->count / $totalAgendamentos) * 100) : 0
+                ];
+            });
+
         return Inertia::render('Tratamentos', [
-            'tratamentos' => $tratamentos
+            'tratamentos' => $tratamentos,
+            'totalSemana' => $totalSemana,
+            'totalMes' => $totalMes,
+            'popularTreatments' => $popularTreatments
         ]);
     }
 
