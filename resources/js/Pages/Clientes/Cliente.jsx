@@ -283,6 +283,7 @@ export default function Cliente({ cliente }) {
                                 </>
                             )}
 
+                            {/* Aba Anamnese */}
                             {activeTab === 'anamnese' && (
                                 <div className="mt-2">
                                     {cliente.anamnese ? (
@@ -320,13 +321,11 @@ export default function Cliente({ cliente }) {
                                 </div>
                             )}
 
+                            {/* Aba Histórico */}   
                             {activeTab === 'historico' && (
                                 <div className="procedure-history">
                                     <div className="d-flex justify-content-between align-items-center mb-4">
                                         <h5 className="mb-0">Histórico de Procedimentos</h5>
-                                        {/* <button className="btn btn-gold px-4 py-2" style={{ borderRadius: '8px' }}>
-                                            <span className="me-2">+</span> Novo Procedimento
-                                        </button> */}
                                     </div>
 
                                     <div className="d-flex flex-column gap-3 mb-4">
@@ -474,7 +473,7 @@ export default function Cliente({ cliente }) {
                 </Modal>
 
                 {/* Anamnese Modal */}
-                <Modal show={showAnamneseModal} onClose={closeAnamneseModal} style={{ maxWidth: '43.75rem' }}>
+                <Modal show={showAnamneseModal} onClose={closeAnamneseModal} closeable={false} style={{ maxWidth: '43.75rem' }}>
                     <div className="p-4">
                         <div className="d-flex justify-content-end mb-2">
                             <button type="button" className="btn-close" onClick={closeAnamneseModal}></button>

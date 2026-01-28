@@ -6,6 +6,7 @@ export default function Modal({
     show = false,
     maxWidth = '2xl',
     onClose = () => { },
+    closeable = true,
     style = {},
     overlayStyle = {},
 }) {
@@ -49,11 +50,11 @@ export default function Modal({
                 padding: '1rem',
                 ...overlayStyle
             }}
-            onClick={onClose}
+            onClick={() => closeable && onClose()}
         >
             <div
                 style={{
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: 'var(--white)',
                     width: '100%',
                     maxWidth: maxWidthClass,
                     maxHeight: 'calc(100vh - 2rem)',
