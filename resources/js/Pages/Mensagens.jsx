@@ -105,7 +105,7 @@ export default function Mensagens({ aniversariantes = [], lembretes = [] }) {
 
 
             {/* Secção de Lembretes */}
-            <h2 className="h5 fw-bold text-dark mb-3">📅 Lembrar Marcações </h2>
+            <h2 className="h5 fw-bold text-dark mb-3">Lembrar Marcações </h2>
             <div className="card border-0 shadow-sm p-3 p-md-4 mb-5">
                 {lembretes.length === 0 ? (
                     <p className="text-center py-4 text-secondary">Não há agendamentos próximos para lembrar.</p>
@@ -116,12 +116,12 @@ export default function Mensagens({ aniversariantes = [], lembretes = [] }) {
                                 <div className="row align-items-center">
                                     <div className="col-12 col-md-4">
                                         <div className="fw-semibold text-dark">{agendamento.cliente?.name}</div>
-                                        <div className="text-success small">{agendamento.tratamento?.nome || 'Tratamento'}</div>
+                                        <div className="text--secondary small">{agendamento.tratamento?.nome || 'Tratamento'}</div>
                                     </div>
                                     <div className="col-6 col-md-4 text-md-center">
                                         <div className="text-secondary small">
                                             {new Date(agendamento.data_hora_inicio).toLocaleString('pt-PT', {
-                                                day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+                                                 day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
                                             })}
                                         </div>
                                     </div>
@@ -137,7 +137,7 @@ export default function Mensagens({ aniversariantes = [], lembretes = [] }) {
                                                 }
                                             )}
                                             className="btn btn-sm text-white px-3 py-2"
-                                            style={{ backgroundColor: '#128C7E', borderRadius: '8px' }}
+                                            style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}
                                         >
                                             <i className="bi bi-clock-history me-2"></i> Lembrar
                                         </button>
@@ -150,7 +150,7 @@ export default function Mensagens({ aniversariantes = [], lembretes = [] }) {
             </div>
 
             {/* Secção de Aniversariantes */}
-            <h2 className="h5 fw-bold text-dark mb-3 mt-5">🎂 Aniversariantes do Mês</h2>
+            <h2 className="h5 fw-bold text-dark mb-3 mt-5">Aniversariantes do Mês</h2>
             <div className="card border-0 shadow-sm p-3 p-md-4 mb-5">
                 {aniversariantes.length === 0 ? (
                     <p className="text-center py-4 text-secondary">Nenhum aniversariante encontrado para este mês.</p>
@@ -165,14 +165,14 @@ export default function Mensagens({ aniversariantes = [], lembretes = [] }) {
                                     </div>
                                     <div className="col-6 col-md-4 text-md-center">
                                         <span className="badge bg-white text-dark border px-3 py-2">
-                                            🎈 {formatDate(cliente.data_nascimento)}
+                                            {formatDate(cliente.data_nascimento)}
                                         </span>
                                     </div>
                                     <div className="col-6 col-md-4 text-end">
                                         <button
                                             onClick={() => handleWhatsAppMessage(cliente.telemovel, cliente.name, 'birthday')}
                                             className="btn btn-sm text-white px-3 py-2"
-                                            style={{ backgroundColor: '#25D366', borderRadius: '8px' }}
+                                            style={{ backgroundColor: 'var(--primary-button', borderRadius: '8px' }}
                                         >
                                             <i className="bi bi-whatsapp me-2"></i> Parabéns
                                         </button>
