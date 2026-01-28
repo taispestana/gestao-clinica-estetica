@@ -258,7 +258,6 @@ export default function Clientes({ clientes }) {
                                 <input
                                     type="text"
                                     className="form-control bg-light border-0 py-2 rounded-3"
-                                    placeholder="(__) ______________"
                                     value={data.telemovel}
                                     onChange={(e) => setData('telemovel', e.target.value)}
                                 />

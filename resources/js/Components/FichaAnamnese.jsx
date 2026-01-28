@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, router } from '@inertiajs/react';
 
 const SignaturePad = ({ onSave, readOnly, existingSignature }) => {
     const canvasRef = useRef(null);
@@ -123,12 +123,66 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
         assinatura: anamnese?.assinatura_path || '',
     });
 
+    useEffect(() => {
+        if (anamnese) {
+            setData(prev => ({
+                ...prev,
+                origem_conheceu: anamnese.origem_conheceu ?? null,
+                exposicao_sol: anamnese.exposicao_sol ?? null,
+                fumante: anamnese.fumante ?? 0,
+                cigarros_por_dia: anamnese.cigarros_por_dia ?? null,
+                ingestao_agua: anamnese.ingestao_agua ?? null,
+                alimentacao: anamnese.alimentacao ?? null,
+                atividade_fisica: anamnese.atividade_fisica ?? null,
+                cirurgia_plastica: anamnese.cirurgia_plastica || '',
+                tratamento_estetico: anamnese.tratamento_estetico || '',
+                tratamento_medico: anamnese.tratamento_medico || '',
+                alergias: anamnese.alergias || '',
+                diabetica: anamnese.diabetica ?? 0,
+                antecedentes_onco: !!(anamnese.antecedentes_onco),
+                anemia_recente: !!(anamnese.anemia_recente),
+                peso_atual: anamnese.peso_atual ?? null,
+                observacoes: anamnese.observacoes || '',
+                assinatura: anamnese.assinatura_path || '',
+            }));
+        }
+    }, [anamnese]);
+
+    useEffect(() => {
+        if (readOnly) return;
+
+        const handleBeforeUnload = (e) => {
+            e.preventDefault();
+            e.returnValue = '';
+            return '';
+        };
+
+        const unsubscribe = router.on('before', (event) => {
+            // Ignorar se for a própria submissão ou logout
+            if (event.detail.visit.method === 'post' && (event.detail.visit.url.href.includes('anamneses') || event.detail.visit.url.href.includes('logout'))) {
+                return;
+            }
+
+            if (!confirm('Para sair desta página deve primeiro Salvar a anamnese. Tem a certeza que deseja sair sem salvar?')) {
+                event.preventDefault();
+            }
+        });
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            unsubscribe();
+        };
+    }, [readOnly]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if (readOnly) return;
         post(route('anamneses.store'), {
             onSuccess: () => {
                 if (onSuccess) onSuccess();
+                // Faz logout após salvar
+                router.post(route('logout'));
             }
         });
     };
