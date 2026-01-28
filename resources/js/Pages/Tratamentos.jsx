@@ -349,8 +349,8 @@ export default function Tratamentos({ tratamentos = [], totalSemana = 0, totalMe
                             >
                                 <i className="bi bi-trash me-2"></i> Apagar
                             </button>
-                            <button type="submit" className="btn btn-gold px-5 py-2 fw-medium" style={{ borderRadius: '10px', minWidth: '200px' }} disabled={editProcessing}>
-                                {editProcessing ? 'Salvando...' : 'Salvar Alterações'}
+                            <button type="submit" className="btn btn-gold px-5 py-2 fw-medium" style={{ borderRadius: '10px', minWidth: '150px' }} disabled={editProcessing}>
+                                {editProcessing ? 'Salvando...' : 'Salvar'}
                             </button>
                         </div>
                     </form>

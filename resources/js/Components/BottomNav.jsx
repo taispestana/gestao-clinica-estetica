@@ -31,7 +31,7 @@ const BottomNav = () => {
     };
 
     return (
-        <nav className="d-sm-none fixed-bottom bg-white border-top shadow-lg" style={{ zIndex: 1030 }}>
+        <nav className="d-lg-none fixed-bottom bg-white border-top shadow-lg" style={{ zIndex: 1030 }}>
             <div className="d-flex justify-content-around align-items-center py-2 px-1">
                 {navItems.map((item) => (
                     <Link

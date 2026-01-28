@@ -456,10 +456,10 @@ export default function Estoque({ produtos = [] }) {
                             <button
                                 type="submit"
                                 className="btn btn-gold px-5 py-2 fw-medium"
-                                style={{ borderRadius: '10px', minWidth: '200px' }}
+                                style={{ borderRadius: '10px', minWidth: '150px' }}
                                 disabled={editProcessing}
                             >
-                                {editProcessing ? 'Salvando...' : 'Salvar Alterações'}
+                                {editProcessing ? 'Salvando...' : 'Salvar'}
                             </button>
                         </div>
                     </form>
