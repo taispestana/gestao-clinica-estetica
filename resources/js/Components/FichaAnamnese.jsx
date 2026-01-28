@@ -333,7 +333,6 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                                     <label className="form-check-label small" htmlFor="fuma-sim">Sim</label>
                                 </div>
                                 <div className="d-flex align-items-center gap-2">
-                                    <span className="small text-secondary">(</span>
                                     <input
                                         type="text"
                                         inputMode="numeric"
@@ -347,7 +346,7 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                                         }}
                                         disabled={readOnly}
                                     />
-                                    <span className="small text-secondary">cigarros/dia)</span>
+                                    <span className="small text-secondary">cigarros/dia</span>
                                 </div>
                             </div>
                             <div className="form-check mb-0">
@@ -461,21 +460,21 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                                     <input
                                         className="form-check-input" type="radio" name="has_cirurgia" id="ciru-sim"
                                         checked={data.cirurgia_plastica !== 'Não' && data.cirurgia_plastica !== ''}
-                                        onChange={() => setData(prev => ({ ...prev, cirurgia_plastica: 'Sim (Qual(is): ' }))}
+                                        onChange={() => setData(prev => ({ ...prev, cirurgia_plastica: 'Sim  Qual(is): ' }))}
                                         disabled={readOnly}
                                     />
-                                    <label className="form-check-label small text-nowrap" htmlFor="ciru-sim">Sim (Qual(is):</label>
+                                    <label className="form-check-label small text-nowrap" htmlFor="ciru-sim">Sim Qual(is):</label>
                                 </div>
                                 <input
                                     type="text" className="form-control form-control-sm border-0 border-bottom bg-transparent p-0" style={{ width: '300px' }}
-                                    value={data.cirurgia_plastica.startsWith('Sim (Qual(is): ') ? data.cirurgia_plastica.replace('Sim (Qual(is): ', '') : ''}
+                                    value={data.cirurgia_plastica.startsWith('Sim Qual(is): ') ? data.cirurgia_plastica.replace('Sim Qual(is): ', '') : ''}
                                     onChange={e => {
                                         const val = e.target.value;
-                                        setData(prev => ({ ...prev, cirurgia_plastica: 'Sim (Qual(is): ' + val }));
+                                        setData(prev => ({ ...prev, cirurgia_plastica: 'Sim Qual(is): ' + val }));
                                     }}
                                     disabled={readOnly}
                                 />
-                                <span className="small">)</span>
+
                             </div>
                         </div>
                     </div>
@@ -498,21 +497,21 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                                     <input
                                         className="form-check-input" type="radio" name="has_trat_estetico" id="trat-sim"
                                         checked={data.tratamento_estetico !== 'Não' && data.tratamento_estetico !== ''}
-                                        onChange={() => setData(prev => ({ ...prev, tratamento_estetico: 'Sim (Qual(is): ' }))}
+                                        onChange={() => setData(prev => ({ ...prev, tratamento_estetico: 'Sim Qual(is): ' }))}
                                         disabled={readOnly}
                                     />
-                                    <label className="form-check-label small text-nowrap" htmlFor="trat-sim">Sim (Qual(is):</label>
+                                    <label className="form-check-label small text-nowrap" htmlFor="trat-sim">Sim Qual(is):</label>
                                 </div>
                                 <input
                                     type="text" className="form-control form-control-sm border-0 border-bottom bg-transparent p-0" style={{ width: '300px' }}
-                                    value={data.tratamento_estetico.startsWith('Sim (Qual(is): ') ? data.tratamento_estetico.replace('Sim (Qual(is): ', '') : ''}
+                                    value={data.tratamento_estetico.startsWith('Sim Qual(is): ') ? data.tratamento_estetico.replace('Sim Qual(is): ', '') : ''}
                                     onChange={e => {
                                         const val = e.target.value;
-                                        setData(prev => ({ ...prev, tratamento_estetico: 'Sim (Qual(is): ' + val }));
+                                        setData(prev => ({ ...prev, tratamento_estetico: 'Sim Qual(is): ' + val }));
                                     }}
                                     disabled={readOnly}
                                 />
-                                <span className="small">)</span>
+
                             </div>
                         </div>
                     </div>
@@ -535,21 +534,21 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                                     <input
                                         className="form-check-input" type="radio" name="has_trat_medico" id="med-sim"
                                         checked={data.tratamento_medico !== 'Não' && data.tratamento_medico !== ''}
-                                        onChange={() => setData(prev => ({ ...prev, tratamento_medico: 'Sim (Qual(is): ' }))}
+                                        onChange={() => setData(prev => ({ ...prev, tratamento_medico: 'Sim Qual(is): ' }))}
                                         disabled={readOnly}
                                     />
-                                    <label className="form-check-label small text-nowrap" htmlFor="med-sim">Sim (Qual(is):</label>
+                                    <label className="form-check-label small text-nowrap" htmlFor="med-sim">Sim Qual(is):</label>
                                 </div>
                                 <input
                                     type="text" className="form-control form-control-sm border-0 border-bottom bg-transparent p-0" style={{ width: '300px' }}
-                                    value={data.tratamento_medico.startsWith('Sim (Qual(is): ') ? data.tratamento_medico.replace('Sim (Qual(is): ', '') : ''}
+                                    value={data.tratamento_medico.startsWith('Sim Qual(is): ') ? data.tratamento_medico.replace('Sim Qual(is): ', '') : ''}
                                     onChange={e => {
                                         const val = e.target.value;
-                                        setData(prev => ({ ...prev, tratamento_medico: 'Sim (Qual(is): ' + val }));
+                                        setData(prev => ({ ...prev, tratamento_medico: 'Sim Qual(is): ' + val }));
                                     }}
                                     disabled={readOnly}
                                 />
-                                <span className="small">)</span>
+
                             </div>
                         </div>
                     </div>
@@ -571,11 +570,11 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                                 <div className="form-check mb-0">
                                     <input
                                         className="form-check-input" type="radio" name="has_alergias" id="ale-sim"
-                                        checked={data.alergias.startsWith('Sim (Especifique: ')}
-                                        onChange={() => setData(prev => ({ ...prev, alergias: 'Sim (Especifique: ' }))}
+                                        checked={data.alergias.startsWith('Sim Especifique: ')}
+                                        onChange={() => setData(prev => ({ ...prev, alergias: 'Sim Especifique: ' }))}
                                         disabled={readOnly}
                                     />
-                                    <label className="form-check-label small text-nowrap" htmlFor="ale-sim">Sim (Especifique:</label>
+                                    <label className="form-check-label small text-nowrap" htmlFor="ale-sim">Sim Especifique:</label>
                                 </div>
                                 <input
                                     type="text" className="form-control form-control-sm border-0 border-bottom bg-transparent p-0" style={{ width: '300px' }}
@@ -586,7 +585,7 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                                     }}
                                     disabled={readOnly}
                                 />
-                                <span className="small">)</span>
+
                             </div>
                         </div>
                     </div>

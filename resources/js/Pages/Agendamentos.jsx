@@ -408,25 +408,27 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
                                             borderColor: apt.estado_agendamento === 5 ? 'var(--status-red)' : 'var(--warning)'
                                         }}>
                                             <div className="d-flex justify-content-between align-items-start">
-                                                <div>
-                                                    <h6 className="mb-1 fw-bold text-dark">
-                                                        {apt.estado_agendamento === 5 ? `AUSÊNCIA: ${apt.motivo}` : apt.tratamento?.nome}
-                                                    </h6>
-                                                    {!apt.motivo && <small className="text-secondary d-block">Cliente: {apt.cliente?.name}</small>}
+                                                <div className="flex-grow-1">
+                                                    <div className="d-flex flex-column flex-md-row align-items-md-center gap-1 gap-md-2 mb-1">
+                                                        <h6 className="mb-0 fw-bold text-dark">
+                                                            {apt.estado_agendamento === 5 ? `AUSÊNCIA: ${apt.motivo}` : apt.tratamento?.nome}
+                                                        </h6>
+                                                        {apt.voucher && (
+                                                            <div className="mt-1 mt-md-0">
+                                                                <span className="badge bg-white text-warning border border-warning px-2 py-1 fw-normal" style={{ fontSize: '0.7rem' }}>Voucher: {apt.voucher}</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    {!apt.motivo && <small className="text-secondary d-block">Cliente: <span className="text-dark">{apt.cliente?.name}</span></small>}
                                                 </div>
-                                                <div className="d-flex align-items-start gap-2">
-                                                    {apt.voucher && (
-                                                        <span className="badge bg-white text-warning border border-warning small fw-normal">Voucher: {apt.voucher}</span>
-                                                    )}
-                                                    <button
-                                                        onClick={(e) => { e.stopPropagation(); confirmDeletion(apt); }}
-                                                        className="btn btn-link link-danger p-0 border-0 shadow-none hover-scale transition-all"
-                                                        title="Remover"
-                                                        style={{ marginTop: '-4px' }}
-                                                    >
-                                                        <i className="bi bi-trash3 fs-6"></i>
-                                                    </button>
-                                                </div>
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); confirmDeletion(apt); }}
+                                                    className="btn btn-link link-danger p-0 border-0 shadow-none hover-scale transition-all ms-3"
+                                                    title="Remover"
+                                                    style={{ marginTop: '-2px' }}
+                                                >
+                                                    <i className="bi bi-trash3 fs-6"></i>
+                                                </button>
                                             </div>
                                             {apt.observacoes && (
                                                 <div className="mt-2 p-2 bg-white rounded border border-light small text-secondary fst-italic">

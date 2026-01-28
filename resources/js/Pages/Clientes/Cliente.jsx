@@ -90,7 +90,7 @@ export default function Cliente({ cliente }) {
         nextProcedure: futureAppointments.length > 0
             ? new Date(Math.min(...futureAppointments.map(a => new Date(a.data_hora_inicio))))
                 .toLocaleDateString('pt-PT')
-            : 'NENHUM',
+            : 'N/A',
         totalSpent: new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' })
             .format(pastAppointments.reduce((acc, a) => acc + parseFloat(a.tratamento?.preco || 0), 0))
     };
@@ -321,7 +321,7 @@ export default function Cliente({ cliente }) {
                                 </div>
                             )}
 
-                            {/* Aba Histórico */}   
+                            {/* Aba Histórico */}
                             {activeTab === 'historico' && (
                                 <div className="procedure-history">
                                     <div className="d-flex justify-content-between align-items-center mb-4">
