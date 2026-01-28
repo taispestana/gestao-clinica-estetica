@@ -1,5 +1,4 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
-import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
@@ -11,7 +10,6 @@ export default function Login({ status }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
-        remember: false,
     });
 
     const submit = (e) => {
@@ -87,18 +85,7 @@ export default function Login({ status }) {
                         <InputError message={errors.password} className="mt-1" />
                     </div>
 
-                    <div className="mb-4 d-flex align-items-center mt-3">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) =>
-                                setData('remember', e.target.checked)
-                            }
-                        />
-                        <span className="ms-2 small text-muted">
-                            Lembrar Senha
-                        </span>
-                    </div>
+
 
                     <div className="d-grid mt-4">
                         <PrimaryButton className="btn-gold" disabled={processing}>

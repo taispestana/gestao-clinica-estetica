@@ -153,7 +153,7 @@ export default function Cliente({ cliente }) {
 
                             <div className="d-flex flex-column gap-3 mb-4">
                                 <div>
-                                    <small className="text-secondary d-block">Telefone</small>
+                                    <small className="text-secondary d-block">Telemóvel</small>
                                     <span className="fw-medium">{customer.phone}</span>
                                 </div>
                                 <div>

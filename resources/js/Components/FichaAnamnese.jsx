@@ -9,9 +9,7 @@ const SignaturePad = ({ onSave, readOnly, existingSignature }) => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
 
-        // Limpar o canvas antes de desenhar
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+        // Configurações iniciais do contexto
         ctx.strokeStyle = '#000';
         ctx.lineWidth = 2;
         ctx.lineJoin = 'round';
@@ -20,18 +18,34 @@ const SignaturePad = ({ onSave, readOnly, existingSignature }) => {
         if (existingSignature) {
             const img = new Image();
             img.onload = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             };
             img.src = existingSignature;
+        } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
     }, [existingSignature]);
+
+    const getCoordinates = (e) => {
+        const canvas = canvasRef.current;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+
+        return {
+            x: (clientX - rect.left) * scaleX,
+            y: (clientY - rect.top) * scaleY
+        };
+    };
 
     const startDrawing = (e) => {
         if (readOnly) return;
         setIsDrawing(true);
-        const rect = canvasRef.current.getBoundingClientRect();
-        const x = (e.clientX || e.touches[0].clientX) - rect.left;
-        const y = (e.clientY || e.touches[0].clientY) - rect.top;
+        const { x, y } = getCoordinates(e);
         const ctx = canvasRef.current.getContext('2d');
         ctx.beginPath();
         ctx.moveTo(x, y);
@@ -40,20 +54,15 @@ const SignaturePad = ({ onSave, readOnly, existingSignature }) => {
     const stopDrawing = () => {
         if (!isDrawing) return;
         setIsDrawing(false);
-        const canvas = canvasRef.current;
-        onSave(canvas.toDataURL());
+        onSave(canvasRef.current.toDataURL());
     };
 
     const draw = (e) => {
         if (!isDrawing || readOnly) return;
         if (e.cancelable) e.preventDefault();
 
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        const rect = canvas.getBoundingClientRect();
-        const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
-        const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
-
+        const { x, y } = getCoordinates(e);
+        const ctx = canvasRef.current.getContext('2d');
         ctx.lineTo(x, y);
         ctx.stroke();
     };
@@ -666,7 +675,7 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                 <label className="small text-secondary mb-2">Assinatura do Cliente:</label>
                 <SignaturePad
                     onSave={(val) => setData('assinatura', val)}
-                    readOnly={readOnly}
+                    readOnly={readOnly || !!anamnese}
                     existingSignature={data.assinatura}
                 />
             </div>

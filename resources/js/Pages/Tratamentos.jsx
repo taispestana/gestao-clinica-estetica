@@ -177,7 +177,7 @@ export default function Tratamentos({ tratamentos = [], totalSemana = 0, totalMe
                                             <div className="col-md-2 text-center text-dark fw-bold ps-0 pe-5">{new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(tratamento.preco)}</div>
                                             <div className="col-md-2 text-end">
                                                 <button
-                                                    className="btn btn-sm text-white  px-3 py-2"
+                                                    className="btn btn-gold btn-sm px-3 px-xl-4 py-2 d-inline-flex align-items-center gap-2 ms-auto"
                                                     style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}
                                                     onClick={() => openEditModal(tratamento)}
                                                 >
