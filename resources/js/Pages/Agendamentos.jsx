@@ -4,6 +4,8 @@ import { Head, useForm, router } from '@inertiajs/react';
 import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
 import DangerButton from '@/Components/DangerButton';
+
+
 const SearchableSelect = ({ label, options, value, onChange, placeholder, error, displayKey = 'name' }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [isOpen, setIsOpen] = useState(false);
@@ -99,14 +101,14 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
         fim: '10:00',
     });
 
-    // Update form date when selectedDate changes from calendar
+    // Atualiza a data do agendamento quando a data selecionada muda
     useEffect(() => {
         if (selectedDate) {
             setData('data', formatDateForInput(selectedDate));
         }
     }, [selectedDate]);
 
-    // Pre-fill client from query parameter
+    // Preenche o cliente selecionado a partir do parâmetro de consulta
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const clienteId = urlParams.get('cliente_id');
@@ -186,7 +188,7 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
     ];
 
 
-    // Helpers
+    // Funções auxiliares
     const getDaysInMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
     const getFirstDayOfMonth = (date) => new Date(date.getFullYear(), date.getMonth(), 1).getDay();
 
@@ -232,7 +234,7 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
         // Formatar chave de data
         const formatDateKey = (date) => {
             const y = date.getFullYear();
-            const mo = String(date.getMonth() + 1).padStart(2, '0');
+            const mo = String(date.getMonth() + 1).padStart(2, '0');// 'padStart' adiciona zeros à esquerda se necessário
             const da = String(date.getDate()).padStart(2, '0');
             return `${y}-${mo}-${da}`;
         };
@@ -481,14 +483,14 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
                                             </svg>
                                         )}
 
-                                        {/* Ícone Semanal (Calendar-Week) */}
+                                        {/* Ícone Semanal */}
                                         {stat.icon === 'calendar-week' && (
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-calendar-week-fill" viewBox="0 0 16 16">
                                                 <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5h16v9zM11 7.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V8a.5.5 0 0 0-.5-.5h-1zm-3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V8a.5.5 0 0 0-.5-.5h-1zm-5 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z" />
                                             </svg>
                                         )}
 
-                                        {/* Ícone Mensal (Calendar-Month / Calendar3) */}
+                                        {/* Ícone Mensal */}
                                         {stat.icon === 'calendar-month' && (
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-calendar3" viewBox="0 0 16 16">
                                                 <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857z" />
@@ -497,7 +499,7 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
                                         )}
                                     </div>
                                 </div>
-                                {/* Mobile Icon */}
+                                {/* Icone Mobile */}
                                 <div className="d-md-none mb-2">
                                     <div className="p-2 rounded d-inline-block" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
                                         {stat.icon === 'calendar' && (<i className="bi bi-calendar-event-fill fs-6"></i>)}
@@ -514,12 +516,12 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
             </div>
 
 
-            {/* Main Content Layout */}
+            {/* Layout do conteúdo principal */}
             <div className="row g-4 mb-5">
                 {/* Calendário - Ocupa col-12 no mobile e col-xl-8 no desktop */}
                 <div className="col-12 col-xl-8">
                     <div className="card border-0 shadow-sm p-4">
-                        {/* Calendar Header with View Switcher */}
+                        {/* Header do calendário com alternador de visualização */}
                         <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3">
                             <h5 className="mb-0 fw-bold text-dark">Calendário</h5>
 
@@ -536,9 +538,9 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
                             </div>
                         </div>
 
-                        {/* Calendar Grid Container */}
+                        {/* Grid do calendário */}
                         <div className="calendar-grid">
-                            {/* Days Header - Only show for Month & Week */}
+                            {/* Cabeçalho de dias - Somente mostra para Mês e Semana */}
                             {view !== 'day' && (
                                 <div className="d-flex text-center mb-2 text-muted small fw-bold">
                                     {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
@@ -547,7 +549,7 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
                                 </div>
                             )}
 
-                            {/* View Content */}
+                            {/* Conteúdo do calendário */}
                             {view === 'month' && renderMonthGrid()}
                             {view === 'day' && renderDayView()}
 
@@ -555,7 +557,7 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
                     </div>
                 </div>
 
-                {/* Right Column: Forms */}
+                {/* Coluna direita: Formulários */}
                 <div className="col-12 col-xl-4">
                     <div className="row g-4">
                         {/* Formulário de Marcação */}

@@ -44,7 +44,7 @@ export default function Clientes({ clientes }) {
                 }
             } else {
                 // Se nunca teve agendamento, vamos ver a data de criação (opcional, aqui mantemos ativo ou decidimos)
-                // Para este caso, se não tem agendamento e foi criado há mais de 15 meses, inativo.
+                // Para este caso, se não tem agendamento e foi criado há mais de 15 meses fica inativo
                 const createdAt = new Date(cliente.created_at); // Assumindo que temos created_at
                 const fifteenMonthsAgo = new Date();
                 fifteenMonthsAgo.setMonth(fifteenMonthsAgo.getMonth() - 15);
@@ -96,7 +96,7 @@ export default function Clientes({ clientes }) {
                             <div key={index} className="col-4 col-md-4 px-1 px-md-3">
                                 <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
                                     <div className="card-body p-2 p-md-4 text-md-start">
-                                        {/* Desktop/Tablet Icon */}
+                                        {/* Icone Desktop/Tablet */}
                                         <div className="d-none d-md-flex align-items-start justify-content-between mb-3">
                                             <div className="p-3 rounded" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
                                                 {stat.icon === 'users' && (
@@ -118,7 +118,7 @@ export default function Clientes({ clientes }) {
                                             </div>
                                         </div>
 
-                                        {/* Mobile Icon */}
+                                        {/* Icone Mobile */}
                                         <div className="d-md-none mb-2">
                                             <div className="p-2 rounded d-inline-block" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
                                                 <i className={`bi bi-${stat.icon === 'users' ? 'people' : (stat.icon === 'calendar' ? 'calendar-event' : 'calendar3')} fs-6`}></i>
@@ -179,8 +179,7 @@ export default function Clientes({ clientes }) {
                                     <div className="col-2"></div>
                                 </div>
 
-                                <div className="d-flex flex-column gap-4
-                        ">
+                                <div className="d-flex flex-column gap-4">
                                     {appointments.length > 0 ? (
                                         appointments.map((appointment, idx) => (
                                             <div key={idx} className="card border-0 shadow-sm py-3 px-4 py-md-4 bg-white rounded-4">
@@ -193,7 +192,7 @@ export default function Clientes({ clientes }) {
                                                         <div className="text-secondary small">{appointment.contacto}</div>
                                                     </div>
 
-                                                    {/* Desktop View Row */}
+                                                    {/* Vista em Linha no Desktop */}
                                                     <div className="d-none d-md-flex row align-items-center w-100 mx-0">
                                                         <div className="col-md-4">
                                                             <div className="fw-semibold text-dark">{appointment.name}</div>
@@ -210,7 +209,7 @@ export default function Clientes({ clientes }) {
                                                             <Link href={route('clientes.show', appointment.id)} className="btn btn-sm text-white px-xl-4 py-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>Ver Mais</Link>
                                                         </div>
                                                     </div>
-                                                    {/* Mobile Button */}
+                                                    {/* Botão Mobile */}
                                                     <div className="col-12 text-end d-md-none">
                                                         <Link href={route('clientes.show', appointment.id)} className="btn btn-sm text-white px-xl-4 py-2" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}>Ver Mais</Link>
                                                     </div>

@@ -26,7 +26,7 @@ export default function Dashboard({ totalClientes, agendamentosHoje, agendamento
                     <div key={index} className="col-4 col-md-4 px-1 px-md-3">
                         <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
                             <div className="card-body p-2 p-md-4 text-start">
-                                {/* Desktop/Tablet Icon */}
+                                {/* Icone Desktop/Tablet */}
                                 <div className="d-none d-md-flex align-items-start justify-content-between mb-3">
                                     <div className="p-3 rounded" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
                                         {stat.icon === 'users' && (
@@ -47,7 +47,7 @@ export default function Dashboard({ totalClientes, agendamentosHoje, agendamento
                                         )}
                                     </div>
                                 </div>
-                                {/* Mobile Icon */}
+                                {/* Icone Mobile */}
                                 <div className="d-md-none mb-2">
                                     <div className="p-2 rounded d-inline-block" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
                                         <i className={`bi bi-${stat.icon === 'users' ? 'people' : (stat.icon === 'calendar' ? 'calendar-event' : 'calendar3')} fs-6`}></i>

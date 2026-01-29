@@ -118,7 +118,7 @@ export default function Tratamentos({ tratamentos = [], totalSemana = 0, totalMe
                                         </div>
                                     </div>
 
-                                    {/* Mobile Icon View */}
+                                    {/* Icone Mobile  */}
                                     <div className="d-md-none mb-2">
                                         <div className="p-2 rounded d-inline-block" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-flower1" viewBox="0 0 16 16">
@@ -241,6 +241,7 @@ export default function Tratamentos({ tratamentos = [], totalSemana = 0, totalMe
                 </div>
             </AuthenticatedLayout>
 
+            {/* Modal para Adicionar Tratamento */}
             <Modal show={showNewTreatmentModal} onClose={closeModal} maxWidth="md">
                 <div className="p-4 p-md-5">
                     <h4 className="fw-bold mb-4" style={{ color: 'var(--main-text)' }}>Novo Tratamento</h4>
