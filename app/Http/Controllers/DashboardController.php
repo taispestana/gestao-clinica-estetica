@@ -15,7 +15,7 @@ class DashboardController extends Controller
     {
         $now = Carbon::now();
 
-        // Stats
+        // estatísticas
         $totalClientes = User::where('tipo_users', 1)->count(); // 1 = Cliente
 
         $agendamentosHoje = Agendamento::where('estado_agendamento', '!=', 5)
@@ -27,7 +27,7 @@ class DashboardController extends Controller
             ->whereYear('data_hora_inicio', $now->year)
             ->count();
 
-        // Today's appointments list
+        // lista de agendamentos de hoje
         $appointmentsHoje = Agendamento::with(['cliente', 'tratamento'])
             ->where('estado_agendamento', '!=', 5)
             ->whereDate('data_hora_inicio', $now->toDateString())
@@ -66,7 +66,7 @@ class DashboardController extends Controller
                 ];
             });
 
-        // Popular Treatments
+        // tratamentos mais agendados
         $totalAgendamentos = Agendamento::where('estado_agendamento', '!=', 5)->count();
 
         $popularTreatments = Agendamento::where('estado_agendamento', '!=', 5)
