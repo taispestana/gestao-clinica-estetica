@@ -59,3 +59,7 @@ require __DIR__ . '/auth.php';
 
 
 Route::post('/storeUser', [UserController::class, 'storeUser'])->name('users.storeUser');
+
+Route::fallback(function () {
+    return Inertia::render('Fallback');
+});
