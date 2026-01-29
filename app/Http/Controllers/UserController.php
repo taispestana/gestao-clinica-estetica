@@ -19,7 +19,7 @@ class UserController extends Controller
             ->withMax('agendamentos as ultima_marcacao', 'data_hora_inicio')
             ->latest()
             ->get();
-            
+
         return Inertia::render('Clientes', [
             'clientes' => $clientes
         ]);
@@ -40,7 +40,7 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'telemovel' => 'required|string|max:20',
+            'telemovel' => 'required|string|min:9|max:20',
             'email' => 'nullable|email|unique:users|max:255',
             'data_nascimento' => 'nullable|date',
             'profissao' => 'nullable|string|max:255',
@@ -93,7 +93,7 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'telemovel' => 'required|string|max:20',
+            'telemovel' => 'required|string|min:9|max:20',
             'email' => 'nullable|email|max:255|unique:users,email,' . $id,
             'data_nascimento' => 'nullable|date',
             'profissao' => 'nullable|string|max:255',

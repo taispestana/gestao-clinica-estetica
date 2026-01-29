@@ -717,9 +717,9 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
             {/* Modal de Confirmação de Exclusão */}
             <Modal show={confirmingDeletion} onClose={() => setConfirmingDeletion(false)} style={{ maxWidth: '25rem' }}>
                 <div className="p-5 text-center">
-                    {/* Icone de Alerta Centralizado */}
+                    {/* Icone de Alerta */}
                     <div className="d-flex justify-content-center mb-4 animate-fade-in">
-                        <div className="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style={{ width: '100px', height: '100px', border: '1px solid #FFC107', color: '#FFC107', backgroundColor: '#fff' }}>
+                        <div className="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style={{ width: '100px', height: '100px', border: '1px solid #FFC107', color: '#FFC107', backgroundColor: 'var(--white' }}>
                             <span style={{ fontSize: '3.5rem', fontWeight: 'bold' }}>!</span>
                         </div>
                     </div>
