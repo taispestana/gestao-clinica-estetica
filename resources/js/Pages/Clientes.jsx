@@ -4,12 +4,14 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import Modal from '@/Components/Modal';
 
 export default function Clientes({ clientes }) {
+    //Estados
     const [showNewClientModal, setShowNewClientModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('Todos');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
+    //Formulário
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         telemovel: '',
@@ -18,21 +20,25 @@ export default function Clientes({ clientes }) {
         profissao: '',
     });
 
+    //Funções
     const openModal = () => setShowNewClientModal(true);
     const closeModal = () => {
         setShowNewClientModal(false);
         reset();
     };
 
+    //Estatísticas
     const stats = [
         { title: 'Clientes Ativos', value: clientes.length.toString(), icon: 'users', color: 'var(--status-green)' },
         { title: 'Agendamentos Hoje', value: '0', icon: 'calendar', color: 'var(--status-green)' },
         { title: 'Agendamento Mensal', value: '0', icon: 'calendar-month', color: 'var(--status-green)' },
     ];
 
+
     const fifteenMonthsAgo = new Date();
     fifteenMonthsAgo.setMonth(fifteenMonthsAgo.getMonth() - 15);
 
+    // Filtro de Clientes
     const filteredClients = clientes
         .map(cliente => {
             let status = 'Ativo';
@@ -160,7 +166,7 @@ export default function Clientes({ clientes }) {
                     <div className="row mb-5">
                         <div className="col-12">
                             <div className="card border-0 shadow-sm p-4">
-                                {/* Cabeçalho da Tabela - Usando Grid para alinhar com o conteúdo */}
+                                {/* Cabeçalho da Tabela */}
                                 <div className="row px-4 mb-3 text-muted fw-semibold d-none d-md-flex">
                                     <div className="col-4">Nome</div>
                                     <div className="col-3 text-center">Contacto</div>
@@ -212,7 +218,7 @@ export default function Clientes({ clientes }) {
                                     )}
                                 </div>
 
-                                {/* Barra de Paginação */}
+                                {/* Paginação da Tabela */}
                                 {totalResults > 0 && (
                                     <div className="mt-5 rounded-4 overflow-hidden" style={{ padding: '15px 25px' }}>
                                         <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
@@ -379,7 +385,6 @@ export default function Clientes({ clientes }) {
                             />
                             {errors.profissao && <div className="text-danger small">{errors.profissao}</div>}
                         </div>
-
                         <div className="text-center">
                             <button type="submit" disabled={processing} className="btn text-white px-5 py-2 fw-medium" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '10px', minWidth: '200px' }}>
                                 Salvar

@@ -213,7 +213,7 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
             [`${year}-12-25`]: 'Natal',
         };
 
-        // Calcular a Páscoa
+        // Calcular os dias de Páscoa
         const a = year % 19;
         const b = Math.floor(year / 100);
         const c = year % 100;
@@ -257,6 +257,7 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
         return holidays;
     };
 
+    // Obter nome do feriado
     const getHolidayName = (date) => {
         const year = date.getFullYear();
         const holidays = getPortugueseHolidays(year);
@@ -275,6 +276,7 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
         }
     };
 
+    // Próximo dia ou mês
     const handleNext = () => {
         if (view === 'month') {
             setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
@@ -285,6 +287,7 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
         }
     };
 
+    // Formatar data para input
     const formatDateForInput = (date) => {
         if (!date) return '';
         const offset = date.getTimezoneOffset();
@@ -302,22 +305,24 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
         return `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
     };
 
+    // Verificar se é a data de hoje
     const isToday = (d) => {
         const today = new Date();
         return d.getDate() === today.getDate() && d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear();
     };
 
+    // Verificar se é o mesmo dia
     const isSameDay = (d1, d2) => {
         return d1.getDate() === d2.getDate() && d1.getMonth() === d2.getMonth() && d1.getFullYear() === d2.getFullYear();
     };
 
+    // Obter agendamentos para uma data
     const getAgendamentosForDate = (date) => {
         return agendamentos.filter(apt => {
             const aptDate = new Date(apt.data_hora_inicio);
             return isSameDay(aptDate, date);
         });
     };
-
 
     // Geradores de renderização
     const renderMonthGrid = () => {
@@ -381,9 +386,9 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
         );
     };
 
-
+    // Renderizar visualização de dia
     const renderDayView = () => {
-        const hours = Array.from({ length: 11 }, (_, i) => i + 9); // 09:00 to 19:00
+        const hours = Array.from({ length: 11 }, (_, i) => i + 9); // 09:00 às 19:00
         const dayAgendamentos = getAgendamentosForDate(currentDate);
 
         return (
@@ -473,10 +478,10 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
                     <div key={index} className="col-4 col-md-4 px-1 px-md-3">
                         <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
                             <div className="card-body p-2 p-md-4 text-start">
-                                {/* Desktop/Tablet Icon */}
+                                {/* Ícone Desktop/Tablet */}
                                 <div className="d-none d-md-flex align-items-start justify-content-between mb-3">
                                     <div className="p-3 rounded" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
-                                        {/* Ícone Hoje */}
+                                        {/* Ícone de Hoje */}
                                         {stat.icon === 'calendar' && (
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-calendar-event-fill" viewBox="0 0 16 16">
                                                 <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5h16v9zm-4.5-6.5a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z" />
@@ -499,7 +504,7 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
                                         )}
                                     </div>
                                 </div>
-                                {/* Icone Mobile */}
+                                {/* Ícones no Mobile */}
                                 <div className="d-md-none mb-2">
                                     <div className="p-2 rounded d-inline-block" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
                                         {stat.icon === 'calendar' && (<i className="bi bi-calendar-event-fill fs-6"></i>)}
@@ -719,12 +724,12 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
                 <div className="p-5 text-center">
                     {/* Icone de Alerta */}
                     <div className="d-flex justify-content-center mb-4 animate-fade-in">
-                        <div className="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style={{ width: '100px', height: '100px', border: '1px solid #FFC107', color: '#FFC107', backgroundColor: 'var(--white' }}>
+                        <div className="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style={{ width: '100px', height: '100px', border: '1px solid var(--primary-button)', color: 'var(--primary-button)', backgroundColor: 'var(--white' }}>
                             <span style={{ fontSize: '3.5rem', fontWeight: 'bold' }}>!</span>
                         </div>
                     </div>
 
-                    <h3 className="fw-bold mb-5 px-3" style={{ color: '#171717', lineHeight: '1.2' }}>
+                    <h3 className="fw-bold mb-5 px-3" style={{ color: 'var(--main-text)', lineHeight: '1.2' }}>
                         Tem certeza que deseja apagar o {agendamentoToDelete?.estado_agendamento === 5 ? 'bloqueio' : 'agendamento'}?
                     </h3>
 
