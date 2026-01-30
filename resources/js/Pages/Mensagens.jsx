@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/react';
 
 export default function Mensagens({ aniversariantes = [], lembretes = [] }) {
 
+    //Estatísticas
     const stats = [
         {
             title: 'Aniversariantes do Mês',
@@ -18,6 +19,7 @@ export default function Mensagens({ aniversariantes = [], lembretes = [] }) {
         },
     ];
 
+    //Função de envio de mensagem
     const handleWhatsAppMessage = (phone, name, type, additionalData = null) => {
         if (!phone) {
             alert('Este cliente não tem um número de telemóvel registado.');
@@ -30,7 +32,7 @@ export default function Mensagens({ aniversariantes = [], lembretes = [] }) {
         if (cleanPhone.startsWith('9') && cleanPhone.length === 9) {
             cleanPhone = '351' + cleanPhone;
         }
-
+        //Mensagem de aniversário
         let message = '';
 
         if (type === 'birthday') {
@@ -45,13 +47,14 @@ export default function Mensagens({ aniversariantes = [], lembretes = [] }) {
                 hour: '2-digit',
                 minute: '2-digit'
             });
+            //Mensagem de lembrete  marcação
             message = `Olá ${name}! Lembramos que tem uma marcação para "${additionalData.tratamento}" no dia ${data} às ${hora}. Agradecemos que confirme a sua presença. Lembramos que as desmarcações terão de ser feitas com 48 horas de antecedência. Até breve!`;
         }
-
+        //Envia a mensagem
         const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
         window.open(url, '_blank');
     };
-
+    //Formata a data
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
         const date = new Date(dateString);
@@ -104,7 +107,7 @@ export default function Mensagens({ aniversariantes = [], lembretes = [] }) {
 
 
 
-            {/* Secção de Lembretes */}
+            {/* Seção de Lembretes */}
             <h2 className="h5 fw-bold text-dark mb-3">Lembrar Marcações </h2>
             <div className="card border-0 shadow-sm p-3 p-md-4 mb-5">
                 {lembretes.length === 0 ? (
@@ -149,7 +152,7 @@ export default function Mensagens({ aniversariantes = [], lembretes = [] }) {
                 )}
             </div>
 
-            {/* Secção de Aniversariantes */}
+            {/* Seção de Aniversariantes */}
             <h2 className="h5 fw-bold text-dark mb-3 mt-5">Aniversariantes do Mês</h2>
             <div className="card border-0 shadow-sm p-3 p-md-4 mb-5">
                 {aniversariantes.length === 0 ? (

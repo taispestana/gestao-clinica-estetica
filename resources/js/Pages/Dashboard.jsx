@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 
 
 export default function Dashboard({ totalClientes, agendamentosHoje, agendamentoMensal, appointmentsHoje, popularTreatments }) {
+    //Estatísticas
     const stats = [
         { title: 'Clientes Ativos', value: totalClientes.toString(), icon: 'users', color: 'var(--status-green)' },
         { title: 'Agendamentos Hoje', value: agendamentosHoje.toString(), icon: 'calendar', color: 'var(--status-green)' },
@@ -47,7 +48,7 @@ export default function Dashboard({ totalClientes, agendamentosHoje, agendamento
                                         )}
                                     </div>
                                 </div>
-                                {/* Icone Mobile */}
+                                {/* Icones Mobile */}
                                 <div className="d-md-none mb-2">
                                     <div className="p-2 rounded d-inline-block" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
                                         <i className={`bi bi-${stat.icon === 'users' ? 'people' : (stat.icon === 'calendar' ? 'calendar-event' : 'calendar3')} fs-6`}></i>

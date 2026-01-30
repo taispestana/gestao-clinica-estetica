@@ -5,29 +5,34 @@ import Modal from '@/Components/Modal';
 
 
 export default function Estoque({ produtos = [] }) {
+    //Estados
     const [showNewProductModal, setShowNewProductModal] = useState(false);
     const [showEditProductModal, setShowEditProductModal] = useState(false);
     const [editingProductId, setEditingProductId] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
+    //Formulário de Produtos
     const { data, setData, post, processing, errors, reset } = useForm({
         nome: '',
         stock: '',
         data_validade: '',
     });
 
+    //Formulário de Edição de Produtos
     const { data: editData, setData: setEditData, put: editPut, delete: editDelete, processing: editProcessing, errors: editErrors, reset: editReset } = useForm({
         nome: '',
         stock: '',
         data_validade: '',
     });
 
+    //Funções dos Modais
     const openModal = () => setShowNewProductModal(true);
     const closeModal = () => {
         setShowNewProductModal(false);
         reset();
     };
 
+    //Funções de Edição de Produtos
     const openEditModal = (produto) => {
         setEditingProductId(produto.id);
         setEditData({
@@ -44,6 +49,7 @@ export default function Estoque({ produtos = [] }) {
         editReset();
     };
 
+    //Funções de Exclusão de Produtos
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
     const handleDelete = () => {
@@ -59,11 +65,13 @@ export default function Estoque({ produtos = [] }) {
         });
     };
 
+    //Estatísticas
     const stats = [
         { title: 'Total de Produtos', value: produtos.length, icon: 'box' },
         { title: 'Estoque Baixo', value: produtos.filter(p => p.stock <= (p.stock_minimo || 2)).length, icon: 'alert' },
     ];
 
+    //Datas
     const today = new Date();
     const thirtyDaysFromNow = new Date();
     thirtyDaysFromNow.setDate(today.getDate() + 30);
@@ -77,6 +85,7 @@ export default function Estoque({ produtos = [] }) {
             type: 'low_stock'
         }));
 
+    // Alertas de validade
     const expiryAlerts = produtos
         .filter(p => p.data_validade && new Date(p.data_validade) <= thirtyDaysFromNow)
         .map(p => ({
@@ -84,9 +93,10 @@ export default function Estoque({ produtos = [] }) {
             alert: `Validade expira em ${new Date(p.data_validade).toLocaleDateString('pt-BR')}`,
             type: 'expiry'
         }));
-    // Alertas de validade
+
     const alerts = [...stockAlerts, ...expiryAlerts];
 
+    //Função de busca
     const normalizeString = (str) =>
         str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
@@ -94,6 +104,7 @@ export default function Estoque({ produtos = [] }) {
         normalizeString(p.nome).includes(normalizeString(searchTerm))
     );
 
+    //Funções de envio de formulário
     const handleSubmit = (e) => {
         e.preventDefault();
         post(route('estoque.storeProduto'), {
@@ -147,7 +158,7 @@ export default function Estoque({ produtos = [] }) {
                         </div>
                     </div>
 
-                    {/* Blocos de Alertas (Visível na linha de Tablet/Mobile) */}
+                    {/* Blocos de Alertas (Visível em linha com os cards de estatísticas no Tablet/Mobile) */}
                     <div className="col-12 col-md-6">
                         <div className="card border-0 shadow-sm p-3 p-md-4 h-100">
                             <h3 className="h6 fw-bold text-dark mb-3">Alertas de Estoque</h3>
@@ -201,7 +212,7 @@ export default function Estoque({ produtos = [] }) {
                     ))}
                 </div>
 
-                {/* Filtros e Ações (Fora do container) */}
+                {/* Modal de Adicionar Produto */}
                 <div className="row g-3 mb-4 align-items-center">
                     <div className="col-12 col-md-auto">
                         <button
@@ -226,7 +237,7 @@ export default function Estoque({ produtos = [] }) {
                     </div>
                 </div>
 
-                {/* Layout do Main Content: Duas colunas no desktop (xl), empilhadas no mobile/tablet */}
+                {/* Layout do conteúdo: Duas colunas no desktop (xl), empilhadas no mobile/tablet */}
                 <div className="row g-4 flex-column-reverse flex-xl-row mb-5">
                     {/* Left Column: Products List */}
                     <div className="col-12 col-xl-8">
@@ -235,7 +246,7 @@ export default function Estoque({ produtos = [] }) {
                                 <h3 className="h5 fw-bold text-dark mb-0">Produtos em Estoque</h3>
                             </div>
 
-                            {/* Headers da Tabela no Desktop */}
+                            {/* Header da Tabela no Desktop */}
                             <div className="row align-items-center mb-3 px-4 d-none d-md-flex">
                                 <div className="col-4 col-xl-4">
                                     <h3 className="h6 fw-bold text-muted mb-0">Produto</h3>
