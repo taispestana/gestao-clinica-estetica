@@ -358,7 +358,6 @@ export default function Estoque({ produtos = [] }) {
                     </div>
                 </div>
             </AuthenticatedLayout>
-
             {/* Modal Novo Produto */}
             <Modal show={showNewProductModal} onClose={closeModal} maxWidth="md">
                 <div className="p-4 p-md-5 bg-white">

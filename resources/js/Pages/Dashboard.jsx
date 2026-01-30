@@ -96,7 +96,6 @@ export default function Dashboard({ totalClientes, agendamentosHoje, agendamento
                         </div>
                     </div>
                 </div>
-
                 {/* Tratamentos Populares */}
                 <div className="col-lg-4">
                     <div className="card border-0 shadow-sm p-4">

@@ -385,7 +385,6 @@ export default function Clientes({ clientes }) {
                             />
                             {errors.profissao && <div className="text-danger small">{errors.profissao}</div>}
                         </div>
-
                         <div className="text-center">
                             <button type="submit" disabled={processing} className="btn text-white px-5 py-2 fw-medium" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '10px', minWidth: '200px' }}>
                                 Salvar

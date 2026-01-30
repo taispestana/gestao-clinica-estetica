@@ -105,8 +105,6 @@ export default function Mensagens({ aniversariantes = [], lembretes = [] }) {
                 ))}
             </div>
 
-
-
             {/* Seção de Lembretes */}
             <h2 className="h5 fw-bold text-dark mb-3">Lembrar Marcações </h2>
             <div className="card border-0 shadow-sm p-3 p-md-4 mb-5">

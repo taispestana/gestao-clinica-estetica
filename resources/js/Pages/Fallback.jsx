@@ -42,8 +42,6 @@ export default function Fallback() {
                     <i className="bi bi-house-door-fill"></i>
                     <span>Voltar para a Página Inicial</span>
                 </Link>
-
-
             </div>
             <Footer />
         </>

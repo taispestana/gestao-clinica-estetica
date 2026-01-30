@@ -246,7 +246,6 @@ export default function Tratamentos({ tratamentos = [], totalSemana = 0, totalMe
                     </div>
                 </div>
             </AuthenticatedLayout>
-
             {/* Modal para Adicionar Tratamento */}
             <Modal show={showNewTreatmentModal} onClose={closeModal} maxWidth="md">
                 <div className="p-4 p-md-5 bg-white">
