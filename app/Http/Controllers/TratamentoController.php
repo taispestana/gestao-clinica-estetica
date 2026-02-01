@@ -10,23 +10,25 @@ use Inertia\Inertia;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
+// Classe para gerenciar tratamentos
 class TratamentoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Função para exibir tratamentos
     public function index()
     {
         $tratamentos = Tratamento::latest()->get();
 
+        // Calcula os totais
         $now = Carbon::now();
         $startOfWeek = $now->copy()->startOfWeek();
         $endOfWeek = $now->copy()->endOfWeek();
 
+        // Total de agendamentos na semana
         $totalSemana = Agendamento::where('estado_agendamento', '!=', 5) // 5 = Ausência
             ->whereBetween('data_hora_inicio', [$startOfWeek, $endOfWeek])
             ->count();
 
+        // Total de agendamentos no mês
         $totalMes = Agendamento::where('estado_agendamento', '!=', 5)
             ->whereMonth('data_hora_inicio', $now->month)
             ->whereYear('data_hora_inicio', $now->year)
@@ -34,6 +36,7 @@ class TratamentoController extends Controller
 
         $totalAgendamentos = Agendamento::where('estado_agendamento', '!=', 5)->count();
 
+        // Tratamentos mais populares
         $popularTreatments = Agendamento::where('estado_agendamento', '!=', 5)
             ->whereNotNull('tratamento_id')
             ->select('tratamento_id', DB::raw('count(*) as count'))
@@ -49,6 +52,7 @@ class TratamentoController extends Controller
                 ];
             });
 
+        // Retorna os dados para a view
         return Inertia::render('Tratamentos', [
             'tratamentos' => $tratamentos,
             'totalSemana' => $totalSemana,
@@ -57,17 +61,17 @@ class TratamentoController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Função para armazenar tratamentos
     public function storeTratamento(Request $request)
     {
+        // Validação dos dados
         $request->validate([
             'nome' => 'required|string|max:100',
             'duracao' => 'required|integer|min:1',
             'preco' => 'required|numeric|min:0',
         ]);
 
+        // Cria o tratamento
         Tratamento::create([
             'nome' => $request->nome,
             'duracao' => $request->duracao,
@@ -93,18 +97,19 @@ class TratamentoController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // Função para atualizar tratamentos
     public function update(Request $request, $id)
     {
+        // Validação dos dados
         $request->validate([
             'nome' => 'required|string|max:100',
             'duracao' => 'required|integer|min:1',
             'preco' => 'required|numeric|min:0',
         ]);
 
+        // Busca o tratamento
         $tratamento = Tratamento::findOrFail($id);
+        // Atualiza o tratamento
         $tratamento->update([
             'nome' => $request->nome,
             'duracao' => $request->duracao,
@@ -114,12 +119,12 @@ class TratamentoController extends Controller
         return redirect()->route('tratamentos')->with('message', 'Tratamento atualizado com sucesso');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // Função para eliminar tratamentos
     public function destroy($id)
     {
+        // Busca o tratamento
         $tratamento = Tratamento::findOrFail($id);
+        // Elimina o tratamento
         $tratamento->delete();
 
         return redirect()->route('tratamentos')->with('message', 'Tratamento excluído com sucesso');

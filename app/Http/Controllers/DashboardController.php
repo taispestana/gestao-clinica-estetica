@@ -9,25 +9,26 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
+// Classe para gerenciar o dashboard
 class DashboardController extends Controller
 {
+    // Função para exibir o dashboard
     public function index()
     {
+        // Data atual
         $now = Carbon::now();
 
-        // Stats
+        // Estatísticas
         $totalClientes = User::where('tipo_users', 1)->count(); // 1 = Cliente
-
         $agendamentosHoje = Agendamento::where('estado_agendamento', '!=', 5)
             ->whereDate('data_hora_inicio', $now->toDateString())
             ->count();
-
         $agendamentoMensal = Agendamento::where('estado_agendamento', '!=', 5)
             ->whereMonth('data_hora_inicio', $now->month)
             ->whereYear('data_hora_inicio', $now->year)
             ->count();
 
-        // Today's appointments list
+        // Lista de agendamentos de hoje
         $appointmentsHoje = Agendamento::with(['cliente', 'tratamento'])
             ->where('estado_agendamento', '!=', 5)
             ->whereDate('data_hora_inicio', $now->toDateString())
@@ -39,7 +40,7 @@ class DashboardController extends Controller
 
                 // Regra: CONFIRMADO após o fim, PENDENTE antes disso (respeitando cancelamentos)
                 $estadoSet = $apt->estado_agendamento;
-                
+
                 if ($estadoSet != 4) { // Se não estiver cancelado
                     if ($now->greaterThanOrEqualTo($horaFim)) {
                         $estadoSet = 2; // CONFIRMADO
@@ -48,6 +49,7 @@ class DashboardController extends Controller
                     }
                 }
 
+                // Mapeamento de status
                 $statusMap = [
                     1 => ['label' => 'PENDENTE', 'color' => 'var(--status-yellow)'],
                     2 => ['label' => 'CONFIRMADO', 'color' => 'var(--status-green)'],
@@ -57,6 +59,7 @@ class DashboardController extends Controller
 
                 $status = $statusMap[$estadoSet] ?? ['label' => 'DESCONHECIDO', 'color' => 'var(--secondary)'];
 
+                // Retorno dos dados
                 return [
                     'name' => $apt->cliente ? $apt->cliente->name : 'N/A',
                     'service' => $apt->tratamento ? $apt->tratamento->nome : 'N/A',
@@ -66,9 +69,8 @@ class DashboardController extends Controller
                 ];
             });
 
-        // Popular Treatments
+        // Tratamentos mais populares
         $totalAgendamentos = Agendamento::where('estado_agendamento', '!=', 5)->count();
-
         $popularTreatments = Agendamento::where('estado_agendamento', '!=', 5)
             ->whereNotNull('tratamento_id')
             ->select('tratamento_id', DB::raw('count(*) as count'))
@@ -84,6 +86,7 @@ class DashboardController extends Controller
                 ];
             });
 
+        // Retorno dos dados
         return Inertia::render('Dashboard', [
             'totalClientes' => $totalClientes,
             'agendamentosHoje' => $agendamentosHoje,

@@ -8,18 +8,19 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
+// Classe para gerenciar clientes
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Função para exibir clientes
     public function index()
     {
+        // Busca os clientes
         $clientes = User::where('tipo_users', 1)
             ->withMax('agendamentos as ultima_marcacao', 'data_hora_inicio')
             ->latest()
             ->get();
-            
+
+        // Retorna os dados para a view
         return Inertia::render('Clientes', [
             'clientes' => $clientes
         ]);
@@ -33,11 +34,10 @@ class UserController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Função para armazenar clientes
     public function storeUser(Request $request)
     {
+        // Validação dos dados
         $request->validate([
             'name' => 'required|string|max:255',
             'telemovel' => 'required|string|max:20',
@@ -46,6 +46,7 @@ class UserController extends Controller
             'profissao' => 'nullable|string|max:255',
         ]);
 
+        // Cria o cliente
         User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -59,19 +60,18 @@ class UserController extends Controller
         return redirect()->route('clientes')->with('message', 'Cliente adicionado com sucesso');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    // Função para exibir clientes
     public function show(string $id)
     {
+        // Busca o cliente
         $cliente = User::with([
             'agendamentos.tratamento',
             'agendamentos.profissional',
             'anamnese',
             'historicoTratamentos.anamnese'
         ])
-        ->withMax('agendamentos as ultima_marcacao', 'data_hora_inicio')
-        ->findOrFail($id);
+            ->withMax('agendamentos as ultima_marcacao', 'data_hora_inicio')
+            ->findOrFail($id);
 
         return Inertia::render('Clientes/Cliente', [
             'cliente' => $cliente
@@ -86,11 +86,10 @@ class UserController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // Função para atualizar clientes
     public function update(Request $request, string $id)
     {
+        // Validação dos dados
         $request->validate([
             'name' => 'required|string|max:255',
             'telemovel' => 'required|string|max:20',
@@ -102,7 +101,9 @@ class UserController extends Controller
             'tipo_users' => 'nullable|integer'
         ]);
 
+        // Busca o cliente
         $user = User::findOrFail($id);
+        // Atualiza o cliente
         $user->update([
             'name' => $request->name,
             'email' => $request->email,

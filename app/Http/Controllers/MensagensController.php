@@ -7,12 +7,14 @@ use App\Models\Agendamento;
 use Inertia\Inertia;
 use Carbon\Carbon;
 
+// Classe para gerenciar mensagens
 class MensagensController extends Controller
 {
+    // Função para exibir mensagens
     public function index()
     {
         $currentMonth = Carbon::now()->month;
-        
+
         // Clientes que fazem anos este mês
         $aniversariantes = User::whereMonth('data_nascimento', $currentMonth)
             ->where('tipo_users', 1) // 1 para Cliente
@@ -27,6 +29,7 @@ class MensagensController extends Controller
             ->orderBy('data_hora_inicio', 'asc')
             ->get();
 
+        // Retorno dos dados
         return Inertia::render('Mensagens', [
             'aniversariantes' => $aniversariantes,
             'lembretes' => $lembretes,
