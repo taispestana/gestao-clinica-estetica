@@ -364,7 +364,7 @@ export default function Cliente({ cliente }) {
 
                 {/* Edit Profile Modal */}
                 <Modal show={showEditModal} onClose={closeEditModal}>
-                    <div className="p-4">
+                    <div className="p-4 bg-white">
                         <div className="d-flex justify-content-between align-items-center mb-4">
                             <h4 className="mb-0">Editar Perfil</h4>
                             <button type="button" className="btn-close" onClick={closeEditModal}></button>
@@ -387,10 +387,13 @@ export default function Cliente({ cliente }) {
                                 <div className="col-12 col-md-6">
                                     <label className="form-label small text-secondary">Telemóvel</label>
                                     <input
-                                        type="text"
+                                        type="tel"
                                         className="form-control bg-light border-0 py-2 rounded-3"
                                         value={data.telemovel}
-                                        onChange={(e) => setData('telemovel', e.target.value)}
+                                        onChange={(e) => {
+                                            const val = e.target.value.replace(/[^0-9+]/g, '');
+                                            setData('telemovel', val);
+                                        }}
                                         required
                                     />
                                     {errors.telemovel && <div className="text-danger small">{errors.telemovel}</div>}

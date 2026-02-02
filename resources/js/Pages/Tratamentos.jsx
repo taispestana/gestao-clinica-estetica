@@ -4,13 +4,16 @@ import { Head, useForm } from '@inertiajs/react';
 import Modal from '@/Components/Modal';
 
 export default function Tratamentos({ tratamentos = [], totalSemana = 0, totalMes = 0, popularTreatments = [] }) {
+    //Estados dos modais
     const [showNewTreatmentModal, setShowNewTreatmentModal] = useState(false);
     const [showEditTreatmentModal, setShowEditTreatmentModal] = useState(false);
     const [editingTreatmentId, setEditingTreatmentId] = useState(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
+    //Estado da pesquisa
     const [searchTerm, setSearchTerm] = useState('');
 
+    //Estados dos formulários
     const { data: newData, setData: setNewData, post: newPost, processing: newProcessing, errors: newErrors, reset: newReset } = useForm({
         nome: '',
         duracao: '',
@@ -23,19 +26,20 @@ export default function Tratamentos({ tratamentos = [], totalSemana = 0, totalMe
         preco: '',
     });
 
+    //Funções dos modais
     const openModal = () => setShowNewTreatmentModal(true);
     const closeModal = () => {
         setShowNewTreatmentModal(false);
         newReset();
     };
-
+    //Função de envio do formulário
     const handleSubmit = (e) => {
         e.preventDefault();
         newPost(route('tratamentos.store'), {
             onSuccess: () => closeModal(),
         });
     };
-
+    //Função de edição do formulário
     const openEditModal = (tratamento) => {
         setEditingTreatmentId(tratamento.id);
         setEditData({
@@ -45,24 +49,24 @@ export default function Tratamentos({ tratamentos = [], totalSemana = 0, totalMe
         });
         setShowEditTreatmentModal(true);
     };
-
+    //Função de fecho do modal de edição
     const closeEditModal = () => {
         setShowEditTreatmentModal(false);
         setEditingTreatmentId(null);
         editReset();
     };
-
+    //Função de envio do formulário de edição
     const handleEditSubmit = (e) => {
         e.preventDefault();
         editPut(route('tratamentos.update', editingTreatmentId), {
             onSuccess: () => closeEditModal(),
         });
     };
-
+    //Função de eliminação do tratamento
     const handleDelete = () => {
         setShowDeleteConfirm(true);
     };
-
+    //Função de confirmação da eliminação do tratamento
     const confirmDelete = () => {
         editDelete(route('tratamentos.destroy', editingTreatmentId), {
             onSuccess: () => {
@@ -72,13 +76,15 @@ export default function Tratamentos({ tratamentos = [], totalSemana = 0, totalMe
         });
     };
 
+    //Função de normalização de strings para pesquisa
     const normalizeString = (str) =>
         str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
+    //Função de filtragem de tratamentos
     const filteredTratamentos = tratamentos.filter(t =>
         normalizeString(t.nome).includes(normalizeString(searchTerm))
     );
-
+    //Função de formatação da duração
     const formatDuration = (minutes) => {
         const h = Math.floor(minutes / 60);
         const m = minutes % 60;
@@ -87,7 +93,7 @@ export default function Tratamentos({ tratamentos = [], totalSemana = 0, totalMe
         }
         return `${m}min`;
     };
-
+    //Array de estatísticas
     const stats = [
         { title: 'Total de Tratamentos', value: tratamentos.length, icon: 'flower1' },
         { title: 'Tratamentos Semanais', value: totalSemana.toString(), icon: 'flower1' },
@@ -240,10 +246,9 @@ export default function Tratamentos({ tratamentos = [], totalSemana = 0, totalMe
                     </div>
                 </div>
             </AuthenticatedLayout>
-
             {/* Modal para Adicionar Tratamento */}
             <Modal show={showNewTreatmentModal} onClose={closeModal} maxWidth="md">
-                <div className="p-4 p-md-5">
+                <div className="p-4 p-md-5 bg-white">
                     <h4 className="fw-bold mb-4" style={{ color: 'var(--main-text)' }}>Novo Tratamento</h4>
 
                     <form onSubmit={handleSubmit}>
@@ -298,7 +303,7 @@ export default function Tratamentos({ tratamentos = [], totalSemana = 0, totalMe
 
             {/* Modal Editar Tratamento */}
             <Modal show={showEditTreatmentModal} onClose={closeEditModal} maxWidth="md">
-                <div className="p-4 p-md-5">
+                <div className="p-4 p-md-5 bg-white">
                     <h4 className="fw-bold mb-4" style={{ color: 'var(--main-text)' }}>Editar Tratamento</h4>
 
                     <form onSubmit={handleEditSubmit}>

@@ -18,12 +18,12 @@ const BottomNav = () => {
             const currentPath = url.split('?')[0];
             const itemPath = new URL(href).pathname;
 
-            // For the dashboard, check for exact match
+            // Para o painel, verifica se há uma correspondência exata
             if (itemPath === '/dashboard' || itemPath === '/') {
                 return currentPath === itemPath;
             }
 
-            // For other routes (like /clientes), check if it starts with the item path
+            // Para outras rotas (como /clientes), verifica se começa com o caminho do item
             return currentPath.startsWith(itemPath);
         } catch (e) {
             return false;
