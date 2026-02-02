@@ -1,9 +1,11 @@
 export default function DangerButton({
+    // Props do botão
     className = '',
     disabled,
     children,
     ...props
 }) {
+    // Renderização do botão
     return (
         <button
             {...props}

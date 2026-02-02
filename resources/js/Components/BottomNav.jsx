@@ -1,9 +1,8 @@
 import React from 'react';
 import { Link, usePage } from '@inertiajs/react';
-
+// Itens do menu
 const BottomNav = () => {
     const { url } = usePage();
-
     const navItems = [
         { name: 'Dashboard', href: route('dashboard'), icon: 'bi bi-house-door-fill' },
         { name: 'Clientes', href: route('clientes'), icon: 'bi bi-people-fill' },
@@ -29,7 +28,7 @@ const BottomNav = () => {
             return false;
         }
     };
-
+// Renderização do menu
     return (
         <nav className="d-lg-none fixed-bottom bg-white border-top shadow-lg" style={{ zIndex: 1030 }}>
             <div className="d-flex justify-content-around align-items-center py-2 px-1">

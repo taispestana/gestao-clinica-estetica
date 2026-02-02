@@ -7,11 +7,13 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Login({ status }) {
+    // Formulário de login
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
     });
 
+    // Função de envio do formulário
     const submit = (e) => {
         e.preventDefault();
 
@@ -20,6 +22,7 @@ export default function Login({ status }) {
         });
     };
 
+    // Renderização do formulário
     return (
         <GuestLayout>
             <Head title="Log in" />
@@ -30,7 +33,7 @@ export default function Login({ status }) {
                 </div>
             )}
 
-            <div className="login-card shadow-sm text-center p-4 text-center">
+            <div className="login-card shadow-sm text-center p-4">
 
                 <div className="mb-2 pt-0">
                     <ApplicationLogo />

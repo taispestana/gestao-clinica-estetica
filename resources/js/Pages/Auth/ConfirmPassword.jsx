@@ -6,10 +6,12 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, useForm } from '@inertiajs/react';
 
 export default function ConfirmPassword() {
+    // Formulário de confirmação de senha
     const { data, setData, post, processing, errors, reset } = useForm({
         password: '',
     });
 
+    // Função de envio do formulário
     const submit = (e) => {
         e.preventDefault();
 
@@ -18,6 +20,7 @@ export default function ConfirmPassword() {
         });
     };
 
+    // Renderização do formulário
     return (
         <GuestLayout>
             <Head title="Confirm Password" />

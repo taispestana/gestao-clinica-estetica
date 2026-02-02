@@ -7,21 +7,24 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, useForm, Link } from '@inertiajs/react';
 
 export default function ForgotPassword({ status }) {
+    // Formulário de redefinição de senha
     const { data, setData, post, processing, errors } = useForm({
         email: '',
     });
 
+    // Função de envio do formulário
     const submit = (e) => {
         e.preventDefault();
 
         post(route('password.email'));
     };
 
+    // Renderização do formulário
     return (
         <GuestLayout>
             <Head title="Forgot Password" />
 
-            <div className="login-card shadow-sm text-center p-4 text-center">
+            <div className="login-card shadow-sm text-center p-4">
 
                 <div className="mb-4 pt-0">
                     <ApplicationLogo />

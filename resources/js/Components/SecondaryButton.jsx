@@ -6,6 +6,7 @@ export default function SecondaryButton({
     ...props
 }) {
     return (
+        // Renderização do botão
         <button
             {...props}
             type={type}
