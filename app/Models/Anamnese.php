@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+// Classe para gerenciar anamnese
 class Anamnese extends Model
 {
     use HasFactory;
 
-    // O Laravel assume o plural 'anamneses', mas é boa prática declarar
     protected $table = 'anamneses';
 
     protected $fillable = [
@@ -34,9 +34,7 @@ class Anamnese extends Model
         'data_assinatura'
     ];
 
-    /**
-     * Relacionamento com o Usuário (Cliente)
-     */
+    // Função para obter o usuário
     public function user()
     {
         return $this->belongsTo(User::class);

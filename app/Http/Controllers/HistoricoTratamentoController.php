@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+// Classe para gerenciar histórico de tratamentos
 class HistoricoTratamentoController extends Controller
 {
     /**

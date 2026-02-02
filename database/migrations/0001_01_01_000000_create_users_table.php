@@ -5,11 +5,11 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
+
+    // Função para executar as migrations
     public function up(): void
     {
+        // Cria a tabela users
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->string('password');
             $table->rememberToken();
 
-            // Campos adicionais do seu diagrama
+            // Campos adicionais do diagrama
             $table->date('data_nascimento')->nullable();
             $table->string('telemovel', 20)->nullable();
             $table->string('nif', 40)->nullable();
@@ -30,12 +30,14 @@ return new class extends Migration {
             $table->timestamps();
         });
 
+        // Cria a tabela password_reset_tokens
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
 
+        // Cria a tabela sessions
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();
@@ -46,9 +48,7 @@ return new class extends Migration {
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
+    // Função para desfazer as migrations
     public function down(): void
     {
         Schema::dropIfExists('users');

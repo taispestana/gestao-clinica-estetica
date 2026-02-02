@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+// Classe para gerenciar anamneses
 class AnamneseController extends Controller
 {
     /**
@@ -23,10 +24,11 @@ class AnamneseController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Função para armazenar uma nova anamnese
      */
     public function store(Request $request)
     {
+        // Validação dos dados
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'origem_conheceu' => 'nullable|integer',
@@ -48,21 +50,25 @@ class AnamneseController extends Controller
             'assinatura' => 'nullable|string',
         ]);
 
+        // Validação da assinatura
         if ($request->assinatura && str_starts_with($request->assinatura, 'data:image')) {
             $imageData = $request->assinatura;
             $imageData = str_replace('data:image/png;base64,', '', $imageData);
             $imageData = str_replace(' ', '+', $imageData);
             $imageName = 'signature_' . $validated['user_id'] . '_' . time() . '.png';
 
+            // Armazenamento da assinatura
             \Illuminate\Support\Facades\Storage::disk('public')->put('signatures/' . $imageName, base64_decode($imageData));
             $validated['assinatura_path'] = '/storage/signatures/' . $imageName;
         }
 
+        // Criação ou atualização da anamnese
         \App\Models\Anamnese::updateOrCreate(
             ['user_id' => $validated['user_id']],
             $validated
         );
 
+        // Redirecionamento
         return redirect()->back();
     }
 

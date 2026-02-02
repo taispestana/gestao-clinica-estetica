@@ -5,20 +5,17 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
+
     public function up(): void
     {
+        // Torna os campos cliente_id e tratamento_id nullable para agendamentos ausentes
         Schema::table('agendamentos', function (Blueprint $table) {
             $table->foreignId('cliente_id')->nullable()->change();
             $table->foreignId('tratamento_id')->nullable()->change();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
+
     public function down(): void
     {
         Schema::table('agendamentos', function (Blueprint $table) {

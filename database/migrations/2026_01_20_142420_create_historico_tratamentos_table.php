@@ -5,13 +5,13 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
+    // Função para executar as migrations
     public function up(): void
     {
+        // Cria a tabela historico_tratamentos
         Schema::create('historico_tratamentos', function (Blueprint $table) {
             $table->id();
+
             // Relacionamentos
             $table->foreignId('anamnese_id')->constrained('anamneses')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
@@ -24,9 +24,7 @@ return new class extends Migration {
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
+    // Função para desfazer as migrations
     public function down(): void
     {
         Schema::dropIfExists('historico_tratamentos');
