@@ -730,7 +730,7 @@ export default function Agendamentos({ clientes = [], tratamentos = [], agendame
                     </div>
 
                     <h3 className="fw-bold mb-5 px-3" style={{ color: 'var(--main-text)', lineHeight: '1.2' }}>
-                        Tem certeza que deseja apagar o {agendamentoToDelete?.estado_agendamento === 5 ? 'bloqueio' : 'agendamento'}?
+                        Tem certeza que deseja apagar a {agendamentoToDelete?.estado_agendamento === 5 ? 'ausência' : 'marcação'}?
                     </h3>
 
                     <div className="d-flex justify-content-center gap-3">
