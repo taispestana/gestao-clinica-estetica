@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useForm, router } from '@inertiajs/react';
 
+// Componente de assinatura
 const SignaturePad = ({ onSave, readOnly, existingSignature }) => {
     const canvasRef = useRef(null);
     const [isDrawing, setIsDrawing] = useState(false);
@@ -27,6 +28,7 @@ const SignaturePad = ({ onSave, readOnly, existingSignature }) => {
         }
     }, [existingSignature]);
 
+    // Função para obter as coordenadas do mouse
     const getCoordinates = (e) => {
         const canvas = canvasRef.current;
         const rect = canvas.getBoundingClientRect();
@@ -42,6 +44,7 @@ const SignaturePad = ({ onSave, readOnly, existingSignature }) => {
         };
     };
 
+    // Função para iniciar o desenho
     const startDrawing = (e) => {
         if (readOnly) return;
         setIsDrawing(true);
@@ -51,12 +54,14 @@ const SignaturePad = ({ onSave, readOnly, existingSignature }) => {
         ctx.moveTo(x, y);
     };
 
+    // Função para parar o desenho
     const stopDrawing = () => {
         if (!isDrawing) return;
         setIsDrawing(false);
         onSave(canvasRef.current.toDataURL());
     };
 
+    // Função para desenhar
     const draw = (e) => {
         if (!isDrawing || readOnly) return;
         if (e.cancelable) e.preventDefault();
@@ -67,6 +72,7 @@ const SignaturePad = ({ onSave, readOnly, existingSignature }) => {
         ctx.stroke();
     };
 
+    // Função para limpar a assinatura
     const clear = () => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
@@ -74,6 +80,7 @@ const SignaturePad = ({ onSave, readOnly, existingSignature }) => {
         onSave('');
     };
 
+    // Renderização do componente
     return (
         <div className="signature-pad-container w-100">
             <canvas
@@ -101,6 +108,7 @@ const SignaturePad = ({ onSave, readOnly, existingSignature }) => {
     );
 };
 
+// Componente principal
 export default function FichaAnamnese({ customer, anamnese = null, readOnly = false, onSuccess = null }) {
     const { data, setData, post, processing, errors } = useForm({
         user_id: customer?.id || null,
@@ -123,6 +131,7 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
         assinatura: anamnese?.assinatura_path || '',
     });
 
+    // Efeito para preencher os dados do formulário
     useEffect(() => {
         if (anamnese) {
             setData(prev => ({
@@ -148,6 +157,7 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
         }
     }, [anamnese]);
 
+    // Efeito para lidar com a saída da página
     useEffect(() => {
         if (readOnly) return;
 
@@ -175,6 +185,7 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
         };
     }, [readOnly]);
 
+    // Função para lidar com o envio do formulário
     const handleSubmit = (e) => {
         e.preventDefault();
         if (readOnly) return;
@@ -187,6 +198,7 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
         });
     };
 
+    // Renderização do formulário
     return (
         <form onSubmit={handleSubmit} className="anamnese-form container-fluid">
             {!readOnly && (
@@ -590,6 +602,7 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                         </div>
                     </div>
 
+                    {/* Diabétic@ */}
                     <div className="row align-items-center g-2 mt-2">
                         <div className="col-auto">
                             <label className="small text-secondary">É diabética(o)?</label>
@@ -616,6 +629,7 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                         </div>
                     </div>
 
+                    {/* Antecedentes Oncológicos */}
                     <div className="row align-items-center g-2 mt-2">
                         <div className="col-auto">
                             <label className="small text-secondary">Antecedentes Oncológicos?</label>
@@ -648,6 +662,7 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                         </div>
                     </div>
 
+                    {/* Anemia recente */}
                     <div className="row align-items-center g-2 mt-2">
                         <div className="col-auto">
                             <label className="small text-secondary">Anemia recente?</label>
@@ -680,6 +695,7 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                         </div>
                     </div>
 
+                    {/* Peso atual */}
                     <div className="row align-items-center g-2 mt-3">
                         <div className="col-auto">
                             <label className="small text-secondary">Peso atual:</label>

@@ -5,6 +5,7 @@ export default function PrimaryButton({
     ...props
 }) {
     return (
+        // Renderização do botão
         <button
             {...props}
             className={

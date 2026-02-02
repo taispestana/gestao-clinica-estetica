@@ -1,6 +1,7 @@
 import { createPortal } from 'react-dom';
 import { useEffect } from 'react';
 
+// Componente Modal
 export default function Modal({
     children,
     show = false,
@@ -10,7 +11,7 @@ export default function Modal({
     style = {},
     overlayStyle = {},
 }) {
-    // Lock body scroll when modal is open
+    // Ajusta o scroll do body quando o modal está aberto
     useEffect(() => {
         if (show) {
             document.body.style.overflow = 'hidden';
@@ -24,6 +25,7 @@ export default function Modal({
 
     if (!show) return null;
 
+    // Define o tamanho máximo do modal
     const maxWidthClass = {
         sm: '400px',
         md: '500px',
@@ -34,6 +36,7 @@ export default function Modal({
         '4xl': '1400px',
     }[maxWidth] || '500px';
 
+    // Renderiza o modal
     const modalContent = (
         <div
             style={{

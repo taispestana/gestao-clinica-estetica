@@ -7,6 +7,7 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, useForm } from '@inertiajs/react';
 
 export default function ResetPassword({ token, email }) {
+    // Formulário de redefinição de senha
     const { data, setData, post, processing, errors, reset } = useForm({
         token: token,
         email: email,
@@ -14,6 +15,7 @@ export default function ResetPassword({ token, email }) {
         password_confirmation: '',
     });
 
+    // Função de envio do formulário
     const submit = (e) => {
         e.preventDefault();
 
@@ -22,6 +24,7 @@ export default function ResetPassword({ token, email }) {
         });
     };
 
+    // Renderização do formulário
     return (
         <GuestLayout>
             <Head title="Recuperar Senha" />

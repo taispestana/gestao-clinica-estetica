@@ -8,9 +8,11 @@ import { useForm } from '@inertiajs/react';
 import { useRef, useState } from 'react';
 
 export default function DeleteUserForm({ className = '' }) {
+    // Estado para controlar a visibilidade do modal de confirmação
     const [confirmingUserDeletion, setConfirmingUserDeletion] = useState(false);
     const passwordInput = useRef();
 
+    // Formulário de confirmação de senha
     const {
         data,
         setData,
@@ -23,10 +25,12 @@ export default function DeleteUserForm({ className = '' }) {
         password: '',
     });
 
+    // Função para confirmar a exclusão do usuário
     const confirmUserDeletion = () => {
         setConfirmingUserDeletion(true);
     };
 
+    // Função para excluir o usuário
     const deleteUser = (e) => {
         e.preventDefault();
 
@@ -38,6 +42,7 @@ export default function DeleteUserForm({ className = '' }) {
         });
     };
 
+    // Função para fechar o modal
     const closeModal = () => {
         setConfirmingUserDeletion(false);
 
@@ -45,6 +50,7 @@ export default function DeleteUserForm({ className = '' }) {
         reset();
     };
 
+    // Renderização do componente
     return (
         <section className={`space-y-6 ${className}`}>
             <header>

@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 
 export default function Sidebar() {
+    // Itens do menu lateral
     const sidebarItems = [
         {
             name: 'Dashboard', icon: (
@@ -46,12 +47,14 @@ export default function Sidebar() {
         },
     ];
 
+    // Renderização do menu lateral
     return (
         <aside className="d-flex flex-column flex-shrink-0 p-3 bg-white shadow-sm h-100" style={{ width: '280px', overflowY: 'auto' }}>
             <div className="mb-3 px-3">
                 <h3 className="h6 text-uppercase text-muted ls-1" style={{ letterSpacing: '2px', fontSize: '0.75rem', fontWeight: 'bold' }}>Gestão</h3>
             </div>
 
+            {/* Navegação do menu lateral */}
             <nav>
                 <ul className="nav nav-pills flex-column mb-auto">
                     {sidebarItems.map((item) => (

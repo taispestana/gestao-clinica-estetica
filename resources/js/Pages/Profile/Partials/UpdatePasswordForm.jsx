@@ -7,9 +7,11 @@ import { useForm } from '@inertiajs/react';
 import { useRef } from 'react';
 
 export default function UpdatePasswordForm({ className = '' }) {
+    // Referências para os inputs
     const passwordInput = useRef();
     const currentPasswordInput = useRef();
 
+    // Formulário de atualização de senha
     const {
         data,
         setData,
@@ -24,6 +26,7 @@ export default function UpdatePasswordForm({ className = '' }) {
         password_confirmation: '',
     });
 
+    // Função para atualizar a senha
     const updatePassword = (e) => {
         e.preventDefault();
 
@@ -44,6 +47,7 @@ export default function UpdatePasswordForm({ className = '' }) {
         });
     };
 
+    // Renderização do componente
     return (
         <section className={className}>
             <header>

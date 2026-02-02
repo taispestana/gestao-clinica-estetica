@@ -1,5 +1,6 @@
 export default function ApplicationLogo(props) {
     return (
+        //Logo do Templo de Gaya
         <img
             {...props}
             src="/images/logo-b.svg"
