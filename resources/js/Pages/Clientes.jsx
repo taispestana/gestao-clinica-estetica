@@ -17,6 +17,7 @@ export default function Clientes({ clientes }) {
         telemovel: '',
         email: '',
         data_nascimento: '',
+        cliente_desde: new Date().toISOString().split('T')[0],
         profissao: '',
     });
 
@@ -327,6 +328,17 @@ export default function Clientes({ clientes }) {
                             onSuccess: () => closeModal(),
                         });
                     }}>
+                        <div className="mb-4">
+                            <label className="form-label small text-secondary fw-medium mb-1">Cliente desde:</label>
+                            <input
+                                type="date"
+                                className="form-control bg-light border-0 py-2 rounded-3"
+                                value={data.cliente_desde}
+                                onChange={(e) => setData('cliente_desde', e.target.value)}
+                            />
+                            {errors.cliente_desde && <div className="text-danger small">{errors.cliente_desde}</div>}
+                        </div>
+
                         <div className="mb-4">
                             <label className="form-label small text-secondary fw-medium mb-1">Nome Completo</label>
                             <input

@@ -15,6 +15,7 @@ export default function Cliente({ cliente }) {
         telemovel: cliente.telemovel || '',
         email: cliente.email || '',
         data_nascimento: cliente.data_nascimento || '',
+        cliente_desde: cliente.cliente_desde || '',
         nif: cliente.nif || '',
         endereco: cliente.endereco || '',
         profissao: cliente.profissao || '',
@@ -65,7 +66,7 @@ export default function Cliente({ cliente }) {
     const customer = {
         id: cliente.id,
         name: cliente.name,
-        since: new Date(cliente.created_at).toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' }),
+        since: (cliente.cliente_desde ? new Date(cliente.cliente_desde) : new Date(cliente.created_at)).toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' }),
         age: calculateAge(cliente.data_nascimento),
         data_nascimento: cliente.data_nascimento,
         status: currentStatus,
@@ -382,6 +383,17 @@ export default function Cliente({ cliente }) {
                                         required
                                     />
                                     {errors.name && <div className="text-danger small">{errors.name}</div>}
+                                </div>
+
+                                <div className="col-12 col-md-6">
+                                    <label className="form-label small text-secondary">Cliente desde:</label>
+                                    <input
+                                        type="date"
+                                        className="form-control bg-light border-0 py-2 rounded-3"
+                                        value={data.cliente_desde}
+                                        onChange={(e) => setData('cliente_desde', e.target.value)}
+                                    />
+                                    {errors.cliente_desde && <div className="text-danger small">{errors.cliente_desde}</div>}
                                 </div>
 
                                 <div className="col-12 col-md-6">
