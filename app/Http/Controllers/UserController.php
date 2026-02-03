@@ -43,6 +43,7 @@ class UserController extends Controller
             'telemovel' => 'required|string|min:9|max:20',
             'email' => 'nullable|email|unique:users|max:255',
             'data_nascimento' => 'nullable|date',
+            'cliente_desde' => 'nullable|date',
             'profissao' => 'nullable|string|max:255',
         ]);
 
@@ -53,6 +54,7 @@ class UserController extends Controller
             'telemovel' => $request->telemovel,
             'password' => Hash::make($request->telemovel), // Senha padrão é o telemovel
             'data_nascimento' => $request->data_nascimento,
+            'cliente_desde' => $request->cliente_desde ?? now(),
             'profissao' => $request->profissao,
             'tipo_users' => 1, // 1 para Cliente
         ]);
@@ -95,6 +97,7 @@ class UserController extends Controller
             'telemovel' => 'required|string|min:9|max:20',
             'email' => 'nullable|email|max:255|unique:users,email,' . $id,
             'data_nascimento' => 'nullable|date',
+            'cliente_desde' => 'nullable|date',
             'profissao' => 'nullable|string|max:255',
             'endereco' => 'nullable|string|max:255',
             'nif' => 'nullable|string|max:255',
@@ -109,6 +112,7 @@ class UserController extends Controller
             'email' => $request->email,
             'telemovel' => $request->telemovel,
             'data_nascimento' => $request->data_nascimento,
+            'cliente_desde' => $request->cliente_desde,
             'profissao' => $request->profissao,
             'endereco' => $request->endereco,
             'nif' => $request->nif,

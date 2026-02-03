@@ -23,6 +23,7 @@ class User extends Authenticatable
         'nif',
         'endereco',
         'profissao',
+        'cliente_desde',
         'estado_fidelidade',
         'especialidade',
         'tipo_users',

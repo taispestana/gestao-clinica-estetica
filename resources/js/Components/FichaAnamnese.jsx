@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { useForm, router } from '@inertiajs/react';
+import { useForm, router, usePage } from '@inertiajs/react';
 
 // Componente de assinatura
 const SignaturePad = ({ onSave, readOnly, existingSignature }) => {
@@ -18,11 +18,28 @@ const SignaturePad = ({ onSave, readOnly, existingSignature }) => {
 
         if (existingSignature) {
             const img = new Image();
+            img.crossOrigin = "anonymous"; // Permite carregar de outros domínios se necessário
             img.onload = () => {
+                // Pequeno delay para garantir que o canvas está pronto e limpo
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             };
-            img.src = existingSignature;
+            img.onerror = () => {
+                console.error("Erro ao carregar a assinatura:", existingSignature);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.font = "italic 14px Arial";
+                ctx.fillStyle = "#999";
+                ctx.textAlign = "center";
+                ctx.fillText("Não foi possível carregar a assinatura", canvas.width / 2, canvas.height / 2);
+            };
+
+            // Resolve o caminho se for relativo ao storage
+            let src = existingSignature;
+            if (src.startsWith('/storage')) {
+                // Garante que o caminho é absoluto para o domínio atual
+                src = window.location.origin + src;
+            }
+            img.src = src;
         } else {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
@@ -110,11 +127,12 @@ const SignaturePad = ({ onSave, readOnly, existingSignature }) => {
 
 // Componente principal
 export default function FichaAnamnese({ customer, anamnese = null, readOnly = false, onSuccess = null }) {
+    const { auth } = usePage().props;
     const { data, setData, post, processing, errors } = useForm({
         user_id: customer?.id || null,
         origem_conheceu: anamnese?.origem_conheceu ?? null,
         exposicao_sol: anamnese?.exposicao_sol ?? null,
-        fumante: anamnese?.fumante ?? 0,
+        fumante: anamnese?.fumante ?? null,
         cigarros_por_dia: anamnese?.cigarros_por_dia ?? null,
         ingestao_agua: anamnese?.ingestao_agua ?? null,
         alimentacao: anamnese?.alimentacao ?? null,
@@ -123,9 +141,9 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
         tratamento_estetico: anamnese?.tratamento_estetico || '',
         tratamento_medico: anamnese?.tratamento_medico || '',
         alergias: anamnese?.alergias || '',
-        diabetica: anamnese?.diabetica ?? 0,
-        antecedentes_onco: !!(anamnese?.antecedentes_onco),
-        anemia_recente: !!(anamnese?.anemia_recente),
+        diabetica: anamnese?.diabetica ?? null,
+        antecedentes_onco: anamnese?.antecedentes_onco ?? null,
+        anemia_recente: anamnese?.anemia_recente ?? null,
         peso_atual: anamnese?.peso_atual ?? null,
         observacoes: anamnese?.observacoes || '',
         assinatura: anamnese?.assinatura_path || '',
@@ -138,7 +156,7 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                 ...prev,
                 origem_conheceu: anamnese.origem_conheceu ?? null,
                 exposicao_sol: anamnese.exposicao_sol ?? null,
-                fumante: anamnese.fumante ?? 0,
+                fumante: anamnese.fumante ?? null,
                 cigarros_por_dia: anamnese.cigarros_por_dia ?? null,
                 ingestao_agua: anamnese.ingestao_agua ?? null,
                 alimentacao: anamnese.alimentacao ?? null,
@@ -147,9 +165,9 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                 tratamento_estetico: anamnese.tratamento_estetico || '',
                 tratamento_medico: anamnese.tratamento_medico || '',
                 alergias: anamnese.alergias || '',
-                diabetica: anamnese.diabetica ?? 0,
-                antecedentes_onco: !!(anamnese.antecedentes_onco),
-                anemia_recente: !!(anamnese.anemia_recente),
+                diabetica: anamnese.diabetica ?? null,
+                antecedentes_onco: anamnese.antecedentes_onco ?? null,
+                anemia_recente: anamnese.anemia_recente ?? null,
                 peso_atual: anamnese.peso_atual ?? null,
                 observacoes: anamnese.observacoes || '',
                 assinatura: anamnese.assinatura_path || '',
@@ -192,8 +210,10 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
         post(route('anamneses.store'), {
             onSuccess: () => {
                 if (onSuccess) onSuccess();
-                // Faz logout após salvar
-                router.post(route('logout'));
+                // Faz logout apenas se for cliente (tipo_users === 1) e for a primeira vez (anamnese null)
+                if (auth.user.tipo_users === 1 && !anamnese) {
+                    router.post(route('logout'));
+                }
             }
         });
     };
@@ -641,7 +661,7 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                                     type="radio"
                                     name="antecedentes_onco_radio"
                                     id="onco-nao"
-                                    checked={data.antecedentes_onco === false}
+                                    checked={data.antecedentes_onco === false || data.antecedentes_onco === 0}
                                     onChange={() => setData('antecedentes_onco', false)}
                                     disabled={readOnly}
                                 />
@@ -653,7 +673,7 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                                     type="radio"
                                     name="antecedentes_onco_radio"
                                     id="onco-sim"
-                                    checked={data.antecedentes_onco === true}
+                                    checked={data.antecedentes_onco === true || data.antecedentes_onco === 1}
                                     onChange={() => setData('antecedentes_onco', true)}
                                     disabled={readOnly}
                                 />
@@ -674,7 +694,7 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                                     type="radio"
                                     name="anemia_recente_radio"
                                     id="ane-nao"
-                                    checked={data.anemia_recente === false}
+                                    checked={data.anemia_recente === false || data.anemia_recente === 0}
                                     onChange={() => setData('anemia_recente', false)}
                                     disabled={readOnly}
                                 />
@@ -686,7 +706,7 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                                     type="radio"
                                     name="anemia_recente_radio"
                                     id="ane-sim"
-                                    checked={data.anemia_recente === true}
+                                    checked={data.anemia_recente === true || data.anemia_recente === 1}
                                     onChange={() => setData('anemia_recente', true)}
                                     disabled={readOnly}
                                 />
@@ -744,7 +764,7 @@ export default function FichaAnamnese({ customer, anamnese = null, readOnly = fa
                 <label className="small text-secondary mb-2">Assinatura do Cliente:</label>
                 <SignaturePad
                     onSave={(val) => setData('assinatura', val)}
-                    readOnly={readOnly || !!anamnese}
+                    readOnly={readOnly || !!anamnese || !!data.assinatura?.startsWith('/storage')}
                     existingSignature={data.assinatura}
                 />
             </div>
