@@ -52,24 +52,53 @@ class AnamneseController extends Controller
 
         // Validação da assinatura
         if ($request->assinatura && str_starts_with($request->assinatura, 'data:image')) {
-            $imageData = $request->assinatura;
-            $imageData = str_replace('data:image/png;base64,', '', $imageData);
-            $imageData = str_replace(' ', '+', $imageData);
-            $imageName = 'signature_' . $validated['user_id'] . '_' . time() . '.png';
+            try {
+                $imageData = $request->assinatura;
+                // Extrai o formato e os dados base64 de forma mais robusta
+                if (preg_match('/^data:image\/(\w+);base64,/', $imageData, $type)) {
+                    $imageData = substr($imageData, strpos($imageData, ',') + 1);
+                    $type = strtolower($type[1]); // png, jpg, etc.
 
-            // Armazenamento da assinatura
-            \Illuminate\Support\Facades\Storage::disk('public')->put('signatures/' . $imageName, base64_decode($imageData));
-            $validated['assinatura_path'] = '/storage/signatures/' . $imageName;
+                    $imageData = base64_decode($imageData);
+
+                    if ($imageData === false) {
+                        throw new \Exception('Base64 decode failed');
+                    }
+
+                    $imageName = 'signature_' . $validated['user_id'] . '_' . time() . '.' . $type;
+                    $path = 'signatures/' . $imageName;
+
+                    // Garante que o diretório existe
+                    if (!\Illuminate\Support\Facades\Storage::disk('public')->exists('signatures')) {
+                        \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('signatures');
+                    }
+
+                    // Armazenamento da assinatura
+                    \Illuminate\Support\Facades\Storage::disk('public')->put($path, $imageData);
+                    $validated['assinatura_path'] = '/storage/' . $path;
+
+                    \Illuminate\Support\Facades\Log::info('Signature saved: ' . $validated['assinatura_path']);
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Signature save error: ' . $e->getMessage());
+            }
         }
 
+        // Se a assinatura for uma URL existente (edição), não precisamos fazer nada,
+        // pois ela não está no str_starts_with('data:image').
+        // Mas precisamos garantir que assinatura_path não seja sobrescrito se não mudar.
+
+        // Remove o campo 'assinatura' se existir para não dar erro no updateOrCreate
+        unset($validated['assinatura']);
+
         // Criação ou atualização da anamnese
-        \App\Models\Anamnese::updateOrCreate(
+        $anamnese = \App\Models\Anamnese::updateOrCreate(
             ['user_id' => $validated['user_id']],
             $validated
         );
 
         // Redirecionamento
-        return redirect()->back();
+        return redirect()->back()->with('message', 'Ficha de anamnese salva com sucesso');
     }
 
     /**

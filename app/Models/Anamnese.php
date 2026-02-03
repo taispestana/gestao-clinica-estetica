@@ -34,6 +34,16 @@ class Anamnese extends Model
         'data_assinatura'
     ];
 
+    /**
+     * Os atributos que devem ser convertidos.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'antecedentes_onco' => 'boolean',
+        'anemia_recente' => 'boolean',
+    ];
+
     // Função para obter o usuário
     public function user()
     {
