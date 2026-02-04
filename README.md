@@ -1,98 +1,101 @@
-# Gestao Clinica Estetica
+# Gestão Clínica Estética
 
-## Introdução
+> **Sistema Proprietário de Gestão de Clínica**
+>
+> Este software é confidencial e destinado ao uso exclusivo da clínica.
 
-Projeto final do CEASE, com o objetivo de criar um site em react e laravel para a gestão de uma clinica de estetica
+## Sobre o Projeto
+O sistema **Gestão Clínica Estética** é uma solução completa para administração de clínicas de estética, focada na otimização do fluxo de trabalho e na experiência do cliente.
 
-## Como Rodar o projeto
+### Módulos Principais
+- **Dashboard**: Visão geral do desempenho da clínica com indicadores chave (KPIs).
+- **Agenda Inteligente**: Gestão de marcações, controlo de ausências e listagem diária/semanal.
+- **Gestão de Clientes**: Fichas completas de pacientes, histórico de tratamentos e anamnese.
+- **Catálogo de Tratamentos**: Gestão de serviços, preços e análise de popularidade.
+- **Controlo de Stock**: Gestão de produtos e inventário (Módulo Estoque).
 
-Ao Iniciar o Projeto rodar o comando
+## Documentação Completa
+Para detalhes técnicos aprofundados sobre a arquitetura e desenvolvimento, consulte:
+*   [📄 Documentação Técnica](./DOCUMENTACAO_TECNICA.md)
+*   [🔧 Guia de Contribuição Interna](./CONTRIBUTING.md)
 
-```
-npm install && npm run build
-composer run dev
-```
+## Requisitos do Sistema
+Para rodar este projeto localmente, você precisará de:
+*   **PHP**: 8.2
+*   **Node.js**: 18+ e NPM
+*   **Composer**
+*   **MySQL** 
 
-Adicionar as configurações do banco de dados no .env 
+## Instalação (Ambiente de Desenvolvimento)
 
-```
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=clinica-estetica
-DB_USERNAME=root
-DB_PASSWORD=roote
-```
+Siga estes passos para configurar o projeto na sua máquina:
 
-Para que as tabelas de SQL sejam criadas deve executar o seguinte comando:
+1.  **Clonar o Repositório**
+    ```bash
+    git clone <url-do-repositorio>
+    cd gestao-clinica-estetica
+    ```
 
-```
-php artisan config:clear
-php artisan migrate
-composer run dev
-```
+2.  **Instalar Dependências de Backend**
+    ```bash
+    composer install
+    ```
 
-OBS: é necessário ter uma base de dados SQL para rodar o Projeto
+3.  **Instalar Dependências de Frontend**
+    ```bash
+    npm install
+    ```
 
-mais informações do laravel na documentação oficial do [LARAVEL](https://laravel.com/docs/11.x/installation)
-## Atualizando as branches
-Sempre rodar esses comandos separadamente nas suas proprias branches para atualizar a mesma após alguem ter feito um pull request para a main
-```
-git fetch origin
-```
-```
-git merge origin/main
-```
+4.  **Configurar Variáveis de Ambiente**
+    Faça uma cópia do arquivo de exemplo e configure o banco de dados:
+    ```bash
+    cp .env.example .env
+    ```
+    Edite o arquivo `.env` e ajuste as credenciais do banco:
+    ```ini
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=clinica_estetica
+    DB_USERNAME=root
+    DB_PASSWORD=
+    ```
 
-## Erros Conhecidos
+5.  **Gerar Chave da Aplicação**
+    ```bash
+    php artisan key:generate
+    ```
 
-### Erro extensões PHP
+6.  **Executar Migrações do Banco de Dados**
+    ```bash
+    php artisan migrate
+    ```
 
-Caso tenham algum erro relacionado as extensões do PHP
-Buscar o arquivo php.ini que se encontra na pasta de instalação do PHP
-e configurar as extensões como abaixo:
+7.  **Compilar Assets e Rodar o Servidor**
+    Para desenvolvimento, utilize o comando que inicia tudo (Servidor Laravel, Vite e Queue):
+    ```bash
+    composer run dev
+    ```
+    Acesse a aplicação em: `http://localhost:8000` (ou a porta indicada no terminal).
 
-```
-;extension=bz2
-extension=curl
-;extension=exif
-;extension=ffi
-;extension=ftp
+## Solução de Problemas Comuns
+
+### Erro de Extensões PHP
+Se encontrar erros como "extensão não encontrada", verifique o seu `php.ini` e garanta que as seguintes linhas **não** têm `;` no início:
+```ini
 extension=fileinfo
 extension=gd
-;extension=gettext
-;extension=gmp
-;extension=intl
-;extension=ldap
-extension=mbstring
-extension=mysqli
-;extension=odbc
-extension=openssl
-;extension=pdo_firebird
 extension=pdo_mysql
-;extension=pdo_odbc
-;extension=pdo_pgsql
-extension=pdo_sqlite
-;extension=pgsql
-;extension=shmop
-
-;extension=snmp
-
-;extension=soap
-;extension=sockets
-;extension=sodium
-extension=sqlite3
-;extension=tidy
-;extension=xsl
-extension=zip
+extension=openssl
+extension=mbstring
 ```
-OBS: Ao remover o ";" estamos retirando o comentário da extensão
 
-### Erro APP key
+### Página em Branco ou Erro 500
+1. Verifique se o arquivo `.env` existe e tem a `APP_KEY` gerada.
+2. Dê permissões de escrita nas pastas de storage:
+    ```bash
+    chmod -R 775 storage bootstrap/cache
+    ```
 
-caso tenham o erro de MISSING APP KEY
-Rodar o comando abaixo para gerar uma nova key no .env
-
-```
-php artisan key:generate
-```
+---
+© 2024 Gestão Clínica Estética. Todos os direitos reservados.

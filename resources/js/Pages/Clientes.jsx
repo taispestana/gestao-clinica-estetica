@@ -4,10 +4,14 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import Modal from '@/Components/Modal';
 
 export default function Clientes({ clientes }) {
+    //Estados
     const [showNewClientModal, setShowNewClientModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('Todos');
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
 
+    //Formulário
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         telemovel: '',
@@ -16,68 +20,53 @@ export default function Clientes({ clientes }) {
         profissao: '',
     });
 
+    //Funções
     const openModal = () => setShowNewClientModal(true);
     const closeModal = () => {
         setShowNewClientModal(false);
         reset();
     };
 
+    //Estatísticas
     const stats = [
         { title: 'Clientes Ativos', value: clientes.length.toString(), icon: 'users', color: 'var(--status-green)' },
         { title: 'Agendamentos Hoje', value: '0', icon: 'calendar', color: 'var(--status-green)' },
         { title: 'Agendamento Mensal', value: '0', icon: 'calendar-month', color: 'var(--status-green)' },
     ];
 
-    const appointments = clientes
-        .filter(cliente => {
-            const matchesName = cliente.name.toLowerCase().includes(searchTerm.toLowerCase());
 
-            // Lógica de inatividade: 15 meses sem agendamentos
-            let clientStatus = 'Ativo';
-            if (cliente.ultima_marcacao) {
-                const lastApt = new Date(cliente.ultima_marcacao);
-                const fifteenMonthsAgo = new Date();
-                fifteenMonthsAgo.setMonth(fifteenMonthsAgo.getMonth() - 15);
+    const fifteenMonthsAgo = new Date();
+    fifteenMonthsAgo.setMonth(fifteenMonthsAgo.getMonth() - 15);
 
-                if (lastApt < fifteenMonthsAgo) {
-                    clientStatus = 'Inativo';
-                }
-            } else {
-                // Se nunca teve agendamento, vamos ver a data de criação (opcional, aqui mantemos ativo ou decidimos)
-                // Para este caso, se não tem agendamento e foi criado há mais de 15 meses fica inativo
-                const createdAt = new Date(cliente.created_at); // Assumindo que temos created_at
-                const fifteenMonthsAgo = new Date();
-                fifteenMonthsAgo.setMonth(fifteenMonthsAgo.getMonth() - 15);
-                if (createdAt < fifteenMonthsAgo) {
-                    clientStatus = 'Inativo';
-                }
-            }
-
-            const matchesStatus = statusFilter === 'Todos' || clientStatus === statusFilter;
-            return matchesName && matchesStatus;
-        })
+    // Filtro de Clientes
+    const filteredClients = clientes
         .map(cliente => {
-            let clientStatus = 'Ativo';
+            let status = 'Ativo';
             if (cliente.ultima_marcacao) {
-                const lastApt = new Date(cliente.ultima_marcacao);
-                const fifteenMonthsAgo = new Date();
-                fifteenMonthsAgo.setMonth(fifteenMonthsAgo.getMonth() - 15);
-                if (lastApt < fifteenMonthsAgo) clientStatus = 'Inativo';
-            } else {
-                const createdAt = new Date(cliente.created_at);
-                const fifteenMonthsAgo = new Date();
-                fifteenMonthsAgo.setMonth(fifteenMonthsAgo.getMonth() - 15);
-                if (createdAt < fifteenMonthsAgo) clientStatus = 'Inativo';
+                if (new Date(cliente.ultima_marcacao) < fifteenMonthsAgo) status = 'Inativo';
+            } else if (cliente.created_at && new Date(cliente.created_at) < fifteenMonthsAgo) {
+                status = 'Inativo';
             }
 
             return {
                 id: cliente.id,
-                name: cliente.name,
+                name: cliente.name || 'Sem Nome',
                 contacto: cliente.telemovel || 'N/A',
-                status: clientStatus,
-                color: clientStatus === 'Ativo' ? 'var(--status-green)' : 'var(--status-red)'
+                status: status,
+                color: status === 'Ativo' ? 'var(--status-green)' : 'var(--status-red)'
             };
-        });
+        })
+        .filter(cliente => {
+            const matchesName = cliente.name.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesStatus = statusFilter === 'Todos' || cliente.status === statusFilter;
+            return matchesName && matchesStatus;
+        })
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+    const totalResults = filteredClients.length;
+    const totalPages = Math.ceil(totalResults / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedItems = filteredClients.slice(startIndex, startIndex + itemsPerPage);
 
     return (
         <>
@@ -150,7 +139,10 @@ export default function Clientes({ clientes }) {
                                 style={{ borderRadius: '10px' }}
                                 placeholder="Pesquisar por nome..."
                                 value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onChange={(e) => {
+                                    setSearchTerm(e.target.value);
+                                    setCurrentPage(1);
+                                }}
                             />
                         </div>
                         <div className="col-4 col-md-2 ms-md-auto order-3">
@@ -158,7 +150,10 @@ export default function Clientes({ clientes }) {
                                 className="form-select border-1 bg-white text-secondary py-2"
                                 style={{ borderRadius: '10px' }}
                                 value={statusFilter}
-                                onChange={(e) => setStatusFilter(e.target.value)}
+                                onChange={(e) => {
+                                    setStatusFilter(e.target.value);
+                                    setCurrentPage(1);
+                                }}
                             >
                                 <option value="Todos">Todos</option>
                                 <option value="Ativo">Ativo</option>
@@ -171,7 +166,7 @@ export default function Clientes({ clientes }) {
                     <div className="row mb-5">
                         <div className="col-12">
                             <div className="card border-0 shadow-sm p-4">
-                                {/* Cabeçalho da Tabela - Usando Grid para alinhar com o conteúdo */}
+                                {/* Cabeçalho da Tabela */}
                                 <div className="row px-4 mb-3 text-muted fw-semibold d-none d-md-flex">
                                     <div className="col-4">Nome</div>
                                     <div className="col-3 text-center">Contacto</div>
@@ -180,10 +175,10 @@ export default function Clientes({ clientes }) {
                                 </div>
 
                                 <div className="d-flex flex-column gap-4">
-                                    {appointments.length > 0 ? (
-                                        appointments.map((appointment, idx) => (
-                                            <div key={idx} className="card border-0 shadow-sm py-3 px-4 py-md-4 bg-white rounded-4">
-                                                <div className="row align-items-center mb-3">
+                                    {paginatedItems.length > 0 ? (
+                                        paginatedItems.map((appointment) => (
+                                            <div key={appointment.id} className="card border-0 shadow-sm py-3 px-4 py-md-3 bg-white rounded-4">
+                                                <div className="row align-items-center mb-2">
                                                     <div className="col-12 mb-2 d-md-none">
                                                         <div className="d-flex justify-content-between align-items-start mb-1">
                                                             <div className="fw-bold fs-5 text-dark">{appointment.name}</div>
@@ -218,10 +213,102 @@ export default function Clientes({ clientes }) {
                                         ))
                                     ) : (
                                         <div className="text-center py-5 text-muted">
-                                            Não existe status {statusFilter}
+                                            Não existem clientes que correspondam aos filtros.
                                         </div>
                                     )}
                                 </div>
+
+                                {/* Paginação da Tabela */}
+                                {totalResults > 0 && (
+                                    <div className="mt-5 rounded-4 overflow-hidden" style={{ padding: '15px 25px' }}>
+                                        <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                                            <div className="small" style={{ color: 'var(--main-text)' }}>
+                                                Mostrando <span className="fw-bold">{totalResults === 0 ? 0 : startIndex + 1}-{startIndex + paginatedItems.length}</span> de <span className="fw-bold">{totalResults}</span> resultados
+                                            </div>
+
+                                            <div className="d-flex align-items-center gap-2">
+                                                <button
+                                                    className="btn btn-sm d-flex align-items-center justify-content-center p-0"
+                                                    style={{
+                                                        width: '32px',
+                                                        height: '32px',
+                                                        border: '1px solid var(--main-green-light)',
+                                                        borderRadius: '6px',
+                                                        backgroundColor: 'transparent',
+                                                        color: 'var(--main-text)',
+                                                        opacity: currentPage === 1 ? 0.3 : 1,
+                                                        cursor: currentPage === 1 ? 'default' : 'pointer'
+                                                    }}
+                                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                                    disabled={currentPage === 1}
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                        <path fillRule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+                                                    </svg>
+                                                </button>
+
+                                                {(() => {
+                                                    let pages = [];
+                                                    if (totalPages <= 5) {
+                                                        for (let i = 1; i <= totalPages; i++) pages.push(i);
+                                                    } else {
+                                                        if (currentPage <= 3) {
+                                                            pages = [1, 2, 3, 4, '...', totalPages];
+                                                        } else if (currentPage >= totalPages - 2) {
+                                                            pages = [1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+                                                        } else {
+                                                            pages = [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+                                                        }
+                                                    }
+
+                                                    return pages.map((page, index) => {
+                                                        if (page === '...') {
+                                                            return <span key={index} className="px-1 text-muted">...</span>;
+                                                        }
+                                                        const isActive = currentPage === page;
+                                                        return (
+                                                            <button
+                                                                key={index}
+                                                                className="btn btn-sm d-flex align-items-center justify-content-center p-0 fw-semibold"
+                                                                style={{
+                                                                    width: '32px',
+                                                                    height: '32px',
+                                                                    backgroundColor: isActive ? 'var(--primary-button)' : 'transparent',
+                                                                    border: isActive ? 'none' : '1px solid var(--main-green-light)',
+                                                                    borderRadius: '6px',
+                                                                    color: isActive ? 'white' : 'var(--main-text)',
+                                                                }}
+                                                                onClick={() => setCurrentPage(page)}
+                                                            >
+                                                                {page}
+                                                            </button>
+                                                        );
+                                                    });
+                                                })()}
+
+                                                <button
+                                                    className="btn btn-sm d-flex align-items-center justify-content-center p-0"
+                                                    style={{
+                                                        width: '32px',
+                                                        height: '32px',
+                                                        border: '1px solid var(--main-green-light)',
+                                                        borderRadius: '6px',
+                                                        backgroundColor: 'transparent',
+                                                        color: 'var(--main-text)',
+                                                        opacity: currentPage === totalPages ? 0.3 : 1,
+                                                        cursor: currentPage === totalPages ? 'default' : 'pointer'
+                                                    }}
+                                                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                                    disabled={currentPage === totalPages}
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                        <path fillRule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -255,10 +342,13 @@ export default function Clientes({ clientes }) {
                             <div className="col-6">
                                 <label className="form-label small text-secondary fw-medium mb-1">Telemóvel</label>
                                 <input
-                                    type="text"
+                                    type="tel"
                                     className="form-control bg-light border-0 py-2 rounded-3"
                                     value={data.telemovel}
-                                    onChange={(e) => setData('telemovel', e.target.value)}
+                                    onChange={(e) => {
+                                        const val = e.target.value.replace(/[^0-9+]/g, '');
+                                        setData('telemovel', val);
+                                    }}
                                 />
                                 {errors.telemovel && <div className="text-danger small">{errors.telemovel}</div>}
                             </div>
@@ -295,7 +385,6 @@ export default function Clientes({ clientes }) {
                             />
                             {errors.profissao && <div className="text-danger small">{errors.profissao}</div>}
                         </div>
-
                         <div className="text-center">
                             <button type="submit" disabled={processing} className="btn text-white px-5 py-2 fw-medium" style={{ backgroundColor: 'var(--primary-button)', borderRadius: '10px', minWidth: '200px' }}>
                                 Salvar
