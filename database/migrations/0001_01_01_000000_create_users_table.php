@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->string('nif', 40)->nullable();
             $table->string('endereco', 100)->nullable();
             $table->string('profissao', 40)->nullable();
-            $table->date('cliente_desde')->nullable();
+            // $table->date('cliente_desde')->nullable();
             $table->boolean('estado_fidelidade')->default(false);
             $table->string('especialidade', 25)->nullable(); // Usado para profissionais
             $table->integer('tipo_users')->default(1)->comment('1: Cliente, 2: Profissional');
