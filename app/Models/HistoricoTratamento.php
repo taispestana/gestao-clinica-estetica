@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+// Classe para gerenciar histórico de tratamentos
 class HistoricoTratamento extends Model
 {
     use HasFactory;
@@ -19,13 +20,15 @@ class HistoricoTratamento extends Model
         'data_sessao'
     ];
 
-    // Relacionamento: O histórico pertence a um cliente
-    public function cliente() {
+    // Função para obter o cliente
+    public function cliente()
+    {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Relacionamento: O histórico está ligado a uma ficha de anamnese
-    public function anamnese() {
+    // Função para obter a ficha de anamnese
+    public function anamnese()
+    {
         return $this->belongsTo(Anamnese::class);
     }
 }

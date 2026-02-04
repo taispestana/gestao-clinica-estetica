@@ -1,5 +1,4 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
-import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
@@ -8,12 +7,13 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Login({ status }) {
+    // Formulário de login
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
-        remember: false,
     });
 
+    // Função de envio do formulário
     const submit = (e) => {
         e.preventDefault();
 
@@ -22,6 +22,7 @@ export default function Login({ status }) {
         });
     };
 
+    // Renderização do formulário
     return (
         <GuestLayout>
             <Head title="Log in" />
@@ -32,7 +33,7 @@ export default function Login({ status }) {
                 </div>
             )}
 
-            <div className="login-card shadow-sm text-center p-4 text-center">
+            <div className="login-card shadow-sm text-center p-4">
 
                 <div className="mb-2 pt-0">
                     <ApplicationLogo />
@@ -87,18 +88,7 @@ export default function Login({ status }) {
                         <InputError message={errors.password} className="mt-1" />
                     </div>
 
-                    <div className="mb-4 d-flex align-items-center mt-3">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) =>
-                                setData('remember', e.target.checked)
-                            }
-                        />
-                        <span className="ms-2 small text-muted">
-                            Lembrar Senha
-                        </span>
-                    </div>
+
 
                     <div className="d-grid mt-4">
                         <PrimaryButton className="btn-gold" disabled={processing}>

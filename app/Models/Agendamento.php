@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+// Classe para gerenciar agendamentos
 class Agendamento extends Model
 {
     protected $fillable = [
@@ -15,7 +16,8 @@ class Agendamento extends Model
         'data_hora_inicio',
         'data_hora_fim',
         'estado_agendamento',
-        'motivo'
+        'motivo',
+        'observacoes'
     ];
 
     // Relacionamentos para facilitar as queries no React
@@ -26,6 +28,7 @@ class Agendamento extends Model
 
     }
 
+    // Função para obter o profissional
     public function profissional()
     {
 
@@ -33,6 +36,7 @@ class Agendamento extends Model
 
     }
 
+    // Função para obter o tratamento
     public function tratamento()
     {
 
@@ -40,6 +44,7 @@ class Agendamento extends Model
 
     }
 
+    // Função para obter as mensagens enviadas
     public function mensagensEnviadas()
     {
         return $this->belongsToMany(User::class, 'users_agendamento')

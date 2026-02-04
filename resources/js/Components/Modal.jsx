@@ -1,15 +1,17 @@
 import { createPortal } from 'react-dom';
 import { useEffect } from 'react';
 
+// Componente Modal
 export default function Modal({
     children,
     show = false,
     maxWidth = '2xl',
     onClose = () => { },
+    closeable = true,
     style = {},
     overlayStyle = {},
 }) {
-    // Lock body scroll when modal is open
+    // Ajusta o scroll do body quando o modal está aberto
     useEffect(() => {
         if (show) {
             document.body.style.overflow = 'hidden';
@@ -23,14 +25,18 @@ export default function Modal({
 
     if (!show) return null;
 
+    // Define o tamanho máximo do modal
     const maxWidthClass = {
         sm: '400px',
         md: '500px',
         lg: '600px',
         xl: '800px',
         '2xl': '1000px',
+        '3xl': '1200px',
+        '4xl': '1400px',
     }[maxWidth] || '500px';
 
+    // Renderiza o modal
     const modalContent = (
         <div
             style={{
@@ -39,7 +45,7 @@ export default function Modal({
                 left: 0,
                 width: '100vw',
                 height: '100vh',
-                backgroundColor: 'var(--bg-transparent)',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -47,16 +53,17 @@ export default function Modal({
                 padding: '1rem',
                 ...overlayStyle
             }}
-            onClick={onClose}
+            onClick={() => closeable && onClose()}
         >
             <div
                 style={{
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: 'var(--white)',
                     width: '100%',
                     maxWidth: maxWidthClass,
+                    maxHeight: 'calc(100vh - 2rem)',
                     borderRadius: '16px',
-                    boxShadow: '0 25px 50px -12px var(--bg-transparent)',
-                    overflow: 'hidden',
+                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                    overflowY: 'auto',
                     position: 'relative',
                     zIndex: 100000,
                     border: 'none',

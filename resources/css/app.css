@@ -105,8 +105,8 @@ body {
 .invalid-feedback,
 .text-danger,
 .input-error-msg {
-    color: #b35d5d !important;
-    font-size: 0.775rem !important;
+    color: #ff0000 !important;
+    font-size: 0.725rem !important;
     font-weight: 500;
     line-height: 1.2;
 }
@@ -135,6 +135,7 @@ body {
     border-radius: 0 10px 10px 0 !important;
     /* transition: all 0.3s ease !important; */
 }
+
 /*
 .btn-filter-gold:hover {
     background-color: var(--primary-button) !important;

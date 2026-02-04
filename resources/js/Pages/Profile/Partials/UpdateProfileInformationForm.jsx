@@ -12,18 +12,21 @@ export default function UpdateProfileInformation({
 }) {
     const user = usePage().props.auth.user;
 
+    // Formulário de atualização de informações do perfil
     const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
             name: user.name,
             email: user.email,
         });
 
+    // Função para enviar o formulário
     const submit = (e) => {
         e.preventDefault();
 
         patch(route('profile.update'));
     };
 
+    // Renderização do componente
     return (
         <section className={className}>
             <header>

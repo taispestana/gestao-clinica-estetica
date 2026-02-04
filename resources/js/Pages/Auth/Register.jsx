@@ -7,6 +7,7 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Register() {
+    // Formulário de registro
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
@@ -14,6 +15,7 @@ export default function Register() {
         password_confirmation: '',
     });
 
+    // Função de envio do formulário
     const submit = (e) => {
         e.preventDefault();
 
@@ -22,11 +24,12 @@ export default function Register() {
         });
     };
 
+    // Renderização do formulário
     return (
         <GuestLayout>
             <Head title="Register" />
 
-            <div className="login-card shadow-sm text-center p-4 text-center">
+            <div className="login-card shadow-sm text-center p-4">
                 <div className="mb-4 pt-0">
                     <ApplicationLogo />
                     <p className="text-muted small mt-0 mb-4">A gestão da sua Clínica de forma eficiente</p>

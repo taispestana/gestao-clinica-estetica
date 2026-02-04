@@ -5,29 +5,34 @@ import Modal from '@/Components/Modal';
 
 
 export default function Estoque({ produtos = [] }) {
+    //Estados
     const [showNewProductModal, setShowNewProductModal] = useState(false);
     const [showEditProductModal, setShowEditProductModal] = useState(false);
     const [editingProductId, setEditingProductId] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
+    //Formulário de Produtos
     const { data, setData, post, processing, errors, reset } = useForm({
         nome: '',
         stock: '',
         data_validade: '',
     });
 
+    //Formulário de Edição de Produtos
     const { data: editData, setData: setEditData, put: editPut, delete: editDelete, processing: editProcessing, errors: editErrors, reset: editReset } = useForm({
         nome: '',
         stock: '',
         data_validade: '',
     });
 
+    //Funções dos Modais
     const openModal = () => setShowNewProductModal(true);
     const closeModal = () => {
         setShowNewProductModal(false);
         reset();
     };
 
+    //Funções de Edição de Produtos
     const openEditModal = (produto) => {
         setEditingProductId(produto.id);
         setEditData({
@@ -44,6 +49,7 @@ export default function Estoque({ produtos = [] }) {
         editReset();
     };
 
+    //Funções de Exclusão de Produtos
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
     const handleDelete = () => {
@@ -59,15 +65,18 @@ export default function Estoque({ produtos = [] }) {
         });
     };
 
+    //Estatísticas
     const stats = [
         { title: 'Total de Produtos', value: produtos.length, icon: 'box' },
         { title: 'Estoque Baixo', value: produtos.filter(p => p.stock <= (p.stock_minimo || 2)).length, icon: 'alert' },
     ];
 
+    //Datas
     const today = new Date();
     const thirtyDaysFromNow = new Date();
     thirtyDaysFromNow.setDate(today.getDate() + 30);
 
+    // Alertas de estoque baixo
     const stockAlerts = produtos
         .filter(p => p.stock <= (p.stock_minimo || 2))
         .map(p => ({
@@ -76,6 +85,7 @@ export default function Estoque({ produtos = [] }) {
             type: 'low_stock'
         }));
 
+    // Alertas de validade
     const expiryAlerts = produtos
         .filter(p => p.data_validade && new Date(p.data_validade) <= thirtyDaysFromNow)
         .map(p => ({
@@ -86,6 +96,7 @@ export default function Estoque({ produtos = [] }) {
 
     const alerts = [...stockAlerts, ...expiryAlerts];
 
+    //Função de busca
     const normalizeString = (str) =>
         str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
@@ -93,6 +104,7 @@ export default function Estoque({ produtos = [] }) {
         normalizeString(p.nome).includes(normalizeString(searchTerm))
     );
 
+    //Funções de envio de formulário
     const handleSubmit = (e) => {
         e.preventDefault();
         post(route('estoque.storeProduto'), {
@@ -118,16 +130,16 @@ export default function Estoque({ produtos = [] }) {
                     <p className="text-secondary">Gerencie todos os produtos e prazos</p>
                 </div>
 
-                {/* Tablet/Mobile Top Row: Stats + Alerts Side-by-Side on Tablet (MD/LG) */}
+                {/* Vista em Linha no Tablet/Mobile: Cards de Estatísticas + Blocos de Alertas lado a lado */}
                 <div className="row g-3 mb-4 align-items-stretch d-xl-none">
-                    {/* Stats Cards */}
+                    {/* Cards de Estatísticas */}
                     <div className="col-12 col-md-6">
                         <div className="row g-2 h-100">
                             {stats.map((stat, index) => (
                                 <div key={index} className="col-6">
                                     <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
                                         <div className="card-body p-2 p-md-4 text-start">
-                                            {/* Mobile Icon */}
+                                            {/* Icone do Mobile */}
                                             <div className="mb-2">
                                                 <div className="p-2 rounded d-inline-block" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
                                                     {stat.icon === 'box' ? (
@@ -146,7 +158,7 @@ export default function Estoque({ produtos = [] }) {
                         </div>
                     </div>
 
-                    {/* Alerts Block (Visible on Tablet/Mobile top row) */}
+                    {/* Blocos de Alertas (Visível em linha com os cards de estatísticas no Tablet/Mobile) */}
                     <div className="col-12 col-md-6">
                         <div className="card border-0 shadow-sm p-3 p-md-4 h-100">
                             <h3 className="h6 fw-bold text-dark mb-3">Alertas de Estoque</h3>
@@ -172,13 +184,13 @@ export default function Estoque({ produtos = [] }) {
                     </div>
                 </div>
 
-                {/* Desktop (XL) Top Row (Just Stats - Alerts are in the sidebar for XL) */}
+                {/* Vista em Linha no  Desktop (XL):  Somente Estatísticas e Alertas no Sidebar */}
                 <div className="row g-2 g-md-4 mb-4 d-none d-xl-flex">
                     {stats.map((stat, index) => (
                         <div key={index} className="col-4 col-md-4 px-1 px-md-3">
                             <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: 'var(--main-green-lighter)' }}>
                                 <div className="card-body p-4 text-start">
-                                    {/* Desktop Icon Container */}
+                                    {/* Icone do Desktop */}
                                     <div className="d-flex align-items-start justify-content-between mb-3">
                                         <div className="p-3 rounded" style={{ backgroundColor: 'var(--main-green-light)', color: 'var(--main-text)' }}>
                                             {stat.icon === 'box' ? (
@@ -200,7 +212,7 @@ export default function Estoque({ produtos = [] }) {
                     ))}
                 </div>
 
-                {/* Filtros e Ações (Fora do container) */}
+                {/* Modal de Adicionar Produto */}
                 <div className="row g-3 mb-4 align-items-center">
                     <div className="col-12 col-md-auto">
                         <button
@@ -225,7 +237,7 @@ export default function Estoque({ produtos = [] }) {
                     </div>
                 </div>
 
-                {/* Main Content Layout: Two columns on desktop (xl), stacked on mobile/tablet */}
+                {/* Layout do conteúdo: Duas colunas no desktop (xl), empilhadas no mobile/tablet */}
                 <div className="row g-4 flex-column-reverse flex-xl-row mb-5">
                     {/* Left Column: Products List */}
                     <div className="col-12 col-xl-8">
@@ -234,7 +246,7 @@ export default function Estoque({ produtos = [] }) {
                                 <h3 className="h5 fw-bold text-dark mb-0">Produtos em Estoque</h3>
                             </div>
 
-                            {/* DESKTOP TABLE HEADERS */}
+                            {/* Header da Tabela no Desktop */}
                             <div className="row align-items-center mb-3 px-4 d-none d-md-flex">
                                 <div className="col-4 col-xl-4">
                                     <h3 className="h6 fw-bold text-muted mb-0">Produto</h3>
@@ -249,11 +261,11 @@ export default function Estoque({ produtos = [] }) {
                                 <div className="col-2 col-xl-3"></div>
                             </div>
 
-                            {/* List of Products as Cards */}
+                            {/* Lista de Produtos como Cards */}
                             <div className="d-flex flex-column gap-3">
                                 {filteredProdutos.length > 0 ? filteredProdutos.map((produto) => (
                                     <div key={produto.id} className="card border-0 shadow-sm p-3 p-md-4 bg-white rounded-4 border-bottom">
-                                        {/* Mobile Card Layout */}
+                                        {/* Layout do Card no Mobile */}
                                         <div className="d-md-none">
                                             <div className="row mb-2">
                                                 <div className="col-4 text-muted small fw-bold">SKU:</div>
@@ -267,12 +279,12 @@ export default function Estoque({ produtos = [] }) {
                                                 <div className="col-4 text-muted small fw-bold">Quantidade:</div>
                                                 <div className="col-8 text-secondary small">{produto.stock} unid.</div>
                                             </div>
-                                            <div className="row mb-3">
-                                                <div className="col-4 text-muted small fw-bold">Validade:</div>
-                                                <div className="col-8 text-secondary small">{produto.data_validade ? new Date(produto.data_validade).toLocaleDateString('pt-BR') : '-'}</div>
-                                            </div>
                                             <div className="row">
-                                                <div className="col-12 text-end">
+                                                <div className="col-12 d-flex justify-content-between align-items-center">
+                                                    <div className="d-flex align-items-center flex-grow-1">
+                                                        <span className="text-muted small fw-bold me-2" style={{ width: '33.33%' }}>Validade:</span>
+                                                        <span className="text-secondary small">{produto.data_validade ? new Date(produto.data_validade).toLocaleDateString('pt-BR') : '-'}</span>
+                                                    </div>
                                                     <button
                                                         className="btn btn-sm text-white px-4 py-2"
                                                         style={{ backgroundColor: 'var(--primary-button)', borderRadius: '8px' }}
@@ -284,7 +296,7 @@ export default function Estoque({ produtos = [] }) {
                                             </div>
                                         </div>
 
-                                        {/* Desktop/Tablet Row View */}
+                                        {/* Vista em Linha no Desktop/Tablet */}
                                         <div className="d-none d-md-flex row align-items-center w-100 mx-0">
                                             <div className="col-4 col-xl-4">
                                                 <div className="fw-bold text-dark">{produto.nome}</div>
@@ -317,7 +329,7 @@ export default function Estoque({ produtos = [] }) {
                         </div>
                     </div>
 
-                    {/* Right Column: Alerts (Sidebar only on desktop xl+) */}
+                    {/* Coluna Direita: Alertas (Sidebar apenas no desktop xl+) */}
                     <div className="col-12 col-xl-4 d-none d-xl-block">
                         <div className="card border-0 shadow-sm p-4">
                             <h3 className="h5 fw-bold text-dark mb-4">Alertas de Estoque</h3>
@@ -346,7 +358,6 @@ export default function Estoque({ produtos = [] }) {
                     </div>
                 </div>
             </AuthenticatedLayout>
-
             {/* Modal Novo Produto */}
             <Modal show={showNewProductModal} onClose={closeModal} maxWidth="md">
                 <div className="p-4 p-md-5 bg-white">
@@ -456,10 +467,10 @@ export default function Estoque({ produtos = [] }) {
                             <button
                                 type="submit"
                                 className="btn btn-gold px-5 py-2 fw-medium"
-                                style={{ borderRadius: '10px', minWidth: '200px' }}
+                                style={{ borderRadius: '10px', minWidth: '150px' }}
                                 disabled={editProcessing}
                             >
-                                {editProcessing ? 'Salvando...' : 'Salvar Alterações'}
+                                {editProcessing ? 'Salvando...' : 'Salvar'}
                             </button>
                         </div>
                     </form>

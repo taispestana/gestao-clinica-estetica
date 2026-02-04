@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
+// Classe para gerenciar requisições Inertia
 class HandleInertiaRequests extends Middleware
 {
     /**
@@ -14,9 +15,7 @@ class HandleInertiaRequests extends Middleware
      */
     protected $rootView = 'app';
 
-    /**
-     * Determine the current asset version.
-     */
+    // Função para retornar a versão
     public function version(Request $request): ?string
     {
         return parent::version($request);
@@ -27,6 +26,7 @@ class HandleInertiaRequests extends Middleware
      *
      * @return array<string, mixed>
      */
+    // Função para compartilhar dados
     public function share(Request $request): array
     {
         return [

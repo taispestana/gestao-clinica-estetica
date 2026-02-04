@@ -2,16 +2,20 @@ import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import Modal from '@/Components/Modal';
+import FichaAnamnese from '@/Components/FichaAnamnese';
 
 export default function Cliente({ cliente }) {
     const [activeTab, setActiveTab] = useState('agendamentos');
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showAnamneseModal, setShowAnamneseModal] = useState(false);
+    const [isEditingAnamnese, setIsEditingAnamnese] = useState(false);
 
     const { data, setData, put, processing, errors, reset } = useForm({
         name: cliente.name || '',
         telemovel: cliente.telemovel || '',
         email: cliente.email || '',
         data_nascimento: cliente.data_nascimento || '',
+        cliente_desde: cliente.cliente_desde || '',
         nif: cliente.nif || '',
         endereco: cliente.endereco || '',
         profissao: cliente.profissao || '',
@@ -22,6 +26,9 @@ export default function Cliente({ cliente }) {
         setShowEditModal(false);
         reset();
     };
+
+    const openAnamneseModal = () => setShowAnamneseModal(true);
+    const closeAnamneseModal = () => setShowAnamneseModal(false);
 
     const handleUpdate = (e) => {
         e.preventDefault();
@@ -42,11 +49,28 @@ export default function Cliente({ cliente }) {
         return age;
     };
 
+    const calculateStatus = () => {
+        const fifteenMonthsAgo = new Date();
+        fifteenMonthsAgo.setMonth(fifteenMonthsAgo.getMonth() - 15);
+
+        if (cliente.ultima_marcacao) {
+            return new Date(cliente.ultima_marcacao) < fifteenMonthsAgo ? 'Inativo' : 'Ativo';
+        }
+
+        // Se nunca teve marcação, usa data de criação
+        return new Date(cliente.created_at) < fifteenMonthsAgo ? 'Inativo' : 'Ativo';
+    };
+
+    const currentStatus = calculateStatus();
+
     const customer = {
+        id: cliente.id,
         name: cliente.name,
-        since: new Date(cliente.created_at).toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' }),
+        since: (cliente.cliente_desde ? new Date(cliente.cliente_desde) : new Date(cliente.created_at)).toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' }),
         age: calculateAge(cliente.data_nascimento),
-        status: 'Ativo',
+        data_nascimento: cliente.data_nascimento,
+        status: currentStatus,
+        color: currentStatus === 'Ativo' ? 'var(--status-green)' : 'var(--status-red)',
         phone: cliente.telemovel,
         email: cliente.email,
         nif: cliente.nif,
@@ -54,57 +78,48 @@ export default function Cliente({ cliente }) {
         occupation: cliente.profissao,
     };
 
+    const now = new Date();
+    const pastAppointments = (cliente.agendamentos || []).filter(a => new Date(a.data_hora_fim) < now && a.estado_agendamento !== 5 && a.estado_agendamento !== 4);
+    const futureAppointments = (cliente.agendamentos || []).filter(a => new Date(a.data_hora_inicio) > now && a.estado_agendamento !== 5 && a.estado_agendamento <= 2);
+
     const stats = {
-        totalSessions: 28,
-        lastVisit: '15/12/2025',
-        nextProcedure: '10/01/2026',
-        totalSpent: '3.240 €'
+        totalSessions: pastAppointments.length,
+        lastVisit: pastAppointments.length > 0
+            ? new Date(Math.max(...pastAppointments.map(a => new Date(a.data_hora_inicio))))
+                .toLocaleDateString('pt-PT')
+            : 'N/A',
+        nextProcedure: futureAppointments.length > 0
+            ? new Date(Math.min(...futureAppointments.map(a => new Date(a.data_hora_inicio))))
+                .toLocaleDateString('pt-PT')
+            : 'N/A',
+        totalSpent: new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' })
+            .format(pastAppointments.reduce((acc, a) => acc + parseFloat(a.tratamento?.preco || 0), 0))
     };
 
-    const appointments = [
-        {
-            title: 'Massagem Terapêutica',
-            therapist: 'Danielle',
-            date: '10/01/2026',
-            price: '80 €'
-        },
-        {
-            title: 'Limpeza de Pele Profunda',
-            therapist: 'Danielle',
-            date: '15/01/2026',
-            price: '80 €'
-        },
-        {
-            title: 'Peeling Químico',
-            therapist: 'Danielle',
-            date: '15/02/2026',
-            price: '80 €'
-        }
-    ];
+    const appointments = cliente.agendamentos
+        ?.filter(apt => new Date(apt.data_hora_inicio) >= new Date() && apt.estado_agendamento <= 2)
+        .map(apt => ({
+            title: apt.tratamento?.nome || 'Tratamento',
+            therapist: apt.profissional?.name || 'Profissional',
+            date: new Date(apt.data_hora_inicio).toLocaleDateString('pt-PT', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }),
+            price: new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(apt.tratamento?.preco || 0)
+        })) || [];
 
-    const procedureHistory = [
-        {
-            title: 'Limpeza de Pele Profunda',
-            date: '15/12/2025',
-            professional: 'Danielle',
-            notes: 'Procedimento realizado com sucesso. Pele apresentou boa resposta ao tratamento.',
-            price: '80 €'
-        },
-        {
-            title: 'Massagem Terapêutica',
-            date: '28/11/2025',
-            professional: 'Danielle',
-            notes: 'Aplicação na região frontal e glabela. Paciente orientada sobre cuidados pós-procedimento.',
-            price: '850 €'
-        },
-        {
-            title: 'Peeling Químico',
-            date: '10/11/2025',
-            professional: 'Danielle',
-            notes: 'Peeling com ácido glicólico 30%. Boa tolerância ao procedimento.',
-            price: '320 €'
-        }
-    ];
+    const procedureHistory = pastAppointments
+        .sort((a, b) => new Date(b.data_hora_inicio) - new Date(a.data_hora_inicio))
+        .map(apt => ({
+            title: apt.tratamento?.nome || 'Tratamento',
+            date: new Date(apt.data_hora_inicio).toLocaleDateString('pt-PT'),
+            professional: apt.profissional?.name || 'Profissional',
+            notes: apt.observacoes || 'Sem observações registadas.',
+            price: new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(apt.tratamento?.preco || 0)
+        }));
 
     return (
         <AuthenticatedLayout>
@@ -131,7 +146,7 @@ export default function Cliente({ cliente }) {
                             <div className="mb-3">
                                 <span className="text-secondary">{customer.age} anos</span>
                                 <div className="mt-1">
-                                    <span className="badge rounded-pill text-dark fw-normal px-3" style={{ backgroundColor: 'var(--status-green)' }}>
+                                    <span className="badge rounded-pill text-dark fw-normal px-3" style={{ backgroundColor: customer.color }}>
                                         {customer.status}
                                     </span>
                                 </div>
@@ -139,7 +154,7 @@ export default function Cliente({ cliente }) {
 
                             <div className="d-flex flex-column gap-3 mb-4">
                                 <div>
-                                    <small className="text-secondary d-block">Telefone</small>
+                                    <small className="text-secondary d-block">Telemóvel</small>
                                     <span className="fw-medium">{customer.phone}</span>
                                 </div>
                                 <div>
@@ -183,7 +198,7 @@ export default function Cliente({ cliente }) {
                                     <span className="fw-medium">{stats.lastVisit}</span>
                                 </div>
                                 <div className="d-flex justify-content-between align-items-center">
-                                    <span className="text-secondary">Próxima Procedimento</span>
+                                    <span className="text-secondary">Próximo Procedimento</span>
                                     <span className="fw-medium">{stats.nextProcedure}</span>
                                 </div>
                                 <div className="d-flex justify-content-between align-items-center mt-2">
@@ -230,382 +245,118 @@ export default function Cliente({ cliente }) {
                                 <>
                                     <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
                                         <h5 className="mb-0">Agendamentos</h5>
-                                        <button className="btn btn-gold px-4 py-2" style={{ borderRadius: '8px' }}>
-                                            <span className="me-2">+</span> Novo Procedimento
-                                        </button>
+                                        <Link href={route('agendamentos', { cliente_id: cliente.id })} className="btn btn-gold px-4 py-2" style={{ borderRadius: '8px' }}>
+                                            <span className="me-2" >+</span> Novo Procedimento
+                                        </Link>
                                     </div>
 
                                     <div className="d-flex flex-column gap-3 mb-4">
-                                        {appointments.map((apt, idx) => (
-                                            <div key={idx} className="card border border-light shadow-sm p-3 rounded-3">
-                                                <div className="d-flex justify-content-between align-items-start">
-                                                    <div>
-                                                        <h6 className="mb-1 fw-bold">{apt.title}</h6>
-                                                        <p className="text-secondary small mb-2">{apt.therapist}</p>
-                                                        <p className="text-secondary small mb-0">Valor: {apt.price}</p>
-                                                    </div>
-                                                    <div className="text-end">
-                                                        <div className="text-muted small mb-1">{apt.date}</div>
+                                        {appointments.length > 0 ? (
+                                            appointments.map((apt, idx) => (
+                                                <div key={idx} className="card border border-light shadow-sm p-3 rounded-3">
+                                                    <div className="d-flex justify-content-between align-items-start">
+                                                        <div>
+                                                            <h6 className="mb-1 fw-bold">{apt.title}</h6>
+                                                            <p className="text-secondary small mb-2">{apt.therapist}</p>
+                                                            <p className="text-secondary small mb-0">Valor: {apt.price}</p>
+                                                        </div>
+                                                        <div className="text-end">
+                                                            <div className="text-muted small mb-1">{apt.date}</div>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                            ))
+                                        ) : (
+                                            <div className="text-center py-5">
+                                                <i className="bi bi-calendar-event fs-1 text-light mb-3 d-block"></i>
+                                                <p className="text-secondary">Não existem agendamentos futuros para este cliente.</p>
                                             </div>
-                                        ))}
+                                        )}
                                     </div>
 
-                                    <div className="text-center mt-auto pt-3">
-                                        <button className="btn btn-gold px-5 py-2" style={{ borderRadius: '8px' }}>
-                                            Ver Mais Agendamentos
-                                        </button>
-                                    </div>
+                                    {appointments.length > 5 && (
+                                        <div className="text-center mt-auto pt-3">
+                                            <button className="btn btn-gold px-5 px-md-5 py-2" style={{ borderRadius: '8px', paddingLeft: '3rem !important', paddingRight: '3rem !important' }}>
+                                                Ver Mais Agendamentos
+                                            </button>
+                                        </div>
+                                    )}
                                 </>
                             )}
 
+                            {/* Aba Anamnese */}
                             {activeTab === 'anamnese' && (
-                                <div className="anamnese-form">
-                                    <div className="d-flex justify-content-between align-items-center mb-4">
-                                        <h5 className="mb-0">Ficha de Anamnese</h5>
-                                        <button className="btn btn-gold px-4 py-2" style={{ borderRadius: '8px' }}>
-                                            <i className="bi bi-pencil-square me-2"></i>
-                                            Editar Anamnese
-                                        </button>
-                                    </div>
-
-                                    {/* Dados Pessoais */}
-                                    <div className="mb-5">
-                                        <h6 className="fw-bold mb-3">Dados Pessoais</h6>
-                                        <div className="row g-3">
-                                            <div className="col-md-12">
-                                                <label className="form-label small text-secondary mb-1">Nome Completo</label>
-                                                <input type="text" className="form-control bg-light border-0 py-2" defaultValue={customer.name} />
-                                            </div>
-                                            <div className="col-4 col-md-3">
-                                                <label className="form-label small text-secondary mb-1">Idade</label>
-                                                <input type="text" className="form-control bg-light border-0 py-2" defaultValue={customer.age} />
-                                            </div>
-                                            <div className="col-8 col-md-5">
-                                                <label className="form-label small text-secondary mb-1">Data de Nascimento</label>
-                                                <input type="text" className="form-control bg-light border-0 py-2" placeholder="27/09/1989" />
-                                            </div>
-                                            <div className="col-md-4">
-                                                <label className="form-label small text-secondary mb-1">Telemóvel</label>
-                                                <input type="text" className="form-control bg-light border-0 py-2" defaultValue={customer.phone} />
-                                            </div>
-                                            <div className="col-md-7">
-                                                <label className="form-label small text-secondary mb-1">Email</label>
-                                                <input type="email" className="form-control bg-light border-0 py-2" defaultValue={customer.email} />
-                                            </div>
-                                            <div className="col-md-5">
-                                                <label className="form-label small text-secondary mb-1">Profissão</label>
-                                                <input type="text" className="form-control bg-light border-0 py-2" defaultValue={customer.occupation} />
-                                            </div>
-                                            <div className="col-12">
-                                                <label className="form-label small text-secondary mb-1">Como nos conheceu?</label>
-                                                <div className="d-flex flex-wrap gap-x-4 gap-y-2 mt-1">
-                                                    <div className="d-flex flex-wrap gap-3">
-                                                        {['Facebook', 'Instagram', 'Indicação de amigos', 'Google/Motor de pesquisa'].map((opt, i) => (
-                                                            <div key={i} className="form-check">
-                                                                <input className="form-check-input" type="radio" name="origin" id={`opt${i}`} />
-                                                                <label className="form-check-label small" htmlFor={`opt${i}`}>
-                                                                    {opt}
-                                                                </label>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                    <div className="d-flex align-items-center gap-3">
-                                                        <div className="form-check mb-0">
-                                                            <input className="form-check-input" type="radio" name="origin" id="opt4" />
-                                                            <label className="form-check-label small" htmlFor="opt4">Passagem pela clínica</label>
-                                                        </div>
-                                                        <div className="d-flex align-items-center gap-2">
-                                                            <div className="form-check mb-0">
-                                                                <input className="form-check-input" type="radio" name="origin" id="opt-outro" />
-                                                                <label className="form-check-label small text-nowrap" htmlFor="opt-outro">Outro:</label>
-                                                            </div>
-                                                            <input type="text" className="form-control form-control-sm border-0 border-bottom bg-transparent p-0" style={{ width: '150px' }} />
-                                                        </div>
-                                                    </div>
+                                <div className="mt-2">
+                                    {cliente.anamnese ? (
+                                        <div className="d-flex flex-column gap-4">
+                                            {!isEditingAnamnese && (
+                                                <div className="d-flex justify-content-end">
+                                                    <button
+                                                        className="btn btn-gold px-4 py-2"
+                                                        style={{ borderRadius: '8px' }}
+                                                        onClick={() => setIsEditingAnamnese(true)}
+                                                    >
+                                                        <i className="bi bi-pencil-square me-2"></i>
+                                                        Editar Anamnese
+                                                    </button>
                                                 </div>
-                                            </div>
+                                            )}
+                                            <FichaAnamnese
+                                                customer={customer}
+                                                anamnese={cliente.anamnese}
+                                                readOnly={!isEditingAnamnese}
+                                                onSuccess={() => setIsEditingAnamnese(false)}
+                                            />
                                         </div>
-                                    </div>
-
-                                    {/* Hábitos Diários */}
-                                    <div className="mb-5">
-                                        <h6 className="fw-bold mb-3">Hábitos Diários</h6>
-                                        <div className="d-flex flex-column gap-3">
-                                            <div>
-                                                <label className="small text-secondary d-block mb-1">Exposição ao sol?</label>
-                                                <div className="d-flex flex-wrap gap-4">
-                                                    {['Nunca', 'Raramente', 'Frequentemente', 'Diariamente'].map((opt, i) => (
-                                                        <div key={i} className="form-check">
-                                                            <input className="form-check-input" type="radio" name="sol" id={`sol${i}`} defaultChecked={opt === 'Frequentemente'} />
-                                                            <label className="form-check-label small" htmlFor={`sol${i}`}>{opt}</label>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <label className="small text-secondary d-block mb-1">É fumador(a)?</label>
-                                                <div className="d-flex flex-wrap gap-4">
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="radio" name="fuma" id="fuma-sim" defaultChecked />
-                                                        <label className="form-check-label small" htmlFor="fuma-sim">Sim (15 cigarros/dia)</label>
-                                                    </div>
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="radio" name="fuma" id="fuma-nao" />
-                                                        <label className="form-check-label small" htmlFor="fuma-nao">Não</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <label className="small text-secondary d-block mb-1">Ingestão de líquidos (Água):</label>
-                                                <div className="d-flex flex-wrap gap-4">
-                                                    {['Menos de 1 litro/dia', '1 a 2 litros/dia', 'Mais de 2 litros/dia'].map((opt, i) => (
-                                                        <div key={i} className="form-check">
-                                                            <input className="form-check-input" type="radio" name="agua" id={`agua${i}`} defaultChecked={i === 0} />
-                                                            <label className="form-check-label small" htmlFor={`agua${i}`}>{opt}</label>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <label className="small text-secondary d-block mb-1">Alimentação predominante:</label>
-                                                <div className="d-flex flex-wrap gap-4">
-                                                    {['Equilibrada', 'Rica em açúcares/doces', 'Rica em gorduras/fritos', 'Rica em processados/fast food'].map((opt, i) => (
-                                                        <div key={i} className="form-check">
-                                                            <input className="form-check-input" type="radio" name="alimento" id={`alim${i}`} defaultChecked={i === 1} />
-                                                            <label className="form-check-label small" htmlFor={`alim${i}`}>{opt}</label>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <label className="small text-secondary d-block mb-1">Pratica atividade física?</label>
-                                                <div className="d-flex flex-wrap gap-4">
-                                                    {['Não (sedentário)', 'Sim (1-2 x /semana)', 'Sim (3 x ou mais/semana)'].map((opt, i) => (
-                                                        <div key={i} className="form-check">
-                                                            <input className="form-check-input" type="radio" name="treino" id={`treino${i}`} defaultChecked={i === 0} />
-                                                            <label className="form-check-label small" htmlFor={`treino${i}`}>{opt}</label>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
+                                    ) : (
+                                        <div className="text-center mt-auto pt-3">
+                                            <button
+                                                className="btn btn-gold px-5 px-md-5 py-2"
+                                                style={{ borderRadius: '8px', paddingLeft: '3rem !important', paddingRight: '3rem !important' }}
+                                                onClick={openAnamneseModal}
+                                            >
+                                                + Criar Anamnese
+                                            </button>
                                         </div>
-                                    </div>
-
-                                    {/* Histórico Estético e Clínico */}
-                                    <div className="mb-5">
-                                        <h6 className="fw-bold mb-3">Histórico Estético e Clínico</h6>
-                                        <div className="d-flex flex-column gap-3">
-                                            <div className="row align-items-center g-2">
-                                                <div className="col-auto">
-                                                    <label className="small text-secondary">Já realizou cirurgia plástica?</label>
-                                                </div>
-                                                <div className="col-auto d-flex align-items-center gap-4 ms-2">
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="cirurgia" id="ciru-nao" defaultChecked />
-                                                        <label className="form-check-label small" htmlFor="ciru-nao">Não</label>
-                                                    </div>
-                                                    <div className="d-flex align-items-center gap-2">
-                                                        <div className="form-check mb-0">
-                                                            <input className="form-check-input" type="radio" name="cirurgia" id="ciru-sim" />
-                                                            <label className="form-check-label small text-nowrap" htmlFor="ciru-sim">Sim (Qual(is):</label>
-                                                        </div>
-                                                        <input type="text" className="form-control form-control-sm border-0 border-bottom bg-transparent p-0" style={{ width: '300px' }} />
-                                                        <span className="small">)</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="row align-items-center g-2">
-                                                <div className="col-auto">
-                                                    <label className="small text-secondary">Já fez tratamentos estéticos anteriores?</label>
-                                                </div>
-                                                <div className="col-auto d-flex align-items-center gap-4 ms-2">
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="trat-ant" id="trat-nao" />
-                                                        <label className="form-check-label small" htmlFor="trat-nao">Não</label>
-                                                    </div>
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="trat-ant" id="trat-sim" defaultChecked />
-                                                        <label className="form-check-label small text-nowrap" htmlFor="trat-sim">Sim (Qual(is): Limpeza de pele)</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="row align-items-center g-2">
-                                                <div className="col-auto">
-                                                    <label className="small text-secondary">Faz algum tratamento médico atual?</label>
-                                                </div>
-                                                <div className="col-auto d-flex align-items-center gap-4 ms-2">
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="medico" id="med-nao" defaultChecked />
-                                                        <label className="form-check-label small" htmlFor="med-nao">Não</label>
-                                                    </div>
-                                                    <div className="d-flex align-items-center gap-2">
-                                                        <div className="form-check mb-0">
-                                                            <input className="form-check-input" type="radio" name="medico" id="med-sim" />
-                                                            <label className="form-check-label small text-nowrap" htmlFor="med-sim">Sim (Qual(is):</label>
-                                                        </div>
-                                                        <input type="text" className="form-control form-control-sm border-0 border-bottom bg-transparent p-0" style={{ width: '300px' }} />
-                                                        <span className="small">)</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="row align-items-center g-2">
-                                                <div className="col-auto">
-                                                    <label className="small text-secondary">Possui alergias?</label>
-                                                </div>
-                                                <div className="col-auto d-flex align-items-center gap-4 ms-2">
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="alergia" id="ale-nao" defaultChecked />
-                                                        <label className="form-check-label small" htmlFor="ale-nao">Não</label>
-                                                    </div>
-                                                    <div className="d-flex align-items-center gap-2">
-                                                        <div className="form-check mb-0">
-                                                            <input className="form-check-input" type="radio" name="alergia" id="ale-sim" />
-                                                            <label className="form-check-label small text-nowrap" htmlFor="ale-sim">Sim (Especifique:</label>
-                                                        </div>
-                                                        <input type="text" className="form-control form-control-sm border-0 border-bottom bg-transparent p-0" style={{ width: '300px' }} />
-                                                        <span className="small">)</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="row align-items-center g-2">
-                                                <div className="col-auto">
-                                                    <label className="small text-secondary">É diabética(o)?</label>
-                                                </div>
-                                                <div className="col-auto d-flex align-items-center gap-4 ms-2">
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="diabetes" id="dia-nao" defaultChecked />
-                                                        <label className="form-check-label small" htmlFor="dia-nao">Não</label>
-                                                    </div>
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="diabetes" id="dia-sim-1" />
-                                                        <label className="form-check-label small" htmlFor="dia-sim-1">Sim (Tipo I)</label>
-                                                    </div>
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="diabetes" id="dia-sim-2" />
-                                                        <label className="form-check-label small" htmlFor="dia-sim-2">Sim (Tipo II)</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="row align-items-center g-2">
-                                                <div className="col-auto">
-                                                    <label className="small text-secondary">Antecedentes Oncológicos?</label>
-                                                </div>
-                                                <div className="col-auto d-flex align-items-center gap-4 ms-2">
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="onco" id="onco-nao" defaultChecked />
-                                                        <label className="form-check-label small" htmlFor="onco-nao">Não</label>
-                                                    </div>
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="onco" id="onco-sim" />
-                                                        <label className="form-check-label small" htmlFor="onco-sim">Sim</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="row align-items-center g-2">
-                                                <div className="col-auto">
-                                                    <label className="small text-secondary">Anemia recente?</label>
-                                                </div>
-                                                <div className="col-auto d-flex align-items-center gap-4 ms-2">
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="anemia" id="ane-nao" defaultChecked />
-                                                        <label className="form-check-label small" htmlFor="ane-nao">Não</label>
-                                                    </div>
-                                                    <div className="form-check mb-0">
-                                                        <input className="form-check-input" type="radio" name="anemia" id="ane-sim" />
-                                                        <label className="form-check-label small" htmlFor="ane-sim">Sim</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="row align-items-center g-2">
-                                                <div className="col-auto">
-                                                    <label className="small text-secondary">Peso atual:</label>
-                                                </div>
-                                                <div className="col-auto d-flex align-items-center gap-2">
-                                                    <input type="text" className="form-control form-control-sm bg-light border-0 text-center" style={{ width: '60px' }} defaultValue="75" />
-                                                    <span className="small">Kg</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Observações */}
-                                    <div className="mb-5">
-                                        <label className="fw-bold mb-2">Observações</label>
-                                        <textarea className="form-control bg-light border-0 p-3" rows="4" defaultValue="Pele muito seca com alguns cravos"></textarea>
-                                    </div>
-
-                                    {/* Política de Cancelamento */}
-                                    <div className="mb-5">
-                                        <div className="d-flex align-items-center gap-2 mb-2">
-                                            <i className="bi bi-exclamation-triangle-fill text-dark"></i>
-                                            <span className="fw-bold fs-6">POLÍTICA DE CANCELAMENTO</span>
-                                        </div>
-                                        <p className="small text-dark mb-0">
-                                            <strong>Nota:</strong> Desmarcações terão de ser feitas com 48h de antecedência. Caso não ocorra, o tratamento em questão será dado como realizado ou será cobrada uma taxa de remarcação no valor de 10€.
-                                        </p>
-                                    </div>
-
-                                    {/* Assinatura */}
-                                    <div className="mb-5">
-                                        <label className="small text-secondary mb-2">Assinatura:</label>
-                                        <div className="border rounded-3 p-3 bg-white d-flex align-items-center justify-content-center" style={{ minHeight: '100px' }}>
-                                            <div className="text-center">
-                                                {/* Placeholder for signature image or canvas */}
-                                                <p className="mb-0 fs-3" style={{ fontFamily: '"Great Vibes", cursive', color: '#333' }}>Ana Maria Costa Silva</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Data e Enviar */}
-                                    <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
-                                        <div className="d-flex align-items-center gap-2">
-                                            <label className="small text-secondary mb-0">Data</label>
-                                            <input type="text" className="form-control form-control-sm bg-light border-0" value="27/08/2025" readOnly style={{ width: '150px' }} />
-                                        </div>
-                                        <button className="btn btn-gold px-5 py-2" style={{ borderRadius: '8px' }}>
-                                            Enviar
-                                        </button>
-                                    </div>
+                                    )}
                                 </div>
                             )}
 
+                            {/* Aba Histórico */}
                             {activeTab === 'historico' && (
                                 <div className="procedure-history">
                                     <div className="d-flex justify-content-between align-items-center mb-4">
                                         <h5 className="mb-0">Histórico de Procedimentos</h5>
-                                        <button className="btn btn-gold px-4 py-2" style={{ borderRadius: '8px' }}>
-                                            <span className="me-2">+</span> Novo Procedimento
-                                        </button>
                                     </div>
 
                                     <div className="d-flex flex-column gap-3 mb-4">
-                                        {procedureHistory.map((item, idx) => (
-                                            <div key={idx} className="card border border-light shadow-sm p-3 rounded-4 bg-white">
-                                                <div className="d-flex justify-content-between align-items-start mb-1">
-                                                    <h6 className="fw-bold mb-0">{item.title}</h6>
-                                                    <span className="small text-dark fw-medium">{item.date}</span>
+                                        {procedureHistory.length > 0 ? (
+                                            procedureHistory.map((item, idx) => (
+                                                <div key={idx} className="card border border-light shadow-sm p-3 rounded-4 bg-white">
+                                                    <div className="d-flex justify-content-between align-items-start mb-1">
+                                                        <h6 className="fw-bold mb-0">{item.title}</h6>
+                                                        <span className="small text-dark fw-medium">{item.date}</span>
+                                                    </div>
+                                                    <p className="text-secondary small mb-3">{item.professional}</p>
+                                                    <p className="small mb-3 text-dark">{item.notes}</p>
+                                                    <div className="fw-medium text-dark small">Valor: {item.price}</div>
                                                 </div>
-                                                <p className="text-secondary small mb-3">{item.professional}</p>
-                                                <p className="small mb-3 text-dark">{item.notes}</p>
-                                                <div className="fw-medium text-dark small">Valor: {item.price}</div>
+                                            ))
+                                        ) : (
+                                            <div className="text-center py-5">
+                                                <i className="bi bi-clock-history fs-1 text-light mb-3 d-block"></i>
+                                                <p className="text-secondary">Ainda não existem procedimentos registados para este cliente.</p>
                                             </div>
-                                        ))}
+                                        )}
                                     </div>
 
-                                    <div className="text-center mt-4">
-                                        <button className="btn btn-gold px-5 py-2" style={{ borderRadius: '8px' }}>
-                                            Ver Mais Procedimentos
-                                        </button>
-                                    </div>
+                                    {procedureHistory.length > 5 && (
+                                        <div className="text-center mt-4">
+                                            <button className="btn btn-gold px-5 px-md-5 py-2" style={{ borderRadius: '8px', paddingLeft: '3rem !important', paddingRight: '3rem !important' }}>
+                                                Ver Mais Procedimentos
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -614,7 +365,7 @@ export default function Cliente({ cliente }) {
 
                 {/* Edit Profile Modal */}
                 <Modal show={showEditModal} onClose={closeEditModal}>
-                    <div className="p-4">
+                    <div className="p-4 bg-white">
                         <div className="d-flex justify-content-between align-items-center mb-4">
                             <h4 className="mb-0">Editar Perfil</h4>
                             <button type="button" className="btn-close" onClick={closeEditModal}></button>
@@ -635,12 +386,26 @@ export default function Cliente({ cliente }) {
                                 </div>
 
                                 <div className="col-12 col-md-6">
+                                    <label className="form-label small text-secondary">Cliente desde:</label>
+                                    <input
+                                        type="date"
+                                        className="form-control bg-light border-0 py-2 rounded-3"
+                                        value={data.cliente_desde}
+                                        onChange={(e) => setData('cliente_desde', e.target.value)}
+                                    />
+                                    {errors.cliente_desde && <div className="text-danger small">{errors.cliente_desde}</div>}
+                                </div>
+
+                                <div className="col-12 col-md-6">
                                     <label className="form-label small text-secondary">Telemóvel</label>
                                     <input
-                                        type="text"
+                                        type="tel"
                                         className="form-control bg-light border-0 py-2 rounded-3"
                                         value={data.telemovel}
-                                        onChange={(e) => setData('telemovel', e.target.value)}
+                                        onChange={(e) => {
+                                            const val = e.target.value.replace(/[^0-9+]/g, '');
+                                            setData('telemovel', val);
+                                        }}
                                         required
                                     />
                                     {errors.telemovel && <div className="text-danger small">{errors.telemovel}</div>}
@@ -719,6 +484,16 @@ export default function Cliente({ cliente }) {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </Modal>
+
+                {/* Anamnese Modal */}
+                <Modal show={showAnamneseModal} onClose={closeAnamneseModal} closeable={false} style={{ maxWidth: '43.75rem' }}>
+                    <div className="p-4">
+                        <div className="d-flex justify-content-end mb-2">
+                            <button type="button" className="btn-close" onClick={closeAnamneseModal}></button>
+                        </div>
+                        <FichaAnamnese customer={customer} onSuccess={closeAnamneseModal} />
                     </div>
                 </Modal>
             </div>

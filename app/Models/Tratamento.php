@@ -5,20 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+// Classe para gerenciar tratamentos
 class Tratamento extends Model
 {
     use HasFactory;
 
-    // Define quais campos podem ser preenchidos via API
     protected $fillable = [
         'nome',
         'duracao',
         'preco',
     ];
 
-    /**
-     * Relacionamento: Um tratamento pode estar em muitos agendamentos.
-     */
+    // Função para obter os agendamentos
     public function agendamentos()
     {
         return $this->hasMany(Agendamento::class);
