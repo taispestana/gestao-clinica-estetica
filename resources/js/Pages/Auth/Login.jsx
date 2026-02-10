@@ -105,14 +105,14 @@ export default function Login({ status }) {
                         </div>
 
 
-                        <div className="mb-1">
+                        {/* <div className="mb-1">
                             <span className="text-muted small">Não tem uma conta? </span>
 
                             <Link href={route('register')} className="gold-link small">
                                 Registe-se
                             </Link>
 
-                        </div>
+                        </div> */}
                     </div>
 
                 </form>

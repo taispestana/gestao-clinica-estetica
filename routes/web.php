@@ -13,10 +13,18 @@ use App\Http\Controllers\MensagensController;
 use App\Http\Controllers\DashboardController;
 
 // Rotas de autenticacao
+// Route::get('/', function () {
+//     return Inertia::render('Auth/Login', [
+//         'canLogin' => Route::has('login'),
+//         'canRegister' => Route::has('register'),
+//     ]);
+// });
 Route::get('/', function () {
     return Inertia::render('Auth/Login', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
+        'canLogin' => true,
+        //'canLogin' => Route::has('login'),
+        'canRegister' => false, // Mudamos de Route::has('register') para false
+        //'canRegister' => Route::has('register'),
     ]);
 });
 require __DIR__ . '/auth.php';
