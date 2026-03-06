@@ -98,4 +98,4 @@ extension=mbstring
     ```
 
 ---
-© 2024 Gestão Clínica Estética. Todos os direitos reservados.
+© 2026 Gestão Clínica Estética. Todos os direitos reservados.
